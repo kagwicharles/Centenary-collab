@@ -71,7 +71,9 @@ class _HomePageState extends State<HomePage> {
                     height: 200,
                     constraints: const BoxConstraints(maxWidth: 450),
                     child: Swiper(
+                        scrollDirection: Axis.vertical,
                         autoplay: true,
+                        autoplayDelay: 5000,
                         itemCount: widget.creditCards.length,
                         itemBuilder: (BuildContext context, int index) {
                           return widget.creditCards[index];
@@ -119,6 +121,7 @@ class _HomePageState extends State<HomePage> {
                     constraints: const BoxConstraints(maxWidth: 450),
                     child: Swiper(
                         autoplay: true,
+                        pagination: const SwiperPagination(),
                         itemCount: widget.adverts.length,
                         itemBuilder: (BuildContext context, int index) {
                           return widget.adverts[index];

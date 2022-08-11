@@ -11,6 +11,7 @@ class CreditCardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 2),
             height: 175,
             width: 275,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -53,7 +54,7 @@ class TextAmount extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(amount,
         style: const TextStyle(
-            fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white));
+            fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white));
   }
 }
 
@@ -64,6 +65,6 @@ class TextLarge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-        style: const TextStyle(fontSize: 22, color: Colors.white));
+        style: const TextStyle(fontSize: 20, color: Colors.white));
   }
 }

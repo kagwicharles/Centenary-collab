@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/menu_item_widget.dart';
@@ -19,30 +20,37 @@ class MainMenuWidget extends StatelessWidget {
         // ListView.builder(
         //     scrollDirection: Axis.horizontal,
         //     itemCount: mainMenuItems.length,
-        //     itemBuilder: (BuildContext context, int index) {
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      MenuItemWidget(
-        icon: "assets/icons/loan.png",
-        title: "Insurance",
-        color: Colors.white,
-      ),
-      MenuItemWidget(
-        icon: "assets/icons/loan.png",
-        title: "Loan",
-        color: Colors.white,
-      ),
-      MenuItemWidget(
-        icon: "assets/icons/send-money.png",
-        title: "Send",
-        color: Colors.white,
-      ),
-      MenuItemWidget(
-        icon: "assets/icons/pay.png",
-        title: "Pay",
-        color: Colors.white,
-      )
-    ]);
-    // });
+        //
+
+        Swiper(
+            itemCount: 4,
+            itemBuilder: (BuildContext context, int index) {
+              return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MenuItemWidget(
+                      icon: "assets/icons/loan.png",
+                      title: "Insurance",
+                      color: Colors.white,
+                    ),
+                    MenuItemWidget(
+                      icon: "assets/icons/loan.png",
+                      title: "Loan",
+                      color: Colors.white,
+                    ),
+                    MenuItemWidget(
+                      icon: "assets/icons/send-money.png",
+                      title: "Send",
+                      color: Colors.white,
+                    ),
+                    MenuItemWidget(
+                      icon: "assets/icons/pay.png",
+                      title: "Pay",
+                      color: Colors.white,
+                    )
+                  ]);
+            });
   }
 }
 
