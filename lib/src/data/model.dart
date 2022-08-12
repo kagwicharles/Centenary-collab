@@ -16,9 +16,9 @@ class CreditCard {
         );
 }
 
-class MenuItem {
+class MenuItemData {
   final String title;
   final String icon;
 
-  MenuItem({required this.title, required this.icon});
+  MenuItemData({required this.title, required this.icon});
 }

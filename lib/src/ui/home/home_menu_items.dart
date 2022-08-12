@@ -8,10 +8,10 @@ import 'package:rafiki/src/ui/menu_item_widget.dart';
 class MainMenuWidget extends StatelessWidget {
   MainMenuWidget({Key? key}) : super(key: key);
 
-  final List<MenuItem> mainMenuItems = [
-    MenuItem(title: "Elimu insurance", icon: "assets/icons/loan.png"),
-    MenuItem(title: "Send money", icon: "assets/icons/send-money.png"),
-    MenuItem(title: "Insurance", icon: "assets/icons/pay.png")
+  final List<MenuItemData> mainMenuItemDatas = [
+    MenuItemData(title: "Elimu insurance", icon: "assets/icons/loan.png"),
+    MenuItemData(title: "Send money", icon: "assets/icons/send-money.png"),
+    MenuItemData(title: "Insurance", icon: "assets/icons/pay.png")
   ];
 
   @override
@@ -19,7 +19,7 @@ class MainMenuWidget extends StatelessWidget {
     return
         // ListView.builder(
         //     scrollDirection: Axis.horizontal,
-        //     itemCount: mainMenuItems.length,
+        //     itemCount: mainMenuItemDatas.length,
         //
 
         Swiper(
@@ -29,22 +29,22 @@ class MainMenuWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    MenuItemWidget(
+                    MenuItemDataWidget(
                       icon: "assets/icons/loan.png",
                       title: "Insurance",
                       color: Colors.white,
                     ),
-                    MenuItemWidget(
+                    MenuItemDataWidget(
                       icon: "assets/icons/loan.png",
                       title: "Loan",
                       color: Colors.white,
                     ),
-                    MenuItemWidget(
+                    MenuItemDataWidget(
                       icon: "assets/icons/send-money.png",
                       title: "Send",
                       color: Colors.white,
                     ),
-                    MenuItemWidget(
+                    MenuItemDataWidget(
                       icon: "assets/icons/pay.png",
                       title: "Pay",
                       color: Colors.white,
@@ -57,15 +57,15 @@ class MainMenuWidget extends StatelessWidget {
 class SubMenuWidget extends StatelessWidget {
   SubMenuWidget({Key? key}) : super(key: key);
 
-  final List<MenuItem> subMenuItems = [
-    MenuItem(title: "Elimu Insurance", icon: "assets/icons/payment.png"),
-    MenuItem(title: "Elimu insurance", icon: "assets/icons/loan.png"),
-    MenuItem(title: "Pay", icon: "assets/icons/pay.png"),
-    MenuItem(title: "Send money", icon: "assets/icons/send-money.png"),
-    MenuItem(title: "Elimu insurance", icon: "assets/icons/loan.png"),
-    MenuItem(title: "Pay", icon: "assets/icons/pay.png"),
-    MenuItem(title: "Elimu insurance", icon: "assets/icons/loan.png"),
-    MenuItem(title: "Pay", icon: "assets/icons/pay.png"),
+  final List<MenuItemData> subMenuItemDatas = [
+    MenuItemData(title: "Elimu Insurance", icon: "assets/icons/payment.png"),
+    MenuItemData(title: "Elimu insurance", icon: "assets/icons/loan.png"),
+    MenuItemData(title: "Pay", icon: "assets/icons/pay.png"),
+    MenuItemData(title: "Send money", icon: "assets/icons/send-money.png"),
+    MenuItemData(title: "Elimu insurance", icon: "assets/icons/loan.png"),
+    MenuItemData(title: "Pay", icon: "assets/icons/pay.png"),
+    MenuItemData(title: "Elimu insurance", icon: "assets/icons/loan.png"),
+    MenuItemData(title: "Pay", icon: "assets/icons/pay.png"),
   ];
 
   @override
@@ -79,7 +79,7 @@ class SubMenuWidget extends StatelessWidget {
               crossAxisCount: 3,
               childAspectRatio: .3 / .4,
             ),
-            itemCount: subMenuItems.length,
+            itemCount: subMenuItemDatas.length,
             itemBuilder: (BuildContext context, int index) {
               return AnimationConfiguration.staggeredList(
                   position: index,
@@ -90,9 +90,9 @@ class SubMenuWidget extends StatelessWidget {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                            MenuItemWidget(
-                                icon: subMenuItems[index].icon,
-                                title: subMenuItems[index].title)
+                            MenuItemDataWidget(
+                                icon: subMenuItemDatas[index].icon,
+                                title: subMenuItemDatas[index].title)
                           ]))));
             }));
   }
