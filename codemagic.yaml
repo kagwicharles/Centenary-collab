@@ -3,6 +3,6 @@ workflows:
     scripts:
       - name: Build Android APK
         working_directory: android
-        script: ./gradlew assembleRelease
+        script: flutter build apk --no-sound-null-safety
     artifacts:
       - app/build/outputs/**/**/*.apk
