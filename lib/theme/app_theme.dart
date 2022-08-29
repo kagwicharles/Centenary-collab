@@ -29,5 +29,15 @@ class AppTheme {
           labelMedium: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-          )));
+          )),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+              textStyle:
+                  MaterialStateProperty.all(const TextStyle(fontSize: 16)),
+              elevation: MaterialStateProperty.all(0.0),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0))),
+              minimumSize:
+                  MaterialStateProperty.all(const Size.fromHeight(58)))));
 }

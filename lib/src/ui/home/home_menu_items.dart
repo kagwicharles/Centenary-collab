@@ -3,6 +3,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/test/test.dart';
 import 'package:rafiki/src/ui/menu_item_widget.dart';
 
 class MainMenuWidget extends StatelessWidget {
@@ -29,26 +30,27 @@ class MainMenuWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    MenuItemDataWidget(
-                      icon: "assets/icons/loan.png",
-                      title: "Insurance",
-                      color: Colors.white,
-                    ),
-                    MenuItemDataWidget(
-                      icon: "assets/icons/loan.png",
-                      title: "Loan",
-                      color: Colors.white,
-                    ),
-                    MenuItemDataWidget(
-                      icon: "assets/icons/send-money.png",
-                      title: "Send",
-                      color: Colors.white,
-                    ),
-                    MenuItemDataWidget(
-                      icon: "assets/icons/pay.png",
-                      title: "Pay",
-                      color: Colors.white,
-                    )
+                    // MenuItemDataWidget(
+                    //   icon: "assets/icons/loan.png",
+                    //   title: "Insurance",
+                    //   color: Colors.white,
+                    // ),
+                    // MenuItemDataWidget(
+                    //   icon: "assets/icons/loan.png",
+                    //   title: "Loan",
+                    //   color: Colors.white,
+                    // ),
+                    // MenuItemDataWidget(
+                    //   icon: "assets/icons/send-money.png",
+                    //   title: "Send",
+                    //   color: Colors.white,
+                    // ),
+                    // MenuItemDataWidget(
+                    //   icon: "assets/icons/pay.png",
+                    //   title: "Pay",
+                    //   color: Colors.white,
+                    // )
+                    Text("No favourites yet!")
                   ]);
             });
   }
@@ -56,6 +58,8 @@ class MainMenuWidget extends StatelessWidget {
 
 class SubMenuWidget extends StatelessWidget {
   SubMenuWidget({Key? key}) : super(key: key);
+
+  Future<List<ModuleItem>>? _moduleItems;
 
   final List<MenuItemData> subMenuItemDatas = [
     MenuItemData(title: "Elimu Insurance", icon: "assets/icons/payment.png"),
@@ -70,30 +74,43 @@ class SubMenuWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: .3 / .4,
-            ),
-            itemCount: subMenuItemDatas.length,
-            itemBuilder: (BuildContext context, int index) {
-              return AnimationConfiguration.staggeredList(
-                  position: index,
-                  duration: const Duration(milliseconds: 500),
-                  child: SlideAnimation(
-                      verticalOffset: 50.0,
-                      child: FadeInAnimation(
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                            MenuItemDataWidget(
-                                icon: subMenuItemDatas[index].icon,
-                                title: subMenuItemDatas[index].title)
-                          ]))));
-            }));
+    _moduleItems = DynamicData.readModulesJson("MAIN");
+
+    return FutureBuilder<List<ModuleItem>>(
+        future: _moduleItems,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<ModuleItem>> snapshot) {
+          Widget child = const Center(child: Text("Please wait..."));
+          if (snapshot.hasData) {
+            child = Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                    ),
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 500),
+                          child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                  child: ModuleItemWidget(
+                                      imageUrl: snapshot.data![index].moduleUrl,
+                                      moduleName:
+                                          snapshot.data![index].moduleName,
+                                      moduleId: snapshot.data![index].moduleId,
+                                      parentModule:
+                                          snapshot.data![index].parentModule,
+                                      moduleCategory: snapshot
+                                          .data![index].moduleCategory))));
+                    }));
+          }
+          return child;
+        });
   }
 }

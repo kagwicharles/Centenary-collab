@@ -1,44 +1,59 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:rafiki/src/ui/dynamic.dart';
 
-class MenuItemDataWidget extends StatelessWidget {
-  MenuItemDataWidget(
-      {Key? key,
-      required this.icon,
-      required this.title,
-      this.color = Colors.black})
-      : super(key: key);
+class ModuleItemWidget extends StatelessWidget {
+  final String imageUrl;
+  final String moduleName;
+  final String moduleId;
+  final String parentModule;
+  final String moduleCategory;
 
-  final String icon;
-  final String title;
-  Color? color;
+  ModuleItemWidget(
+      {required this.imageUrl,
+      required this.moduleName,
+      required this.moduleId,
+      required this.parentModule,
+      required this.moduleCategory});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-        onTap: () {},
-        child: Container(
-          width: 85,
-          height: 100,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                icon,
-                width: 40,
-                height: 40,
-              ),
-              const SizedBox(
-                height: 18,
-              ),
-              Text(
-                title,
-                style: TextStyle(
-                    color: color, fontSize: 14, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              )
-            ],
-          ),
-        ));
+    return Card(
+        child: InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DynamicWidget(
+                        moduleId: moduleId,
+                        moduleName: moduleName,
+                        parentModule: parentModule,
+                        moduleCategory: moduleCategory,
+                      )));
+            },
+            child: Container(
+              margin: const EdgeInsets.all(4.0),
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(12))),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      height: 44,
+                      width: 44,
+                      placeholder: (context, url) =>
+                          Lottie.asset('assets/lottie/loading.json'),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Flexible(
+                        child: Text(
+                      moduleName,
+                      overflow: TextOverflow.fade,
+                      textAlign: TextAlign.center,
+                    )),
+                  ]),
+            )));
   }
 }

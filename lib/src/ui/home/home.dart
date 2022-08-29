@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/test/test.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
 import 'package:rafiki/src/ui/home/credit_card.dart';
 import 'package:rafiki/src/ui/home/home_menu_items.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
+   HomePage({Key? key, required this.title}) : super(key: key);
   final String title;
   final String user = "Kagwi";
   final String lastLogin = "Jul 12 2022 11:50AM";
+
 
   final List<Widget> creditCards = const [
     CreditCardWidget(),
@@ -33,6 +35,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
             title: Row(

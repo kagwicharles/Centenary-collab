@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Rafiki',
       debugShowCheckedModeBanner: false,
       theme: AppTheme().appTheme,
-      home: const HomePage(title: 'Rafiki'),
+      home: HomePage(title: 'Rafiki'),
     );
   }
 }
