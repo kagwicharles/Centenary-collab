@@ -28,24 +28,17 @@ class DynamicWidget extends StatelessWidget {
     _formItems = DynamicData.readFormsJson(moduleId);
     _moduleItems = DynamicData.readModulesJson(moduleId);
 
-    return Scaffold(
-        appBar: AppBar(title: Text(moduleName)),
-        body: SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Column(children: [
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  moduleCategory == "FORM"
-                      ? FormsListWidget(
-                          orientation: orientation,
-                          formItems: _formItems,
-                          parentModule: parentModule)
-                      : ModulesListWidget(
-                          orientation: orientation,
-                          moduleItems: _moduleItems,
-                          parentModule: parentModule)
-                ]))));
+    return moduleCategory == "FORM"
+        ? FormsListWidget(
+            orientation: orientation,
+            formItems: _formItems,
+            parentModule: parentModule,
+            moduleName: moduleName,
+          )
+        : ModulesListWidget(
+            orientation: orientation,
+            moduleItems: _moduleItems,
+            parentModule: parentModule,
+            moduleName: moduleName);
   }
 }

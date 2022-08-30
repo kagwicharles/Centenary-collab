@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: constant_identifier_names
+enum ViewType { TEXT, BUTTON, RBUTTON, DROPDOWN, TAB, LABEL }
 
 class CreditCard {
   final String balance;
@@ -49,15 +50,21 @@ class FormItem {
   String? controlType;
   String? controlText;
   String? moduleId;
+  String? controlId;
+  String? linkedToControl = "";
 
   FormItem(
       {required this.controlType,
       required this.controlText,
-      required this.moduleId});
+      required this.moduleId,
+      this.linkedToControl,
+      this.controlId});
 
   FormItem.fromJson(Map<String, dynamic> json) {
     controlType = json['ControlType'];
     controlText = json['ControlText'];
     moduleId = json['ModuleID'];
+    linkedToControl = json['LinkedToControl'];
+    controlId = json['ControlID'];
   }
 }
