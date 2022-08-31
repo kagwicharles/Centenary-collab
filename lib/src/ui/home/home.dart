@@ -35,57 +35,89 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            title: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  child: Image.asset("assets/images/user.png"),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        appBar: PreferredSize(
+            preferredSize:
+                const Size.fromHeight(64.0), // here the desired height
+            child: AppBar(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Hello ${widget.user}"),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      "Last Login ${widget.lastLogin}",
-                      style: Theme.of(context).textTheme.titleSmall,
+                    CircleAvatar(
+                      child: Image.asset("assets/images/user.png"),
                     ),
                     const SizedBox(
-                      height: 8,
+                      width: 8,
                     ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Text("Hello ${widget.user}"),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          "Last Login ${widget.lastLogin}",
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.more_vert))
                   ],
-                ),
-                const Spacer(),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
-              ],
-            )),
+                ))),
         body: ListView(
           children: [
             const SizedBox(
               height: 24,
             ),
-            Center(
-                child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    height: 200,
-                    constraints: const BoxConstraints(maxWidth: 450),
-                    child: Swiper(
-                        scrollDirection: Axis.horizontal,
-                        autoplay: true,
-                        autoplayDelay: 5000,
-                        itemCount: widget.creditCards.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return widget.creditCards[index];
-                        }))),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: (() {}),
+                            icon: const Icon(
+                              Icons.filter_none,
+                              size: 40,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          IconButton(
+                            onPressed: (() {}),
+                            icon: const Icon(
+                              Icons.alarm,
+                              size: 40,
+                            ),
+                          )
+                        ],
+                      ),
+                      Container(
+                          height: 177,
+                          constraints: const BoxConstraints(maxWidth: 270),
+                          child: Swiper(
+                              scrollDirection: Axis.horizontal,
+                              autoplay: true,
+                              autoplayDelay: 5000,
+                              itemCount: widget.creditCards.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return widget.creditCards[index];
+                              }))
+                    ])),
             const SizedBox(
               height: 24,
             ),
@@ -111,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                     padding: const EdgeInsets.fromLTRB(18, 124, 18, 10),
                     child: Material(
-                        elevation: 8,
+                        elevation: 6,
                         borderRadius: BorderRadius.circular(12),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),

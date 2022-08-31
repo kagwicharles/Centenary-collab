@@ -18,30 +18,48 @@ class CreditCardWidget extends StatelessWidget {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(
-                height: 24,
+                height: 8,
               ),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                const TextLarge(text: "Total Amount"),
+                const Text(
+                  "Total Amount",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
+                ),
                 Image.asset(
                   "assets/icons/visa.png",
                   height: 45,
                   width: 45,
                 )
               ]),
-              Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: const [
-                    TextAmount(amount: "\$100,000"),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    TextLarge(text: "4055 8923 9321 1213"),
-                    SizedBox(
-                      height: 8,
-                    )
-                  ]))
+              const SizedBox(
+                height: 24,
+              ),
+              const TextAmount(amount: "\$100,000"),
+              const SizedBox(
+                height: 12,
+              ),
+              Row(
+                children: const [
+                  Text(
+                    "Show balance",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  SizedBox(
+                    width: 4,
+                  ),
+                  Icon(
+                    Icons.visibility,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              const TextLarge(text: "4055 8923 9321 1213"),
             ])));
   }
 }
@@ -64,6 +82,6 @@ class TextLarge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-        style: const TextStyle(fontSize: 18, color: Colors.white));
+        style: const TextStyle(fontSize: 14, color: Colors.white));
   }
 }

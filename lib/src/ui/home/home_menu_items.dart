@@ -29,7 +29,7 @@ class MainMenuWidget extends StatelessWidget {
               return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: const [
                     // MenuItemDataWidget(
                     //   icon: "assets/icons/loan.png",
                     //   title: "Insurance",
@@ -50,7 +50,10 @@ class MainMenuWidget extends StatelessWidget {
                     //   title: "Pay",
                     //   color: Colors.white,
                     // )
-                    Text("No favourites yet!")
+                    Text(
+                      "No favourites yet!",
+                      style: TextStyle(color: Colors.white),
+                    )
                   ]);
             });
   }
@@ -60,17 +63,6 @@ class SubMenuWidget extends StatelessWidget {
   SubMenuWidget({Key? key}) : super(key: key);
 
   Future<List<ModuleItem>>? _moduleItems;
-
-  final List<MenuItemData> subMenuItemDatas = [
-    MenuItemData(title: "Elimu Insurance", icon: "assets/icons/payment.png"),
-    MenuItemData(title: "Elimu insurance", icon: "assets/icons/loan.png"),
-    MenuItemData(title: "Pay", icon: "assets/icons/pay.png"),
-    MenuItemData(title: "Send money", icon: "assets/icons/send-money.png"),
-    MenuItemData(title: "Elimu insurance", icon: "assets/icons/loan.png"),
-    MenuItemData(title: "Pay", icon: "assets/icons/pay.png"),
-    MenuItemData(title: "Elimu insurance", icon: "assets/icons/loan.png"),
-    MenuItemData(title: "Pay", icon: "assets/icons/pay.png"),
-  ];
 
   @override
   Widget build(BuildContext context) {
