@@ -5,6 +5,7 @@ import 'package:rafiki/src/data/test/test.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
 import 'package:rafiki/src/ui/home/credit_card.dart';
 import 'package:rafiki/src/ui/home/home_menu_items.dart';
+import 'package:rafiki/src/ui/home/top_home_widget.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
@@ -55,18 +56,22 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(
-                          height: 12,
+                          height: 18,
                         ),
-                        Text("Hello ${widget.user}"),
+                        Text(
+                          "Hello ${widget.user}",
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
+                        ),
                         const SizedBox(
-                          height: 8,
+                          height: 4,
                         ),
                         Text(
                           "Last Login ${widget.lastLogin}",
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(
-                          height: 8,
+                          height: 12,
                         ),
                       ],
                     ),
@@ -80,44 +85,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 24,
             ),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: (() {}),
-                            icon: const Icon(
-                              Icons.filter_none,
-                              size: 40,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          IconButton(
-                            onPressed: (() {}),
-                            icon: const Icon(
-                              Icons.alarm,
-                              size: 40,
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                          height: 177,
-                          constraints: const BoxConstraints(maxWidth: 270),
-                          child: Swiper(
-                              scrollDirection: Axis.horizontal,
-                              autoplay: true,
-                              autoplayDelay: 5000,
-                              itemCount: widget.creditCards.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return widget.creditCards[index];
-                              }))
-                    ])),
+            TopHomeWidget(),
             const SizedBox(
               height: 24,
             ),

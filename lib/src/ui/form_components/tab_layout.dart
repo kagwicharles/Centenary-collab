@@ -31,7 +31,6 @@ class TabWidget extends StatelessWidget {
           formItems: formItems
               .where((formItem) =>
                   formItem.linkedToControl == linkControl ||
-                  formItem.linkedToControl == "" ||
                   formItem.linkedToControl == null &&
                       formItem.controlType != ViewType.RBUTTON.name &&
                       formItem.formSequence == 1)

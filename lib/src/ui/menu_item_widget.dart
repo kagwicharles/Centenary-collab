@@ -20,6 +20,7 @@ class ModuleItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+        elevation: 0,
         child: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
@@ -31,10 +32,10 @@ class ModuleItemWidget extends StatelessWidget {
                       )));
             },
             child: Container(
-              margin: const EdgeInsets.all(2.0),
               padding: const EdgeInsets.all(2.0),
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(12))),
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  border: Border.all(color: Colors.blueGrey[100]!)),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
