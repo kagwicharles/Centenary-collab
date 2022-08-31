@@ -7,11 +7,10 @@ import 'package:rafiki/src/ui/home/credit_card.dart';
 import 'package:rafiki/src/ui/home/home_menu_items.dart';
 
 class HomePage extends StatefulWidget {
-   HomePage({Key? key, required this.title}) : super(key: key);
+  HomePage({Key? key, required this.title}) : super(key: key);
   final String title;
   final String user = "Kagwi";
   final String lastLogin = "Jul 12 2022 11:50AM";
-
 
   final List<Widget> creditCards = const [
     CreditCardWidget(),
@@ -35,34 +34,40 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
             title: Row(
-          children: [
-            CircleAvatar(
-              child: Image.asset("assets/images/user.png"),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("Hello ${widget.user}"),
-                const SizedBox(
-                  height: 8,
+                CircleAvatar(
+                  child: Image.asset("assets/images/user.png"),
                 ),
-                Text(
-                  "Last Login ${widget.lastLogin}",
-                  style: Theme.of(context).textTheme.titleSmall,
-                )
+                const SizedBox(
+                  width: 8,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Hello ${widget.user}"),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      "Last Login ${widget.lastLogin}",
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
               ],
-            ),
-            const Spacer(),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
-          ],
-        )),
+            )),
         body: ListView(
           children: [
             const SizedBox(
@@ -74,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                     height: 200,
                     constraints: const BoxConstraints(maxWidth: 450),
                     child: Swiper(
-                        scrollDirection: Axis.vertical,
+                        scrollDirection: Axis.horizontal,
                         autoplay: true,
                         autoplayDelay: 5000,
                         itemCount: widget.creditCards.length,

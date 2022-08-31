@@ -31,7 +31,8 @@ class ModuleItemWidget extends StatelessWidget {
                       )));
             },
             child: Container(
-              margin: const EdgeInsets.all(4.0),
+              margin: const EdgeInsets.all(2.0),
+              padding: const EdgeInsets.all(2.0),
               decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(12))),
               child: Column(
@@ -50,8 +51,9 @@ class ModuleItemWidget extends StatelessWidget {
                     Flexible(
                         child: Text(
                       moduleName,
-                      overflow: TextOverflow.fade,
+                      // overflow: TextOverflow.fade,
                       textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleMedium,
                     )),
                   ]),
             )));

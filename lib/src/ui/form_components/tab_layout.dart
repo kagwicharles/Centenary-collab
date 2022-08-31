@@ -21,7 +21,7 @@ class TabWidget extends StatelessWidget {
           formItem.controlType == ViewType.RBUTTON.name) {
         linkControls.add(formItem.controlId!);
         tabs.add(Tab(
-          child: RButtonWidget(text: formItem.controlText!),
+          text: formItem.controlText!,
         ));
       }
     });
@@ -33,7 +33,8 @@ class TabWidget extends StatelessWidget {
                   formItem.linkedToControl == linkControl ||
                   formItem.linkedToControl == "" ||
                   formItem.linkedToControl == null &&
-                      formItem.controlType != ViewType.RBUTTON.name)
+                      formItem.controlType != ViewType.RBUTTON.name &&
+                      formItem.formSequence == 1)
               .toList()));
     });
     return DefaultTabController(

@@ -52,13 +52,15 @@ class FormItem {
   String? moduleId;
   String? controlId;
   String? linkedToControl = "";
+  int? formSequence;
 
   FormItem(
       {required this.controlType,
       required this.controlText,
       required this.moduleId,
       this.linkedToControl,
-      this.controlId});
+      this.controlId,
+      this.formSequence});
 
   FormItem.fromJson(Map<String, dynamic> json) {
     controlType = json['ControlType'];
@@ -66,5 +68,6 @@ class FormItem {
     moduleId = json['ModuleID'];
     linkedToControl = json['LinkedToControl'];
     controlId = json['ControlID'];
+    formSequence = json['FormSequence'];
   }
 }

@@ -27,8 +27,8 @@ class ModulesListWidget extends StatelessWidget {
               Widget child = const Text("Please wait...");
               if (snapshot.hasData) {
                 child = Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 12),
                     child: GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -92,26 +92,28 @@ class FormsListWidget extends StatelessWidget {
                     ))
                 : Scaffold(
                     appBar: AppBar(title: Text(moduleName)),
-                    body: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: ListView.builder(
-                            itemCount: snapshot.data?.length,
-                            itemBuilder: (context, index) {
-                              var controlType;
-                              try {
-                                controlType = ViewType.values
-                                    .byName(snapshot.data![index].controlType!);
-                              } catch (e) {}
+                    body:  Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 12),
+                            child: ListView.builder(
+                                itemCount: snapshot.data?.length,
+                                itemBuilder: (context, index) {
+                                  var controlType;
+                                  try {
+                                    controlType = ViewType.values.byName(
+                                        snapshot.data![index].controlType!);
+                                  } catch (e) {}
 
-                              var controlText =
-                                  snapshot.data![index].controlText;
+                                  var controlText =
+                                      snapshot.data![index].controlText;
 
-                              return Column(children: [
-                                CommonUtils.determineRenderWidget(controlType,
-                                    text: controlText),
-                                const SizedBox(height: 24)
-                              ]);
-                            })));
+                                  return Column(children: [
+                                    CommonUtils.determineRenderWidget(
+                                        controlType,
+                                        text: controlText),
+                                    const SizedBox(height: 24)
+                                  ]);
+                                })));
           }
           return child;
         });
