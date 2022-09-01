@@ -35,11 +35,11 @@ class CreditCardWidget extends StatelessWidget {
                 )
               ]),
               const SizedBox(
-                height: 24,
+                height: 8,
               ),
               const TextAmount(amount: "\$100,000"),
               const SizedBox(
-                height: 12,
+                height: 8,
               ),
               Row(
                 children: const [
@@ -48,7 +48,7 @@ class CreditCardWidget extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   SizedBox(
-                    width: 4,
+                    width: 8,
                   ),
                   Icon(
                     Icons.visibility,
@@ -57,7 +57,7 @@ class CreditCardWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(
-                height: 4,
+                height: 2,
               ),
               const TextLarge(text: "4055 8923 9321 1213"),
             ])));
@@ -71,7 +71,8 @@ class TextAmount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(amount,
-        style: const TextStyle(fontSize: 14, color: Colors.white));
+        style: const TextStyle(
+            fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold));
   }
 }
 

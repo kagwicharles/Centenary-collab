@@ -3,34 +3,66 @@ import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 
 class CommonUtils {
-  static Widget determineRenderWidget(ViewType widgetType, {text}) {
+  static Widget determineRenderWidget(ViewType widgetType, {text, imageUrl}) {
     String? selectedItem;
+    Widget dynamicWidgetItem;
 
     switch (widgetType) {
       case ViewType.TEXT:
         {
-          return TextInputWidget(text: text);
+          dynamicWidgetItem = TextInputWidget(text: text);
         }
+        break;
       case ViewType.BUTTON:
         {
-          return ButtonWidget(text: text);
+          dynamicWidgetItem = ButtonWidget(text: text);
         }
+        break;
       case ViewType.DROPDOWN:
         {
-          return DropdownButtonWidget(text: text, selectedItem: selectedItem);
+          dynamicWidgetItem =
+              DropdownButtonWidget(text: text, selectedItem: selectedItem);
         }
-      case ViewType.RBUTTON:
-        {
-          return RButtonWidget(text: text);
-        }
+        break;
+      // case ViewType.RBUTTON:
+      //   {
+      //     return RButtonWidget(text: text);
+      //   }
       case ViewType.LABEL:
         {
-          return LabelWidget(text: text);
+          dynamicWidgetItem = LabelWidget(text: text);
         }
+        break;
+
+      case ViewType.QRSCANNER:
+        {
+          dynamicWidgetItem = QRScannerFormWidget();
+        }
+        break;
+
+      case ViewType.PHONECONTACTS:
+        {
+          dynamicWidgetItem = PhonePickerFormWidget(
+            text: text,
+          );
+        }
+        break;
       default:
         {
-          return Container();
+          return const Visibility(
+            visible: false,
+            child: SizedBox(),
+          );
         }
     }
+
+    return Column(
+      children: [
+        dynamicWidgetItem,
+        const SizedBox(
+          height: 15,
+        )
+      ],
+    );
   }
 }

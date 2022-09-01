@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                     padding: const EdgeInsets.fromLTRB(18, 124, 18, 10),
                     child: Material(
-                        elevation: 6,
+                        elevation: 4,
                         borderRadius: BorderRadius.circular(12),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),

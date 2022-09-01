@@ -78,42 +78,41 @@ class FormsListWidget extends StatelessWidget {
         future: formItems,
         builder:
             (BuildContext context, AsyncSnapshot<List<FormItem>> snapshot) {
-          Widget child = const Text("Please wait...");
+          Widget child = const SizedBox();
           if (snapshot.hasData) {
+            var filteredFormItems = snapshot.data!
+                .where((formItem) => formItem.formSequence == 1)
+                .toList();
             child = snapshot.data!
                     .map((item) => item.controlType)
                     .contains("CONTAINER")
-                ? Container(
-                    height: 300,
-                    child: TabWidget(
-                      title: "test",
-                      formItems: snapshot.data!,
-                      moduleName: moduleName,
-                    ))
+                ? TabWidget(
+                    title: "test",
+                    formItems: snapshot.data!,
+                    moduleName: moduleName,
+                  )
                 : Scaffold(
                     appBar: AppBar(title: Text(moduleName)),
-                    body:  Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 12),
-                            child: ListView.builder(
-                                itemCount: snapshot.data?.length,
-                                itemBuilder: (context, index) {
-                                  var controlType;
-                                  try {
-                                    controlType = ViewType.values.byName(
-                                        snapshot.data![index].controlType!);
-                                  } catch (e) {}
+                    body: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 12),
+                        child: ListView.builder(
+                            itemCount: filteredFormItems.length,
+                            itemBuilder: (context, index) {
+                              var controlType;
+                              try {
+                                controlType = ViewType.values.byName(
+                                    filteredFormItems[index].controlType!);
+                              } catch (e) {}
 
-                                  var controlText =
-                                      snapshot.data![index].controlText;
+                              var controlText =
+                                  filteredFormItems[index].controlText;
 
-                                  return Column(children: [
-                                    CommonUtils.determineRenderWidget(
-                                        controlType,
-                                        text: controlText),
-                                    const SizedBox(height: 24)
-                                  ]);
-                                })));
+                              return Column(children: [
+                                CommonUtils.determineRenderWidget(controlType,
+                                    text: controlText),
+                              ]);
+                            })));
           }
           return child;
         });

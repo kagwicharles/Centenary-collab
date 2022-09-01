@@ -1,5 +1,14 @@
 // ignore_for_file: constant_identifier_names
-enum ViewType { TEXT, BUTTON, RBUTTON, DROPDOWN, TAB, LABEL }
+enum ViewType {
+  TEXT,
+  BUTTON,
+  RBUTTON,
+  DROPDOWN,
+  TAB,
+  LABEL,
+  QRSCANNER,
+  PHONECONTACTS
+}
 
 class CreditCard {
   final String balance;
@@ -51,7 +60,7 @@ class FormItem {
   String? controlText;
   String? moduleId;
   String? controlId;
-  String? linkedToControl = "";
+  String? linkedToControl;
   int? formSequence;
 
   FormItem(

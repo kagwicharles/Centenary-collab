@@ -58,8 +58,8 @@ class TabWidgetList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
         child: ListView.builder(
             itemCount: formItems.length,
             itemBuilder: (context, index) {
@@ -73,7 +73,6 @@ class TabWidgetList extends StatelessWidget {
               return Column(children: [
                 CommonUtils.determineRenderWidget(controlType,
                     text: controlText),
-                const SizedBox(height: 24)
               ]);
             }));
   }

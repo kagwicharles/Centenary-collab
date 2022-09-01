@@ -45,6 +45,8 @@ class ModuleItemWidget extends StatelessWidget {
                       width: 44,
                       placeholder: (context, url) =>
                           Lottie.asset('assets/lottie/loading.json'),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     ),
                     const SizedBox(
                       height: 8,

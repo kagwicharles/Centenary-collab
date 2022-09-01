@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:lottie/lottie.dart';
 
 class DropdownButtonWidget extends StatelessWidget {
   final String text;
@@ -13,6 +16,7 @@ class DropdownButtonWidget extends StatelessWidget {
     return DropdownButtonFormField2(
       value: selectedItem,
       isExpanded: true,
+      style: const TextStyle(fontSize: 16, color: Colors.black),
       onChanged: (value) {},
       items: [
         DropdownMenuItem<String>(
@@ -34,6 +38,7 @@ class TextInputWidget extends StatelessWidget {
         border: const OutlineInputBorder(),
         hintText: text,
       ),
+      style: const TextStyle(fontSize: 16),
     );
   }
 }
@@ -72,6 +77,49 @@ class LabelWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
+      style: const TextStyle(fontSize: 16),
+    );
+  }
+}
+
+class QRScannerFormWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: Image.asset(
+      "assets/images/qr-code.png",
+      height: 54,
+      width: 54,
+    ));
+  }
+}
+
+class PhonePickerFormWidget extends StatelessWidget {
+  final String text;
+
+  final _phoneInputController = TextEditingController();
+  String? number;
+
+  PhonePickerFormWidget({Key? key, required this.text}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _phoneInputController,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        hintText: text,
+        suffixIcon: IconButton(
+            icon: const Icon(
+              Icons.contacts,
+              color: Colors.blue,
+            ),
+            onPressed: () async {
+              final PhoneContact contact =
+                  await FlutterContactPicker.pickPhoneContact();
+              number = contact.phoneNumber?.number;
+              _phoneInputController.text = number!;
+            }),
+      ),
       style: const TextStyle(fontSize: 16),
     );
   }
