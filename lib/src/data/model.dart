@@ -1,4 +1,7 @@
 // ignore_for_file: constant_identifier_names
+
+import 'package:floor/floor.dart';
+
 enum ViewType {
   TEXT,
   BUTTON,
@@ -33,10 +36,12 @@ class MenuItemData {
   MenuItemData({required this.title, required this.icon});
 }
 
+@entity
 class ModuleItem {
+  @primaryKey
+  String moduleId;
   String parentModule;
   String moduleUrl;
-  String moduleId;
   String moduleName;
   String moduleCategory;
 
