@@ -24,60 +24,82 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
+              Expanded(
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                          color: viewCreditCardState
-                              ? Colors.blue
-                              : Colors.transparent,
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(4.0),
-                              topRight: Radius.circular(4.0))),
-                      child: IconButton(
-                        onPressed: (() {
-                          setState(() {
-                            viewCreditCardState = true;
-                          });
-                        }),
-                        icon: Icon(
-                          Icons.filter_none,
-                          size: 34,
-                          color:
-                              viewCreditCardState ? Colors.white : Colors.black,
-                        ),
-                      )),
+                  InkWell(
+                      onTap: (() => {
+                            setState(() {
+                              viewCreditCardState = true;
+                            })
+                          }),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(4.0))),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RotatedBox(
+                                    quarterTurns: -1,
+                                    child: Text("Cards",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: viewCreditCardState
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ))),
+                                Icon(
+                                  Icons.radio_button_checked,
+                                  size: 12,
+                                  color: viewCreditCardState
+                                      ? Colors.blue
+                                      : Colors.transparent,
+                                )
+                              ]))),
                   const SizedBox(height: 12),
-                  Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                          color: viewCreditCardState
-                              ? Colors.transparent
-                              : Colors.blue,
-                          borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(4.0),
-                              bottomRight: Radius.circular(4.0))),
-                      child: IconButton(
-                        onPressed: (() {
-                          setState(() {
-                            viewCreditCardState = false;
-                          });
-                        }),
-                        icon: Icon(
-                          Icons.alarm,
-                          size: 34,
-                          color:
-                              viewCreditCardState ? Colors.black : Colors.white,
-                        ),
-                      ))
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          viewCreditCardState = false;
+                        });
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(4.0))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RotatedBox(
+                                  quarterTurns: -1,
+                                  child: Text("Alerts",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: viewCreditCardState
+                                            ? FontWeight.normal
+                                            : FontWeight.bold,
+                                      ))),
+                              Icon(
+                                Icons.radio_button_checked,
+                                size: 12,
+                                color: viewCreditCardState
+                                    ? Colors.transparent
+                                    : Colors.blue,
+                              )
+                            ],
+                          )))
                 ],
+              )),
+              SizedBox(
+                height: 4,
               ),
               viewCreditCardState
                   ? Container(
                       height: 177,
-                      constraints: const BoxConstraints(maxWidth: 280),
+                      constraints: const BoxConstraints(maxWidth: 270),
                       child: Swiper(
                           scrollDirection: Axis.horizontal,
                           autoplay: false,

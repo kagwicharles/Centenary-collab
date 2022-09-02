@@ -1,3 +1,4 @@
+import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -37,7 +38,7 @@ class _CreditCardWidgetState extends State<CreditCardWidget> {
                       fontWeight: FontWeight.w600),
                 ),
                 Image.asset(
-                  "assets/icons/visa.png",
+                  "assets/icons/master-card.png",
                   height: 45,
                   width: 45,
                 )
@@ -46,12 +47,12 @@ class _CreditCardWidgetState extends State<CreditCardWidget> {
                 height: 6,
               ),
               hideAvailableBalance
-                  ? BackdropFilter(
-                      filter: ui.ImageFilter.blur(
-                        sigmaX: 5.0,
-                        sigmaY: 5.0,
-                      ),
-                      child: const TextAmount(amount: "XXXXXXX"))
+                  ? Blur(
+                      blur: 3,
+                      blurColor: Theme.of(context).primaryColor,
+                      child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          child: TextAmount(amount: "XXXXXXX")))
                   : const TextAmount(amount: "\$100,000"),
               Row(
                 children: [
