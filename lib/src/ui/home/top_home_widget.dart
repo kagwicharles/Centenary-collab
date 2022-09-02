@@ -9,7 +9,7 @@ class TopHomeWidget extends StatefulWidget {
 }
 
 class _TopHomeWidgetState extends State<TopHomeWidget> {
-  final List<Widget> creditCards = const [
+  final List<Widget> creditCards = [
     CreditCardWidget(),
     CreditCardWidget(),
     CreditCardWidget(),
@@ -44,7 +44,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
                         }),
                         icon: Icon(
                           Icons.filter_none,
-                          size: 40,
+                          size: 34,
                           color:
                               viewCreditCardState ? Colors.white : Colors.black,
                         ),
@@ -67,7 +67,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
                         }),
                         icon: Icon(
                           Icons.alarm,
-                          size: 40,
+                          size: 34,
                           color:
                               viewCreditCardState ? Colors.black : Colors.white,
                         ),
@@ -77,10 +77,10 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
               viewCreditCardState
                   ? Container(
                       height: 177,
-                      constraints: const BoxConstraints(maxWidth: 270),
+                      constraints: const BoxConstraints(maxWidth: 280),
                       child: Swiper(
                           scrollDirection: Axis.horizontal,
-                          autoplay: true,
+                          autoplay: false,
                           autoplayDelay: 5000,
                           itemCount: creditCards.length,
                           itemBuilder: (BuildContext context, int index) {

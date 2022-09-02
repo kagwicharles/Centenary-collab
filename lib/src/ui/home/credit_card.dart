@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 
-class CreditCardWidget extends StatelessWidget {
-  const CreditCardWidget({Key? key}) : super(key: key);
+class CreditCardWidget extends StatefulWidget {
+  CreditCardWidget({Key? key}) : super(key: key);
+
+  @override
+  State<CreditCardWidget> createState() => _CreditCardWidgetState();
+}
+
+class _CreditCardWidgetState extends State<CreditCardWidget> {
+  bool hideAvailableBalance = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +26,11 @@ class CreditCardWidget extends StatelessWidget {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(
-                height: 8,
+                height: 4,
               ),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 const Text(
-                  "Total Amount",
+                  "Available balance",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -35,25 +43,41 @@ class CreditCardWidget extends StatelessWidget {
                 )
               ]),
               const SizedBox(
-                height: 8,
+                height: 6,
               ),
-              const TextAmount(amount: "\$100,000"),
-              const SizedBox(
-                height: 8,
-              ),
+              hideAvailableBalance
+                  ? BackdropFilter(
+                      filter: ui.ImageFilter.blur(
+                        sigmaX: 5.0,
+                        sigmaY: 5.0,
+                      ),
+                      child: const TextAmount(amount: "XXXXXXX"))
+                  : const TextAmount(amount: "\$100,000"),
               Row(
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     "Show balance",
                     style: TextStyle(color: Colors.white),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
-                  Icon(
-                    Icons.visibility,
-                    color: Colors.white,
-                  ),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (hideAvailableBalance) {
+                            hideAvailableBalance = false;
+                          } else {
+                            hideAvailableBalance = true;
+                          }
+                        });
+                      },
+                      icon: Icon(
+                        hideAvailableBalance
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Color.fromARGB(255, 216, 213, 213),
+                      )),
                 ],
               ),
               const SizedBox(

@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
   final String user = "Kagwi";
   final String lastLogin = "Jul 12 2022 11:50AM";
 
-  final List<Widget> creditCards = const [
+  final List<Widget> creditCards = [
     CreditCardWidget(),
     CreditCardWidget(),
     CreditCardWidget(),
