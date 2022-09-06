@@ -63,6 +63,8 @@ class _$AppDatabase extends AppDatabase {
 
   ModuleItemDao? _moduleItemDaoInstance;
 
+  FormItemDao? _formItemDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -82,7 +84,9 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT NOT NULL, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, PRIMARY KEY (`moduleId`))');
+            'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, PRIMARY KEY (`moduleId`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -94,11 +98,16 @@ class _$AppDatabase extends AppDatabase {
   ModuleItemDao get moduleItemDao {
     return _moduleItemDaoInstance ??= _$ModuleItemDao(database, changeListener);
   }
+
+  @override
+  FormItemDao get formItemDao {
+    return _formItemDaoInstance ??= _$FormItemDao(database, changeListener);
+  }
 }
 
 class _$ModuleItemDao extends ModuleItemDao {
   _$ModuleItemDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database, changeListener),
+      : _queryAdapter = QueryAdapter(database),
         _moduleItemInsertionAdapter = InsertionAdapter(
             database,
             'ModuleItem',
@@ -108,8 +117,7 @@ class _$ModuleItemDao extends ModuleItemDao {
                   'moduleUrl': item.moduleUrl,
                   'moduleName': item.moduleName,
                   'moduleCategory': item.moduleCategory
-                },
-            changeListener);
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -120,22 +128,74 @@ class _$ModuleItemDao extends ModuleItemDao {
   final InsertionAdapter<ModuleItem> _moduleItemInsertionAdapter;
 
   @override
-  Stream<ModuleItem?> findModulesById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM ModuleItem WHERE id = ?1',
+  Future<List<ModuleItem>> getModulesById(String parentModule) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM ModuleItem WHERE parentModule = ?1',
         mapper: (Map<String, Object?> row) => ModuleItem(
             parentModule: row['parentModule'] as String,
-            moduleUrl: row['moduleUrl'] as String,
+            moduleUrl: row['moduleUrl'] as String?,
             moduleId: row['moduleId'] as String,
             moduleName: row['moduleName'] as String,
             moduleCategory: row['moduleCategory'] as String),
-        arguments: [id],
-        queryableName: 'ModuleItem',
-        isView: false);
+        arguments: [parentModule]);
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM ModuleItem');
   }
 
   @override
   Future<void> insertModuleItem(ModuleItem moduleItem) async {
     await _moduleItemInsertionAdapter.insert(
         moduleItem, OnConflictStrategy.abort);
+  }
+}
+
+class _$FormItemDao extends FormItemDao {
+  _$FormItemDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _formItemInsertionAdapter = InsertionAdapter(
+            database,
+            'FormItem',
+            (FormItem item) => <String, Object?>{
+                  'no': item.no,
+                  'controlType': item.controlType,
+                  'controlText': item.controlText,
+                  'moduleId': item.moduleId,
+                  'controlId': item.controlId,
+                  'linkedToControl': item.linkedToControl,
+                  'formSequence': item.formSequence
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<FormItem> _formItemInsertionAdapter;
+
+  @override
+  Future<List<FormItem>> getFormsByModuleId(String id) async {
+    return _queryAdapter.queryList('SELECT * FROM FormItem WHERE moduleId = ?1',
+        mapper: (Map<String, Object?> row) => FormItem(
+            controlType: row['controlType'] as String?,
+            controlText: row['controlText'] as String?,
+            moduleId: row['moduleId'] as String?,
+            linkedToControl: row['linkedToControl'] as String?,
+            controlId: row['controlId'] as String?,
+            formSequence: row['formSequence'] as int?),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM FormItem');
+  }
+
+  @override
+  Future<void> insertFormItem(FormItem formItem) async {
+    await _formItemInsertionAdapter.insert(formItem, OnConflictStrategy.abort);
   }
 }

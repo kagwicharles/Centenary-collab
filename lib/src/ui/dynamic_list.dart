@@ -26,6 +26,7 @@ class ModulesListWidget extends StatelessWidget {
                 AsyncSnapshot<List<ModuleItem>> snapshot) {
               Widget child = const Text("Please wait...");
               if (snapshot.hasData) {
+                print("MODULES LENGTH: ${snapshot.data?.length}");
                 child = Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 12),
@@ -45,7 +46,7 @@ class ModulesListWidget extends StatelessWidget {
                               snapshot.data![index].moduleCategory;
 
                           return ModuleItemWidget(
-                            imageUrl: imageUrl,
+                            imageUrl: imageUrl!,
                             moduleName: name,
                             moduleId: moduleId,
                             parentModule: parentModule,

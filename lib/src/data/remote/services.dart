@@ -5,12 +5,17 @@ import 'package:http/http.dart' as http;
 
 import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
+import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 
 class TestEndpoint {
   var localDevice, localIv, localToken, testBody;
   final dio = Dio();
   Map<String, String> tb = {};
+
+  final _moduleRepository = ModuleRepository();
+  final _formRepository = FormsRepository();
 
   baseRequestSetUp(String formId) async {
     localDevice = await SharedPrefLocal.getLocalDevice();
@@ -100,17 +105,22 @@ class TestEndpoint {
             ),
             data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
     response.then((value) => {
+          _moduleRepository.clearTable(),
           res = value.data["Response"],
           decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
               base64.normalize(res),
               CryptLibImpl.toSHA256(localDevice, 32),
               localIv))),
+          json.decode(decrypted)[0]["Modules"].forEach((item) {
+            _moduleRepository.insertModuleItem(ModuleItem.fromJson(item));
+          }),
           print("\n\nMODULES REQ: $decrypted}")
         });
   }
 
   void getForms() async {
     await baseRequestSetUp("FORMS");
+    String res, decrypted;
 
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
@@ -121,8 +131,16 @@ class TestEndpoint {
             ),
             data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
     response.then((value) => {
-          print(
-              "\n\nFORMS REQ: ${utf8.decode(base64.decode(CryptLibImpl.decrypt(value.data["Response"], CryptLibImpl.toSHA256(localDevice, 32), localIv)))}")
+          _formRepository.clearTable(),
+          res = value.data["Response"],
+          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
+              base64.normalize(res),
+              CryptLibImpl.toSHA256(localDevice, 32),
+              localIv))),
+          json.decode(decrypted)[0]["FormControls"].forEach((item) {
+            _formRepository.insertFormItem(FormItem.fromJson(item));
+          }),
+          print("\n\nFORMS REQ: $decrypted")
         });
   }
 }

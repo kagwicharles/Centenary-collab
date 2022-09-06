@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:sqlite_viewer/sqlite_viewer.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/data/test/test.dart';
@@ -36,7 +37,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    TestEndpoint().getToken().then((res) => {TestEndpoint().getModules()});
+    TestEndpoint().getToken().then(
+        (res) => {
+          
+          TestEndpoint().getModules(), TestEndpoint().getForms()});
+
+    // Open local sqlite database here
+    // for debugging purposes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (_) => DatabaseList()));
+    });
 
     return Scaffold(
         appBar: PreferredSize(

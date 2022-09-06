@@ -3,6 +3,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/data/test/test.dart';
 import 'package:rafiki/src/ui/menu_item_widget.dart';
 
@@ -62,14 +63,17 @@ class MainMenuWidget extends StatelessWidget {
 class SubMenuWidget extends StatelessWidget {
   SubMenuWidget({Key? key}) : super(key: key);
 
-  Future<List<ModuleItem>>? _moduleItems;
+  Stream<List<ModuleItem>>? _moduleItems;
+  final _moduleRepository = ModuleRepository();
 
   @override
   Widget build(BuildContext context) {
-    _moduleItems = DynamicData.readModulesJson("MAIN");
+    // _moduleItems = DynamicData.readModulesJson("MAIN");
+    // _moduleItems =
+    //     _moduleRepository.getModulesById("MAIN") as Stream<List<ModuleItem>>;
 
     return FutureBuilder<List<ModuleItem>>(
-        future: _moduleItems,
+        future: _moduleRepository.getModulesById("MAIN"),
         builder:
             (BuildContext context, AsyncSnapshot<List<ModuleItem>> snapshot) {
           Widget child = const Center(child: Text("Please wait..."));
@@ -78,7 +82,7 @@ class SubMenuWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: GridView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
@@ -92,7 +96,8 @@ class SubMenuWidget extends StatelessWidget {
                               verticalOffset: 50.0,
                               child: FadeInAnimation(
                                   child: ModuleItemWidget(
-                                      imageUrl: snapshot.data![index].moduleUrl,
+                                      imageUrl:
+                                          snapshot.data![index].moduleUrl!,
                                       moduleName:
                                           snapshot.data![index].moduleName,
                                       moduleId: snapshot.data![index].moduleId,

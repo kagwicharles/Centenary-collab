@@ -41,7 +41,7 @@ class ModuleItem {
   @primaryKey
   String moduleId;
   String parentModule;
-  String moduleUrl;
+  String? moduleUrl;
   String moduleName;
   String moduleCategory;
 
@@ -60,7 +60,10 @@ class ModuleItem {
         moduleCategory = json["ModuleCategory"];
 }
 
+@entity
 class FormItem {
+  @primaryKey
+  int? no;
   String? controlType;
   String? controlText;
   String? moduleId;

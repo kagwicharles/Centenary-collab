@@ -429,6 +429,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.6.0"
+  json_table:
+    dependency: transitive
+    description:
+      name: json_table
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   lints:
     dependency: transitive
     description:
@@ -777,6 +784,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
+  sqlite_viewer:
+    dependency: "direct main"
+    description:
+      name: sqlite_viewer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.5"
   stack_trace:
     dependency: transitive
     description:
