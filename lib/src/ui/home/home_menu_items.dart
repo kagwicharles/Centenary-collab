@@ -10,53 +10,41 @@ import 'package:rafiki/src/ui/menu_item_widget.dart';
 class MainMenuWidget extends StatelessWidget {
   MainMenuWidget({Key? key}) : super(key: key);
 
-  final List<MenuItemData> mainMenuItemDatas = [
-    MenuItemData(title: "Elimu insurance", icon: "assets/icons/loan.png"),
-    MenuItemData(title: "Send money", icon: "assets/icons/send-money.png"),
-    MenuItemData(title: "Insurance", icon: "assets/icons/pay.png")
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return
-        // ListView.builder(
-        //     scrollDirection: Axis.horizontal,
-        //     itemCount: mainMenuItemDatas.length,
-        //
+    final List<FavouriteItem> favouriteItems = [
+      FavouriteItem(
+          title: "Elimu insurance", imageUrl: "assets/icons/loan.png"),
+    ];
 
-        Swiper(
-            itemCount: 4,
-            itemBuilder: (BuildContext context, int index) {
-              return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    // MenuItemDataWidget(
-                    //   icon: "assets/icons/loan.png",
-                    //   title: "Insurance",
-                    //   color: Colors.white,
-                    // ),
-                    // MenuItemDataWidget(
-                    //   icon: "assets/icons/loan.png",
-                    //   title: "Loan",
-                    //   color: Colors.white,
-                    // ),
-                    // MenuItemDataWidget(
-                    //   icon: "assets/icons/send-money.png",
-                    //   title: "Send",
-                    //   color: Colors.white,
-                    // ),
-                    // MenuItemDataWidget(
-                    //   icon: "assets/icons/pay.png",
-                    //   title: "Pay",
-                    //   color: Colors.white,
-                    // )
-                    Text(
-                      "No favourites yet!",
-                      style: TextStyle(color: Colors.white),
-                    )
-                  ]);
-            });
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: favouriteItems.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Image.asset(
+                  favouriteItems[index].imageUrl,
+                  height: 44,
+                  width: 44,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Flexible(
+                    child: Text(favouriteItems[index].title,
+                        // overflow: TextOverflow.fade,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 12))),
+              ]),
+        );
+      },
+    );
   }
 }
 

@@ -36,29 +36,20 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
                             })
                           }),
                       child: Container(
+                          padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
+                              color: viewCreditCardState
+                                  ? Colors.blue
+                                  : Colors.white,
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(4.0))),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                RotatedBox(
-                                    quarterTurns: -1,
-                                    child: Text("Cards",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: viewCreditCardState
-                                              ? FontWeight.bold
-                                              : FontWeight.normal,
-                                        ))),
-                                Icon(
-                                  Icons.radio_button_checked,
-                                  size: 12,
-                                  color: viewCreditCardState
-                                      ? Colors.blue
-                                      : Colors.transparent,
-                                )
-                              ]))),
+                          child: Icon(
+                            Icons.filter_none,
+                            size: 44,
+                            color: viewCreditCardState
+                                ? Colors.white
+                                : Colors.blue,
+                          ))),
                   const SizedBox(height: 12),
                   InkWell(
                       onTap: () {
@@ -67,29 +58,19 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
                         });
                       },
                       child: Container(
+                          padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
+                              color: viewCreditCardState
+                                  ? Colors.white
+                                  : Colors.blue,
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(4.0))),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              RotatedBox(
-                                  quarterTurns: -1,
-                                  child: Text("Alerts",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: viewCreditCardState
-                                            ? FontWeight.normal
-                                            : FontWeight.bold,
-                                      ))),
-                              Icon(
-                                Icons.radio_button_checked,
-                                size: 12,
-                                color: viewCreditCardState
-                                    ? Colors.transparent
-                                    : Colors.blue,
-                              )
-                            ],
+                          child: Icon(
+                            Icons.notifications,
+                            size: 44,
+                            color: viewCreditCardState
+                                ? Colors.blue
+                                : Colors.white,
                           )))
                 ],
               )),

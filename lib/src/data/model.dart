@@ -88,3 +88,10 @@ class FormItem {
     formSequence = json['FormSequence'];
   }
 }
+
+class FavouriteItem {
+  String imageUrl;
+  String title;
+
+  FavouriteItem({required this.imageUrl, required this.title});
+}

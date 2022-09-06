@@ -38,16 +38,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     TestEndpoint().getToken().then(
-        (res) => {
-          
-          TestEndpoint().getModules(), TestEndpoint().getForms()});
+        (res) => {TestEndpoint().getModules(), TestEndpoint().getForms()});
 
     // Open local sqlite database here
     // for debugging purposes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (_) => DatabaseList()));
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Navigator.push(
+    //       context, MaterialPageRoute(builder: (_) => DatabaseList()));
+    // });
 
     return Scaffold(
         appBar: PreferredSize(

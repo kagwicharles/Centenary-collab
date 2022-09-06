@@ -26,7 +26,6 @@ class ModulesListWidget extends StatelessWidget {
                 AsyncSnapshot<List<ModuleItem>> snapshot) {
               Widget child = const Text("Please wait...");
               if (snapshot.hasData) {
-                print("MODULES LENGTH: ${snapshot.data?.length}");
                 child = Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 12),

@@ -29,20 +29,18 @@ class _CreditCardWidgetState extends State<CreditCardWidget> {
               const SizedBox(
                 height: 4,
               ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                const Text(
-                  "Available balance",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
-                ),
-                Image.asset(
-                  "assets/icons/master-card.png",
-                  height: 45,
-                  width: 45,
-                )
-              ]),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text(
+                      "Available balance",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    Icon(Icons.info,color: Color.fromRGBO(227, 242, 253, 1),),
+                  ]),
               const SizedBox(
                 height: 6,
               ),
