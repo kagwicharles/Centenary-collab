@@ -48,10 +48,14 @@ class MainMenuWidget extends StatelessWidget {
   }
 }
 
-class SubMenuWidget extends StatelessWidget {
+class SubMenuWidget extends StatefulWidget {
   SubMenuWidget({Key? key}) : super(key: key);
 
-  Stream<List<ModuleItem>>? _moduleItems;
+  @override
+  State<SubMenuWidget> createState() => _SubMenuWidgetState();
+}
+
+class _SubMenuWidgetState extends State<SubMenuWidget> {
   final _moduleRepository = ModuleRepository();
 
   @override
@@ -60,8 +64,14 @@ class SubMenuWidget extends StatelessWidget {
     // _moduleItems =
     //     _moduleRepository.getModulesById("MAIN") as Stream<List<ModuleItem>>;
 
+    getModuleItems() => _moduleRepository.getModulesById("MAIN");
+    getModuleItems().then(
+      (value) => {
+        if (value.isEmpty) {setState(() {})}
+      },
+    );
     return FutureBuilder<List<ModuleItem>>(
-        future: _moduleRepository.getModulesById("MAIN"),
+        future: getModuleItems(),
         builder:
             (BuildContext context, AsyncSnapshot<List<ModuleItem>> snapshot) {
           Widget child = const Center(child: Text("Please wait..."));

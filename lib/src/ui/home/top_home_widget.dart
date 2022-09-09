@@ -45,7 +45,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
                                   const BorderRadius.all(Radius.circular(4.0))),
                           child: Icon(
                             Icons.filter_none,
-                            size: 44,
+                            size: 40,
                             color: viewCreditCardState
                                 ? Colors.white
                                 : Colors.blue,
@@ -67,7 +67,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
                                   const BorderRadius.all(Radius.circular(4.0))),
                           child: Icon(
                             Icons.notifications,
-                            size: 44,
+                            size: 40,
                             color: viewCreditCardState
                                 ? Colors.blue
                                 : Colors.white,

@@ -62,6 +62,6 @@ class AppTheme {
               color: Colors.white,
             ),
             insets: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0))),
-    scaffoldBackgroundColor: Colors.blue[50],
+    scaffoldBackgroundColor: Color.fromARGB(255, 230, 238, 243),
   );
 }

@@ -37,9 +37,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    TestEndpoint().getToken().then(
-        (res) => {TestEndpoint().getModules(), TestEndpoint().getForms()});
-
     // Open local sqlite database here
     // for debugging purposes
     // WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -118,7 +118,7 @@ class TestEndpoint {
         });
   }
 
-  void getForms() async {
+  getForms() async {
     await baseRequestSetUp("FORMS");
     String res, decrypted;
 
@@ -130,7 +130,7 @@ class TestEndpoint {
               headers: {'T': localToken},
             ),
             data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
-    response.then((value) => {
+    response.then((value) async => {
           _formRepository.clearTable(),
           res = value.data["Response"],
           decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
@@ -140,7 +140,7 @@ class TestEndpoint {
           json.decode(decrypted)[0]["FormControls"].forEach((item) {
             _formRepository.insertFormItem(FormItem.fromJson(item));
           }),
-          print("\n\nFORMS REQ: $decrypted")
+          print("\n\nFORMS REQ: $decrypted"),
         });
   }
 }
