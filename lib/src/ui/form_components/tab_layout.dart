@@ -33,8 +33,7 @@ class TabWidget extends StatelessWidget {
                   formItem.linkedToControl == linkControl ||
                   formItem.linkedToControl == null ||
                   formItem.linkedToControl == "" &&
-                      formItem.controlType != ViewType.RBUTTON.name &&
-                      formItem.formSequence == 1)
+                      formItem.controlType != ViewType.RBUTTON.name)
               .toList()));
     });
     return DefaultTabController(

@@ -88,7 +88,7 @@ class FormsListWidget extends StatelessWidget {
                     .contains("CONTAINER")
                 ? TabWidget(
                     title: "test",
-                    formItems: snapshot.data!,
+                    formItems: filteredFormItems,
                     moduleName: moduleName,
                   )
                 : Scaffold(
