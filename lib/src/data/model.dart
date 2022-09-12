@@ -89,6 +89,34 @@ class FormItem {
   }
 }
 
+@entity
+class ActionItem {
+  @primaryKey
+  int? no;
+  String moduleId;
+  String formId;
+  String? actionType;
+  String actionId;
+  String serviceParamsIds;
+  String controlId;
+
+  ActionItem(
+      {required this.formId,
+      required this.actionType,
+      required this.moduleId,
+      required this.actionId,
+      required this.serviceParamsIds,
+      required this.controlId});
+
+  ActionItem.fromJson(Map<String, dynamic> json)
+      : formId = json["FormID"],
+        actionType = json["ActionType"],
+        moduleId = json["ModuleID"],
+        actionId = json["ActionID"],
+        serviceParamsIds = json["ServiceParamIDs"],
+        controlId = json["ControlID"];
+}
+
 class FavouriteItem {
   String imageUrl;
   String title;

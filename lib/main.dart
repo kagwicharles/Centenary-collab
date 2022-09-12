@@ -14,8 +14,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    TestEndpoint().getToken().then(
-        (res) => {TestEndpoint().getModules(), TestEndpoint().getForms()});
+    TestEndpoint().getToken().then((res) => {
+          TestEndpoint().getModules(),
+          TestEndpoint().getForms(),
+          TestEndpoint().getActionControls()
+        });
 
     return MaterialApp(
       title: 'Rafiki',

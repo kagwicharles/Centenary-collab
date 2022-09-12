@@ -143,4 +143,30 @@ class TestEndpoint {
           print("\n\nFORMS REQ: $decrypted"),
         });
   }
+
+  getActionControls() async {
+    await baseRequestSetUp("ACTIONS");
+    String res, decrypted;
+
+    final encryptedBody =
+        CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
+    var response =
+        dio.post(Constants.baseUrl + "/ElmaWebOtherDynamic/api/elma/other",
+            options: Options(
+              headers: {'T': localToken},
+            ),
+            data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
+    response.then((value) async => {
+          _formRepository.clearTable(),
+          res = value.data["Response"],
+          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
+              base64.normalize(res),
+              CryptLibImpl.toSHA256(localDevice, 32),
+              localIv))),
+          json.decode(decrypted)[0]["ActionControls"].forEach((item) {
+            // _formRepository.insertFormItem(FormItem.fromJson(item));
+          }),
+          print("\n\nACTION CONTROLS REQ: $decrypted"),
+        });
+  }
 }

@@ -14,7 +14,7 @@ class MainMenuWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<FavouriteItem> favouriteItems = [
       FavouriteItem(
-          title: "Elimu insurance", imageUrl: "assets/icons/loan.png"),
+          title: "Loans", imageUrl: "assets/icons/loan.png"),
     ];
 
     return ListView.builder(
@@ -84,6 +84,7 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
+                      childAspectRatio: 8.0 / 9.0,
                     ),
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
