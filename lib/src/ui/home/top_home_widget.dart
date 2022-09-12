@@ -8,13 +8,24 @@ class TopHomeWidget extends StatefulWidget {
   State<TopHomeWidget> createState() => _TopHomeWidgetState();
 }
 
-class _TopHomeWidgetState extends State<TopHomeWidget> {
+class _TopHomeWidgetState extends State<TopHomeWidget>
+    with SingleTickerProviderStateMixin {
   final List<Widget> creditCards = [
     CreditCardWidget(),
     CreditCardWidget(),
     CreditCardWidget(),
   ];
   bool viewCreditCardState = true;
+
+  var transitionBuilder = (Widget child, Animation<double> animation) {
+    // return ScaleTransition(scale: animation, child: child);
+    return SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0.0, 1.0),
+          end: Offset.zero,
+        ).animate(animation),
+        child: child);
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -78,23 +89,40 @@ class _TopHomeWidgetState extends State<TopHomeWidget> {
                 height: 4,
               ),
               viewCreditCardState
-                  ? Container(
-                      height: 177,
-                      constraints: const BoxConstraints(maxWidth: 270),
-                      child: Swiper(
-                          scrollDirection: Axis.horizontal,
-                          autoplay: false,
-                          autoplayDelay: 5000,
-                          itemCount: creditCards.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return creditCards[index];
-                          }))
-                  : Container(
-                      height: 177,
-                      constraints: const BoxConstraints(maxWidth: 270),
-                      child: const Center(
-                        child: Text("No alerts yet"),
-                      ))
+                  ? AnimatedSwitcher(
+                      transitionBuilder: transitionBuilder,
+                      duration: const Duration(milliseconds: 500),
+                      child: Container(
+                          // This key causes the AnimatedSwitcher to interpret this as a "new"
+                          // child each time the count changes, so that it will begin its animation
+                          // when the count changes.
+                          key: ValueKey<bool>(viewCreditCardState),
+                          height: 177,
+                          constraints: const BoxConstraints(maxWidth: 270),
+                          child: Swiper(
+                              scrollDirection: Axis.horizontal,
+                              autoplay: false,
+                              autoplayDelay: 5000,
+                              itemCount: creditCards.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return creditCards[index];
+                              })))
+                  : AnimatedSwitcher(
+                      transitionBuilder: transitionBuilder,
+                      duration: const Duration(milliseconds: 500),
+                      child: Container(
+                          // This key causes the AnimatedSwitcher to interpret this as a "new"
+                          // child each time the count changes, so that it will begin its animation
+                          // when the count changes.
+                          key: ValueKey<bool>(viewCreditCardState),
+                          height: 177,
+                          constraints: const BoxConstraints(maxWidth: 270),
+                          child: const Center(
+                            child: Text("No alerts yet"),
+                          )))
             ]));
   }
+
+  @override
+  void dispose() {}
 }
