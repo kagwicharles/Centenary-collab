@@ -450,6 +450,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  logger:
+    dependency: "direct main"
+    description:
+      name: logger
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   logging:
     dependency: transitive
     description:
@@ -477,7 +484,7 @@ packages:
       name: material_color_utilities
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0"
+    version: "0.1.5"
   meta:
     dependency: transitive
     description:
@@ -755,7 +762,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.1"
+    version: "1.9.0"
   sqflite:
     dependency: transitive
     description:

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
@@ -13,6 +14,7 @@ class TestEndpoint {
   var localDevice, localIv, localToken, testBody;
   final dio = Dio();
   Map<String, String> tb = {};
+  var logger = Logger();
 
   final _moduleRepository = ModuleRepository();
   final _formRepository = FormsRepository();
@@ -166,7 +168,7 @@ class TestEndpoint {
           json.decode(decrypted)[0]["ActionControls"].forEach((item) {
             // _formRepository.insertFormItem(FormItem.fromJson(item));
           }),
-          print("\n\nACTION CONTROLS REQ: $decrypted"),
+          logger.d("\n\nACTION CONTROLS REQ: $decrypted"),
         });
   }
 }
