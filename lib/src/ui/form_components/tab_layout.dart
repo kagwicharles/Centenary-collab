@@ -81,9 +81,12 @@ class _TabWidgetListState extends State<TabWidgetList>
                         .byName(widget.formItems[index].controlType!);
                   } catch (e) {}
                   var controlText = widget.formItems[index].controlText;
+                  bool? isMandatory = widget.formItems[index].isMandatory;
 
                   return CommonUtils.determineRenderWidget(controlType,
-                      text: controlText, formKey: _formKey);
+                      text: controlText,
+                      formKey: _formKey,
+                      isMandatory: isMandatory);
                 })));
   }
 
