@@ -10,13 +10,12 @@ class TabWidget extends StatelessWidget {
   List<TabWidgetList> tabWidgetList = [];
   List<String> linkControls = [];
   String title;
-  var formKey;
 
-  TabWidget(
-      {required this.title,
-      required this.formItems,
-      required this.moduleName,
-      this.formKey});
+  TabWidget({
+    required this.title,
+    required this.formItems,
+    required this.moduleName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +29,16 @@ class TabWidget extends StatelessWidget {
       }
     });
 
-    linkControls.forEach((linkControl) {
+    linkControls.asMap().forEach((index, linkControl) {
       tabWidgetList.add(TabWidgetList(
-          formKey: formKey,
-          formItems: formItems
-              .where((formItem) =>
-                  formItem.linkedToControl == linkControl ||
-                  formItem.linkedToControl == null ||
-                  formItem.linkedToControl == "" &&
-                      formItem.controlType != ViewType.RBUTTON.name)
-              .toList()));
+        formItems: formItems
+            .where((formItem) =>
+                formItem.linkedToControl == linkControl ||
+                formItem.linkedToControl == null ||
+                formItem.linkedToControl == "" &&
+                    formItem.controlType != ViewType.RBUTTON.name)
+            .toList(),
+      ));
     });
     return DefaultTabController(
         length: tabs.length,
@@ -56,32 +55,38 @@ class TabWidget extends StatelessWidget {
   }
 }
 
-class TabWidgetList extends StatelessWidget {
+class TabWidgetList extends StatefulWidget {
   final List<FormItem> formItems;
-  var formKey;
+  TabWidgetList({required this.formItems});
 
-  TabWidgetList({required this.formItems, this.formKey});
+  @override
+  State<TabWidgetList> createState() => _TabWidgetListState();
+}
 
+class _TabWidgetListState extends State<TabWidgetList>
+    with AutomaticKeepAliveClientMixin {
+  var _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
         child: Form(
-            key: formKey,
+            key: _formKey,
             child: ListView.builder(
-                itemCount: formItems.length,
+                itemCount: widget.formItems.length,
                 itemBuilder: (context, index) {
                   var controlType;
                   try {
-                    controlType =
-                        ViewType.values.byName(formItems[index].controlType!);
+                    controlType = ViewType.values
+                        .byName(widget.formItems[index].controlType!);
                   } catch (e) {}
-                  var controlText = formItems[index].controlText;
+                  var controlText = widget.formItems[index].controlText;
 
-                  return Column(children: [
-                    CommonUtils.determineRenderWidget(controlType,
-                        text: controlText, formKey: formKey),
-                  ]);
+                  return CommonUtils.determineRenderWidget(controlType,
+                      text: controlText, formKey: _formKey);
                 })));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

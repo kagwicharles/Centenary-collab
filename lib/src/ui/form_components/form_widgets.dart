@@ -31,25 +31,33 @@ class DropdownButtonWidget extends StatelessWidget {
   }
 }
 
-class TextInputWidget extends StatelessWidget {
+class TextInputWidget extends StatefulWidget {
   final String text;
-  bool isMandatory = false;
-  var inputController = TextEditingController();
 
   TextInputWidget({Key? key, required this.text, isMandatory})
       : super(key: key);
+
+  @override
+  State<TextInputWidget> createState() => _TextInputWidgetState();
+}
+
+class _TextInputWidgetState extends State<TextInputWidget> {
+  bool isMandatory = false;
+
+  var inputController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
         controller: inputController,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
-          hintText: text,
+          hintText: widget.text,
         ),
         style: const TextStyle(fontSize: 16),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Required*';
+            return 'Input required*';
           }
           return null;
         });
