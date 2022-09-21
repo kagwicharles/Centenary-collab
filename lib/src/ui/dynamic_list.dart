@@ -99,7 +99,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                     title: "test",
                     formItems: filteredFormItems,
                     moduleName: widget.moduleName,
-                  )
+                    formKey: _formKey)
                 : Scaffold(
                     appBar: AppBar(title: Text(widget.moduleName)),
                     body: Container(

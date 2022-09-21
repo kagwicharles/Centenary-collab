@@ -50,8 +50,6 @@ class TextInputWidget extends StatelessWidget {
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Required*';
-          } else {
-            print("field has been validated");
           }
           return null;
         });

@@ -10,9 +10,13 @@ class TabWidget extends StatelessWidget {
   List<TabWidgetList> tabWidgetList = [];
   List<String> linkControls = [];
   String title;
+  var formKey;
 
   TabWidget(
-      {required this.title, required this.formItems, required this.moduleName});
+      {required this.title,
+      required this.formItems,
+      required this.moduleName,
+      this.formKey});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,7 @@ class TabWidget extends StatelessWidget {
 
     linkControls.forEach((linkControl) {
       tabWidgetList.add(TabWidgetList(
+          formKey: formKey,
           formItems: formItems
               .where((formItem) =>
                   formItem.linkedToControl == linkControl ||
@@ -53,16 +58,16 @@ class TabWidget extends StatelessWidget {
 
 class TabWidgetList extends StatelessWidget {
   final List<FormItem> formItems;
-  final _formKey = GlobalKey<FormState>();
+  var formKey;
 
-  TabWidgetList({required this.formItems});
+  TabWidgetList({required this.formItems, this.formKey});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
         child: Form(
-            key: _formKey,
+            key: formKey,
             child: ListView.builder(
                 itemCount: formItems.length,
                 itemBuilder: (context, index) {
@@ -75,7 +80,7 @@ class TabWidgetList extends StatelessWidget {
 
                   return Column(children: [
                     CommonUtils.determineRenderWidget(controlType,
-                        text: controlText),
+                        text: controlText, formKey: formKey),
                   ]);
                 })));
   }
