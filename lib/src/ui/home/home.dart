@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> {
             preferredSize:
                 const Size.fromHeight(64.0), // here the desired height
             child: AppBar(
+                automaticallyImplyLeading: false,
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 title: Row(

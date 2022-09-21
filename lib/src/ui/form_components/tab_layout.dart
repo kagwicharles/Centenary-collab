@@ -53,6 +53,7 @@ class TabWidget extends StatelessWidget {
 
 class TabWidgetList extends StatelessWidget {
   final List<FormItem> formItems;
+  final _formKey = GlobalKey<FormState>();
 
   TabWidgetList({required this.formItems});
 
@@ -60,20 +61,22 @@ class TabWidgetList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-        child: ListView.builder(
-            itemCount: formItems.length,
-            itemBuilder: (context, index) {
-              var controlType;
-              try {
-                controlType =
-                    ViewType.values.byName(formItems[index].controlType!);
-              } catch (e) {}
-              var controlText = formItems[index].controlText;
+        child: Form(
+            key: _formKey,
+            child: ListView.builder(
+                itemCount: formItems.length,
+                itemBuilder: (context, index) {
+                  var controlType;
+                  try {
+                    controlType =
+                        ViewType.values.byName(formItems[index].controlType!);
+                  } catch (e) {}
+                  var controlText = formItems[index].controlText;
 
-              return Column(children: [
-                CommonUtils.determineRenderWidget(controlType,
-                    text: controlText),
-              ]);
-            }));
+                  return Column(children: [
+                    CommonUtils.determineRenderWidget(controlType,
+                        text: controlText),
+                  ]);
+                })));
   }
 }

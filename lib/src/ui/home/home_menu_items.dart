@@ -13,8 +13,7 @@ class MainMenuWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<FavouriteItem> favouriteItems = [
-      FavouriteItem(
-          title: "Loans", imageUrl: "assets/icons/loan.png"),
+      FavouriteItem(title: "Loans", imageUrl: "assets/icons/loan.png"),
     ];
 
     return ListView.builder(
@@ -40,7 +39,9 @@ class MainMenuWidget extends StatelessWidget {
                         // overflow: TextOverflow.fade,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                            color: Colors.white, fontSize: 12))),
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600))),
               ]),
         );
       },
@@ -83,9 +84,9 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 8.0 / 9.0,
-                    ),
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 4.0,
+                            mainAxisSpacing: 4.0),
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
                       return AnimationConfiguration.staggeredList(
@@ -95,15 +96,15 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
                               verticalOffset: 50.0,
                               child: FadeInAnimation(
                                   child: ModuleItemWidget(
-                                      imageUrl:
-                                          snapshot.data![index].moduleUrl!,
-                                      moduleName:
-                                          snapshot.data![index].moduleName,
-                                      moduleId: snapshot.data![index].moduleId,
-                                      parentModule:
-                                          snapshot.data![index].parentModule,
-                                      moduleCategory: snapshot
-                                          .data![index].moduleCategory))));
+                                imageUrl: snapshot.data![index].moduleUrl!,
+                                moduleName: snapshot.data![index].moduleName,
+                                moduleId: snapshot.data![index].moduleId,
+                                parentModule:
+                                    snapshot.data![index].parentModule,
+                                moduleCategory:
+                                    snapshot.data![index].moduleCategory,
+                                isMain: true,
+                              ))));
                     }));
           }
           return child;

@@ -58,7 +58,7 @@ class ModulesListWidget extends StatelessWidget {
   }
 }
 
-class FormsListWidget extends StatelessWidget {
+class FormsListWidget extends StatefulWidget {
   final Future<List<FormItem>>? formItems;
   final orientation;
   final String parentModule;
@@ -71,11 +71,20 @@ class FormsListWidget extends StatelessWidget {
       required this.moduleName});
 
   @override
+  State<FormsListWidget> createState() => _FormsListWidgetState();
+}
+
+class _FormsListWidgetState extends State<FormsListWidget> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
   Widget build(BuildContext context) {
     double deviceHeight = MediaQuery.of(context).size.height;
 
+    List<TextFormField> formWidgets = [];
+
     return FutureBuilder<List<FormItem>>(
-        future: formItems,
+        future: widget.formItems,
         builder:
             (BuildContext context, AsyncSnapshot<List<FormItem>> snapshot) {
           Widget child = const SizedBox();
@@ -89,30 +98,37 @@ class FormsListWidget extends StatelessWidget {
                 ? TabWidget(
                     title: "test",
                     formItems: filteredFormItems,
-                    moduleName: moduleName,
+                    moduleName: widget.moduleName,
                   )
                 : Scaffold(
-                    appBar: AppBar(title: Text(moduleName)),
+                    appBar: AppBar(title: Text(widget.moduleName)),
                     body: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 15, vertical: 12),
-                        child: ListView.builder(
-                            itemCount: filteredFormItems.length,
-                            itemBuilder: (context, index) {
-                              var controlType;
-                              try {
-                                controlType = ViewType.values.byName(
-                                    filteredFormItems[index].controlType!);
-                              } catch (e) {}
+                        child: Form(
+                            key: _formKey,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: filteredFormItems.length,
+                                itemBuilder: (context, index) {
+                                  var controlType;
+                                  try {
+                                    controlType = ViewType.values.byName(
+                                        filteredFormItems[index].controlType!);
+                                  } catch (e) {}
 
-                              var controlText =
-                                  filteredFormItems[index].controlText;
+                                  var controlText =
+                                      filteredFormItems[index].controlText;
+                                  var isMandatory =
+                                      filteredFormItems[index].isMandatory;
 
-                              return Column(children: [
-                                CommonUtils.determineRenderWidget(controlType,
-                                    text: controlText),
-                              ]);
-                            })));
+                                  print("Is mandatory: $isMandatory");
+                                  return CommonUtils.determineRenderWidget(
+                                      controlType,
+                                      text: controlText,
+                                      isMandatory: isMandatory,
+                                      formKey: _formKey);
+                                }))));
           }
           return child;
         });

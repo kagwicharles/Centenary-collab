@@ -9,18 +9,21 @@ class ModuleItemWidget extends StatelessWidget {
   final String moduleId;
   final String parentModule;
   final String moduleCategory;
+  bool isMain = false;
 
   ModuleItemWidget(
       {required this.imageUrl,
       required this.moduleName,
       required this.moduleId,
       required this.parentModule,
-      required this.moduleCategory});
+      required this.moduleCategory,
+      this.isMain = false});
 
   @override
   Widget build(BuildContext context) {
     return Card(
         elevation: 0,
+        color: isMain ? Colors.transparent : null,
         child: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
@@ -34,15 +37,18 @@ class ModuleItemWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(2.0),
               decoration: BoxDecoration(
+                  color: isMain ? Colors.transparent : null,
                   borderRadius: const BorderRadius.all(Radius.circular(4)),
-                  border: Border.all(color: Colors.blueGrey[100]!)),
+                  border: isMain == true
+                      ? null
+                      : Border.all(color: Colors.blueGrey[100]!)),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CachedNetworkImage(
                       imageUrl: imageUrl,
-                      height: 44,
-                      width: 44,
+                      height: 48,
+                      width: 48,
                       placeholder: (context, url) =>
                           Lottie.asset('assets/lottie/loading.json'),
                       errorWidget: (context, url, error) =>
@@ -56,6 +62,7 @@ class ModuleItemWidget extends StatelessWidget {
                       moduleName,
                       // overflow: TextOverflow.fade,
                       textAlign: TextAlign.center,
+                      overflow: TextOverflow.visible,
                       style: Theme.of(context).textTheme.titleMedium,
                     )),
                   ]),

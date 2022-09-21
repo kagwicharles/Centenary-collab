@@ -13,7 +13,7 @@ import 'package:rafiki/src/utils/crypt_lib.dart';
 class TestEndpoint {
   var localDevice, localIv, localToken, testBody;
   final dio = Dio();
-  Map<String, String> tb = {};
+  Map<String, dynamic> tb = {};
   var logger = Logger();
 
   final _moduleRepository = ModuleRepository();
@@ -170,5 +170,39 @@ class TestEndpoint {
           }),
           logger.d("\n\nACTION CONTROLS REQ: $decrypted"),
         });
+  }
+
+  Future<String> activateMobile({mobileNumber, plainPin}) async {
+    String res, decrypted;
+    var status = "";
+    var message = "";
+
+    await baseRequestSetUp("ACTIVATIONREQ");
+    final encryptedPin =
+        CryptLibImpl.encrypt(jsonEncode(plainPin), localDevice, localIv);
+    tb["SessionID"] = Constants.uniqueId;
+    tb["MobileNumber"] = mobileNumber;
+    tb["Activation"] = {};
+    tb["EncryptedFields"] = {"PIN": "$encryptedPin"};
+    final encryptedBody =
+        CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
+    var response = dio
+        .post(Constants.baseUrl + "/ElmaWebAuthDynamic/api/elma/authentication",
+            options: Options(
+              headers: {'T': localToken},
+            ),
+            data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
+    await response.then((value) => {
+          res = value.data["Response"],
+          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
+              base64.normalize(res),
+              CryptLibImpl.toSHA256(localDevice, 32),
+              localIv))),
+          status = json.decode(decrypted)["Status"],
+          message = json.decode(decrypted)["Message"],
+          logger.d("\n\nACTIVATION RESPONSE: $decrypted"),
+        });
+    print("Message: $message");
+    return message;
   }
 }

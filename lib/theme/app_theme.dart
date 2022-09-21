@@ -19,7 +19,7 @@ class AppTheme {
     ),
     textTheme: const TextTheme(
         titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-        titleMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+        titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         labelSmall: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w800,
@@ -48,7 +48,7 @@ class AppTheme {
       ),
       border: const OutlineInputBorder(
           borderSide: BorderSide(color: Color.fromARGB(255, 217, 217, 217))),
-      contentPadding: const EdgeInsets.all(18),
+      contentPadding: const EdgeInsets.all(22),
       labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       hintStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       filled: true,

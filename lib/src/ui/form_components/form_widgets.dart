@@ -3,14 +3,18 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rafiki/src/utils/utils.dart';
+import 'package:vibration/vibration.dart';
 
 class DropdownButtonWidget extends StatelessWidget {
   final String text;
   String? selectedItem;
 
-  DropdownButtonWidget(
-      {Key? key, required this.text, required this.selectedItem})
-      : super(key: key);
+  DropdownButtonWidget({
+    Key? key,
+    required this.text,
+    required this.selectedItem,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField2(
@@ -29,28 +33,46 @@ class DropdownButtonWidget extends StatelessWidget {
 
 class TextInputWidget extends StatelessWidget {
   final String text;
+  bool isMandatory = false;
+  var inputController = TextEditingController();
 
-  TextInputWidget({Key? key, required this.text}) : super(key: key);
+  TextInputWidget({Key? key, required this.text, isMandatory})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        hintText: text,
-      ),
-      style: const TextStyle(fontSize: 16),
-    );
+    return TextFormField(
+        controller: inputController,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          hintText: text,
+        ),
+        style: const TextStyle(fontSize: 16),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Required*';
+          } else {
+            print("field has been validated");
+          }
+          return null;
+        });
   }
 }
 
 class ButtonWidget extends StatelessWidget {
   final String text;
+  var formKey;
 
-  ButtonWidget({Key? key, required this.text}) : super(key: key);
+  ButtonWidget({Key? key, required this.text, this.formKey}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        if (formKey.currentState.validate()) {
+          print("Form is okay...");
+        } else {
+          Vibration.vibrate();
+        }
+      },
       child: Text(text),
     );
   }

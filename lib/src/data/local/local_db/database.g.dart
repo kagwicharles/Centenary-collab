@@ -86,7 +86,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, PRIMARY KEY (`moduleId`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -165,7 +165,14 @@ class _$FormItemDao extends FormItemDao {
                   'moduleId': item.moduleId,
                   'controlId': item.controlId,
                   'linkedToControl': item.linkedToControl,
-                  'formSequence': item.formSequence
+                  'formSequence': item.formSequence,
+                  'serviceParamId': item.serviceParamId,
+                  'isMandatory': item.isMandatory == null
+                      ? null
+                      : (item.isMandatory! ? 1 : 0),
+                  'isEncrypted': item.isEncrypted == null
+                      ? null
+                      : (item.isEncrypted! ? 1 : 0)
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -185,7 +192,14 @@ class _$FormItemDao extends FormItemDao {
             moduleId: row['moduleId'] as String?,
             linkedToControl: row['linkedToControl'] as String?,
             controlId: row['controlId'] as String?,
-            formSequence: row['formSequence'] as int?),
+            formSequence: row['formSequence'] as int?,
+            isMandatory: row['isMandatory'] == null
+                ? null
+                : (row['isMandatory'] as int) != 0,
+            isEncrypted: row['isEncrypted'] == null
+                ? null
+                : (row['isEncrypted'] as int) != 0,
+            serviceParamId: row['serviceParamId'] as String?),
         arguments: [id]);
   }
 

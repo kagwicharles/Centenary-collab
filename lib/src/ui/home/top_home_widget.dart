@@ -98,7 +98,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
                           // when the count changes.
                           key: ValueKey<bool>(viewCreditCardState),
                           height: 177,
-                          constraints: const BoxConstraints(maxWidth: 270),
+                          constraints: const BoxConstraints(maxWidth: 277),
                           child: Swiper(
                               scrollDirection: Axis.horizontal,
                               autoplay: false,
@@ -116,7 +116,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
                           // when the count changes.
                           key: ValueKey<bool>(viewCreditCardState),
                           height: 177,
-                          constraints: const BoxConstraints(maxWidth: 270),
+                          constraints: const BoxConstraints(maxWidth: 277),
                           child: const Center(
                             child: Text("No alerts yet"),
                           )))
