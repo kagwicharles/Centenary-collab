@@ -71,19 +71,24 @@ class FormItem {
   String? linkedToControl;
   int? formSequence;
   String? serviceParamId;
+  double? displayOrder;
+  String? controlFormat;
   bool? isMandatory;
   bool? isEncrypted;
 
-  FormItem(
-      {required this.controlType,
-      required this.controlText,
-      required this.moduleId,
-      this.linkedToControl,
-      this.controlId,
-      this.formSequence,
-      this.isMandatory,
-      this.isEncrypted,
-      this.serviceParamId});
+  FormItem({
+    required this.controlType,
+    required this.controlText,
+    required this.moduleId,
+    this.linkedToControl,
+    this.controlId,
+    this.formSequence,
+    this.serviceParamId,
+    this.displayOrder,
+    this.controlFormat,
+    this.isMandatory,
+    this.isEncrypted,
+  });
 
   FormItem.fromJson(Map<String, dynamic> json) {
     controlType = json['ControlType'];
@@ -92,9 +97,11 @@ class FormItem {
     linkedToControl = json['LinkedToControl'];
     controlId = json['ControlID'];
     formSequence = json['FormSequence'];
+    serviceParamId = json['ServiceParamID'];
+    displayOrder = json['DisplayOrder'];
     isMandatory = json['IsMandatory'];
     isEncrypted = json['IsEncrypted'];
-    serviceParamId = json['ServiceParamID'];
+    controlFormat = json['ControlFormat'];
   }
 }
 

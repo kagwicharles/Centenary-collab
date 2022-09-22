@@ -6,27 +6,44 @@ import 'package:lottie/lottie.dart';
 import 'package:rafiki/src/utils/utils.dart';
 import 'package:vibration/vibration.dart';
 
-class DropdownButtonWidget extends StatelessWidget {
+class DropdownButtonWidget extends StatefulWidget {
   final String text;
-  String? selectedItem;
+  String? controller;
+  List<String> dropdownItems = [];
 
   DropdownButtonWidget({
     Key? key,
     required this.text,
-    required this.selectedItem,
+    required this.controller,
   }) : super(key: key);
+
+  @override
+  State<DropdownButtonWidget> createState() => _DropdownButtonWidgetState();
+}
+
+class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
   @override
   Widget build(BuildContext context) {
+    var currentValue =
+        widget.dropdownItems.isNotEmpty ? widget.dropdownItems[0] : null;
+
     return DropdownButtonFormField2(
-      value: selectedItem,
+      value: currentValue,
+      hint: Text(
+        widget.text,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
       isExpanded: true,
       style: const TextStyle(fontSize: 16, color: Colors.black),
-      onChanged: (value) {},
-      items: [
-        DropdownMenuItem<String>(
-          child: Text(text),
-        )
-      ],
+      onChanged: (value) {
+        setState(() {});
+      },
+      items: widget.dropdownItems.map((value) {
+        return DropdownMenuItem(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
     );
   }
 }
@@ -34,8 +51,10 @@ class DropdownButtonWidget extends StatelessWidget {
 class TextInputWidget extends StatefulWidget {
   final String text;
   bool isMandatory = false;
+  var controller;
 
-  TextInputWidget({Key? key, required this.text, this.isMandatory = false})
+  TextInputWidget(
+      {Key? key, required this.text, this.isMandatory = false, this.controller})
       : super(key: key);
 
   @override
@@ -43,13 +62,11 @@ class TextInputWidget extends StatefulWidget {
 }
 
 class _TextInputWidgetState extends State<TextInputWidget> {
-  var inputController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     print("texfield ${widget.isMandatory}");
     return TextFormField(
-        controller: inputController,
+        controller: widget.controller,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: widget.text,
@@ -73,8 +90,11 @@ class ButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
+        CommonUtils.textfieldValues.clear();
+
         if (formKey.currentState.validate()) {
           print("Form is okay...");
+          print(CommonUtils.textfieldValues.toString());
         } else {
           Vibration.vibrate();
         }

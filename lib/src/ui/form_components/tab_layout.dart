@@ -31,14 +31,16 @@ class TabWidget extends StatelessWidget {
 
     linkControls.asMap().forEach((index, linkControl) {
       tabWidgetList.add(TabWidgetList(
-        formItems: formItems
-            .where((formItem) =>
-                formItem.linkedToControl == linkControl ||
-                formItem.linkedToControl == null ||
-                formItem.linkedToControl == "" &&
-                    formItem.controlType != ViewType.RBUTTON.name)
-            .toList(),
-      ));
+          formItems: formItems
+              .where((formItem) =>
+                  formItem.linkedToControl == linkControl ||
+                  formItem.linkedToControl == null ||
+                  formItem.linkedToControl == "" &&
+                      formItem.controlType != ViewType.RBUTTON.name)
+              .toList()
+            ..sort(((a, b) {
+              return a.displayOrder!.compareTo(b.displayOrder!);
+            }))));
     });
     return DefaultTabController(
         length: tabs.length,
@@ -82,7 +84,7 @@ class _TabWidgetListState extends State<TabWidgetList>
                   } catch (e) {}
                   var controlText = widget.formItems[index].controlText;
                   bool? isMandatory = widget.formItems[index].isMandatory;
-
+                  print("Sorted ${widget.formItems[index].displayOrder}");
                   return CommonUtils.determineRenderWidget(controlType,
                       text: controlText,
                       formKey: _formKey,

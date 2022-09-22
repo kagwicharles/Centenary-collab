@@ -91,7 +91,10 @@ class _FormsListWidgetState extends State<FormsListWidget> {
           if (snapshot.hasData) {
             var filteredFormItems = snapshot.data!
                 .where((formItem) => formItem.formSequence == 1)
-                .toList();
+                .toList()
+              ..sort(((a, b) {
+                return a.displayOrder!.compareTo(b.displayOrder!);
+              }));
             child = snapshot.data!
                     .map((item) => item.controlType)
                     .contains("CONTAINER")
@@ -122,12 +125,12 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                   var isMandatory =
                                       filteredFormItems[index].isMandatory;
 
-                                  print("Is mandatory: $isMandatory");
                                   return CommonUtils.determineRenderWidget(
-                                      controlType,
-                                      text: controlText,
-                                      isMandatory: isMandatory,
-                                      formKey: _formKey);
+                                    controlType,
+                                    text: controlText,
+                                    isMandatory: isMandatory,
+                                    formKey: _formKey,
+                                  );
                                 }))));
           }
           return child;
