@@ -126,12 +126,15 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                       filteredFormItems[index].isMandatory;
                                   var controlFormat =
                                       filteredFormItems[index].controlFormat;
+                                  var serviceParamId =
+                                      filteredFormItems[index].serviceParamId;
 
                                   return DetermineRenderWidget(controlType,
                                       text: controlText!,
                                       isMandatory: isMandatory!,
                                       formKey: _formKey,
                                       controlFormat: controlFormat,
+                                      serviceParamId: serviceParamId,
                                       refreshParent: updateState);
                                 }))));
           }

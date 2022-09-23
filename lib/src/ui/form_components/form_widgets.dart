@@ -4,15 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/determine_render_widget.dart';
 import 'package:vibration/vibration.dart';
 
+class InputUtil {
+  static List<Map<String?, dynamic>> formInputValues = [];
+}
+
 class DropdownButtonWidget extends StatefulWidget {
   final String text;
-  String? controller;
+  String? serviceParamId;
   List<String> dropdownItems = [];
 
-  DropdownButtonWidget({Key? key, required this.text, required this.controller})
+  DropdownButtonWidget({Key? key, required this.text, this.serviceParamId})
       : super(key: key);
 
   @override
@@ -34,7 +39,12 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
       isExpanded: true,
       style: const TextStyle(fontSize: 16, color: Colors.black),
       onChanged: (value) {
-        setState(() {});
+        setState(() {
+          // InputUtil.formInputValues.add(value.toString());
+        });
+      },
+      validator: (value) {
+        InputUtil.formInputValues.add({widget.serviceParamId: value});
       },
       items: widget.dropdownItems.map((value) {
         return DropdownMenuItem(
@@ -49,17 +59,19 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
 class TextInputWidget extends StatefulWidget {
   final String text;
   String? controlFormat;
+  String? serviceParamId;
   bool isMandatory;
-  bool obscureText;
+  bool isObscured;
   var controller;
 
   TextInputWidget(
       {Key? key,
       required this.text,
       this.controlFormat,
+      this.serviceParamId,
       this.isMandatory = false,
-      this.obscureText = false,
-      this.controller})
+      this.controller,
+      this.isObscured = false})
       : super(key: key);
 
   @override
@@ -70,33 +82,47 @@ class _TextInputWidgetState extends State<TextInputWidget> {
   @override
   Widget build(BuildContext context) {
     print("texfield ${widget.isMandatory}");
+    print("Control format ${widget.controlFormat}");
+    var isPinType = widget.controlFormat == ControlFormat.PinNumber.name ||
+            widget.controlFormat == ControlFormat.PIN.name
+        ? true
+        : false;
+
     return TextFormField(
         controller: widget.controller,
-        obscureText: widget.obscureText,
+        keyboardType: widget.controlFormat == ControlFormat.NUMERIC.name ||
+                widget.controlFormat == ControlFormat.Amount.name
+            ? TextInputType.number
+            : TextInputType.text,
+        obscureText: widget.isObscured,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: widget.text,
-          suffixIcon: widget.controlFormat == ControlFormat.PinNumber.name
+          suffixIcon: widget.controlFormat == ControlFormat.PinNumber.name ||
+                  widget.controlFormat == ControlFormat.PIN.name
               ? IconButton(
                   onPressed: () {
-                    if (widget.obscureText) {
+                    if (widget.isObscured) {
                       setState(() {
-                        widget.obscureText = false;
+                        widget.isObscured = false;
                       });
                     } else {
                       setState(() {
-                        widget.obscureText = true;
+                        widget.isObscured = true;
                       });
                     }
                   },
-                  icon: Icon(widget.obscureText
+                  icon: Icon(widget.isObscured
                       ? Icons.visibility
                       : Icons.visibility_off))
               : null,
         ),
         style: const TextStyle(fontSize: 16),
         validator: (value) {
-          DetermineRenderWidget.textfieldValues.add(value!);
+          InputUtil.formInputValues.add({
+            widget.serviceParamId:
+                isPinType ? CryptLibImpl.encryptField(value!) : value!
+          });
           if (value.isEmpty && widget.isMandatory) {
             return 'Input required*';
           }
@@ -114,11 +140,10 @@ class ButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // CommonUtils.textfieldValues.clear();
-
+        InputUtil.formInputValues.clear();
         if (formKey.currentState.validate()) {
           print("Form is okay...");
-          // print(CommonUtils.textfieldValues.toString());
+          print(InputUtil.formInputValues.toString());
         } else {
           Vibration.vibrate();
         }
@@ -168,8 +193,10 @@ class QRScannerFormWidget extends StatelessWidget {
 
 class PhonePickerFormWidget extends StatefulWidget {
   String? text;
+  String? serviceParamId;
 
-  PhonePickerFormWidget({Key? key, required this.text}) : super(key: key);
+  PhonePickerFormWidget({Key? key, required this.text, this.serviceParamId})
+      : super(key: key);
 
   @override
   State<PhonePickerFormWidget> createState() => _PhonePickerFormWidgetState();
@@ -201,7 +228,7 @@ class _PhonePickerFormWidgetState extends State<PhonePickerFormWidget> {
             }),
       ),
       validator: (value) {
-        DetermineRenderWidget.textfieldValues.add(value!);
+        InputUtil.formInputValues.add({widget.serviceParamId: value!});
       },
       style: const TextStyle(fontSize: 16),
     );

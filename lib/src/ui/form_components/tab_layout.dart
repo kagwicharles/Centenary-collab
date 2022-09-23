@@ -88,11 +88,12 @@ class _TabWidgetListState extends State<TabWidgetList>
                   } catch (e) {}
                   var controlText = widget.formItems[index].controlText;
                   bool? isMandatory = widget.formItems[index].isMandatory;
-                  print("Sorted ${widget.formItems[index].displayOrder}");
+                  String? controlFormat = widget.formItems[index].controlFormat;
                   return DetermineRenderWidget(controlType,
                       text: controlText!,
                       formKey: _formKey,
                       isMandatory: isMandatory!,
+                      controlFormat: controlFormat,
                       refreshParent: widget.updateState);
                 })));
   }

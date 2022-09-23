@@ -13,6 +13,7 @@ class DetermineRenderWidget extends StatefulWidget {
   bool isMandatory;
   String text;
   String imageUrl;
+  String? serviceParamId;
   var formKey;
 
   DetermineRenderWidget(this.widgetType,
@@ -21,6 +22,7 @@ class DetermineRenderWidget extends StatefulWidget {
       this.isMandatory = false,
       formWidgets,
       this.controlFormat,
+      this.serviceParamId,
       this.formKey,
       refreshParent});
 
@@ -49,9 +51,11 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
               ? true
               : false;
           dynamicWidgetItem = TextInputWidget(
-            text: widget.text,
-            isMandatory: widget.isMandatory,
-          );
+              text: widget.text,
+              isMandatory: widget.isMandatory,
+              controlFormat: widget.controlFormat,
+              serviceParamId: widget.serviceParamId,
+              isObscured: obscureText);
         }
         break;
       case ViewType.BUTTON:
@@ -65,26 +69,9 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
           var currentValue = DetermineRenderWidget.dropdownItems.isNotEmpty
               ? DetermineRenderWidget.dropdownItems[0]
               : null;
-          dynamicWidgetItem = DropdownButtonFormField2(
-            value: currentValue,
-            hint: Text(
-              widget.text,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-            isExpanded: true,
-            style: const TextStyle(fontSize: 16, color: Colors.black),
-            onChanged: (value) {
-              DetermineRenderWidget.textfieldValues.add(value.toString());
-            },
-            items: DetermineRenderWidget.dropdownItems.map((value) {
-              return DropdownMenuItem(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            validator: (value) {
-              DetermineRenderWidget.textfieldValues.add(value.toString());
-            },
+          dynamicWidgetItem = DropdownButtonWidget(
+            text: widget.text,
+            serviceParamId: widget.serviceParamId,
           );
         }
         break;
@@ -106,7 +93,10 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
 
       case ViewType.PHONECONTACTS:
         {
-          dynamicWidgetItem = PhonePickerFormWidget(text: widget.text);
+          dynamicWidgetItem = PhonePickerFormWidget(
+            text: widget.text,
+            serviceParamId: widget.serviceParamId,
+          );
         }
         break;
       default:
