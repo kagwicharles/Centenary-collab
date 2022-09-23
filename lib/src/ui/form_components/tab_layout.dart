@@ -10,12 +10,13 @@ class TabWidget extends StatelessWidget {
   List<TabWidgetList> tabWidgetList = [];
   List<String> linkControls = [];
   String title;
+  Function? updateState;
 
-  TabWidget({
-    required this.title,
-    required this.formItems,
-    required this.moduleName,
-  });
+  TabWidget(
+      {required this.title,
+      required this.formItems,
+      required this.moduleName,
+      this.updateState});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,8 @@ class TabWidget extends StatelessWidget {
               .toList()
             ..sort(((a, b) {
               return a.displayOrder!.compareTo(b.displayOrder!);
-            }))));
+            })),
+          updateState: updateState));
     });
     return DefaultTabController(
         length: tabs.length,
@@ -59,7 +61,9 @@ class TabWidget extends StatelessWidget {
 
 class TabWidgetList extends StatefulWidget {
   final List<FormItem> formItems;
-  TabWidgetList({required this.formItems});
+  Function? updateState;
+
+  TabWidgetList({required this.formItems, this.updateState});
 
   @override
   State<TabWidgetList> createState() => _TabWidgetListState();
@@ -88,7 +92,8 @@ class _TabWidgetListState extends State<TabWidgetList>
                   return CommonUtils.determineRenderWidget(controlType,
                       text: controlText,
                       formKey: _formKey,
-                      isMandatory: isMandatory);
+                      isMandatory: isMandatory,
+                      refreshParent: widget.updateState);
                 })));
   }
 

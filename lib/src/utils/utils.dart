@@ -8,28 +8,49 @@ import 'package:vibration/vibration.dart';
 class CommonUtils {
   static List<String> textfieldValues = [];
   static List<String> dropdownItems = [];
+  static String? number = "";
+  static bool obscureText = false;
+  static Function()? refreshParent;
 
-  static Widget determineRenderWidget(
-    ViewType widgetType, {
-    text,
-    imageUrl,
-    isMandatory,
-    formWidgets,
-    formKey,
-    dropdownController,
-    textfieldController,
-    textFieldsValue,
-  }) {
+  static Widget determineRenderWidget(ViewType widgetType,
+      {text,
+      imageUrl,
+      isMandatory,
+      formWidgets,
+      formKey,
+      controlFormat,
+      refreshParent}) {
     String? selectedItem;
     Widget dynamicWidgetItem;
 
     switch (widgetType) {
       case ViewType.TEXT:
         {
+          print(controlFormat);
+          obscureText = controlFormat == ControlFormat.PinNumber.name ||
+                  controlFormat == ControlFormat.PIN.name
+              ? true
+              : false;
           dynamicWidgetItem = TextFormField(
+              obscureText: obscureText,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 hintText: text,
+                suffixIcon: controlFormat == ControlFormat.PinNumber.name
+                    ? IconButton(
+                        onPressed: () {
+                          if (obscureText) {
+                            obscureText = false;
+                            refreshParent();
+                          } else {
+                            obscureText = true;
+                            refreshParent();
+                          }
+                        },
+                        icon: Icon(obscureText
+                            ? Icons.visibility
+                            : Icons.visibility_off))
+                    : null,
               ),
               style: const TextStyle(fontSize: 16),
               validator: (value) {
@@ -57,13 +78,18 @@ class CommonUtils {
             ),
             isExpanded: true,
             style: const TextStyle(fontSize: 16, color: Colors.black),
-            onChanged: (value) {},
+            onChanged: (value) {
+              textfieldValues.add(value.toString());
+            },
             items: dropdownItems.map((value) {
               return DropdownMenuItem(
                 value: value,
                 child: Text(value),
               );
             }).toList(),
+            validator: (value) {
+              textfieldValues.add(value.toString());
+            },
           );
         }
         break;
@@ -85,7 +111,6 @@ class CommonUtils {
 
       case ViewType.PHONECONTACTS:
         {
-          String? number;
           var controller = TextEditingController();
           dynamicWidgetItem = TextFormField(
             controller: controller,
@@ -104,7 +129,9 @@ class CommonUtils {
                     controller.text = number!;
                   }),
             ),
-            onChanged: ((value) => {controller.text = value}),
+            validator: (value) {
+              textfieldValues.add(value!);
+            },
             style: const TextStyle(fontSize: 16),
           );
         }

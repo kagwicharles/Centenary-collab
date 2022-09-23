@@ -13,6 +13,8 @@ enum ViewType {
   PHONECONTACTS
 }
 
+enum ControlFormat { PinNumber, PIN }
+
 class CreditCard {
   final String balance;
   final String currency;

@@ -102,7 +102,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                     title: "test",
                     formItems: filteredFormItems,
                     moduleName: widget.moduleName,
-                  )
+                    updateState: updateState)
                 : Scaffold(
                     appBar: AppBar(title: Text(widget.moduleName)),
                     body: Container(
@@ -124,16 +124,23 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                       filteredFormItems[index].controlText;
                                   var isMandatory =
                                       filteredFormItems[index].isMandatory;
+                                  var controlFormat =
+                                      filteredFormItems[index].controlFormat;
 
                                   return CommonUtils.determineRenderWidget(
-                                    controlType,
-                                    text: controlText,
-                                    isMandatory: isMandatory,
-                                    formKey: _formKey,
-                                  );
+                                      controlType,
+                                      text: controlText,
+                                      isMandatory: isMandatory,
+                                      formKey: _formKey,
+                                      controlFormat: controlFormat,
+                                      refreshParent: updateState);
                                 }))));
           }
           return child;
         });
+  }
+
+  void updateState() {
+    setState(() {});
   }
 }

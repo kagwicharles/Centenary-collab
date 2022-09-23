@@ -6,6 +6,11 @@ import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/theme/app_theme.dart';
 
 void main() {
+  TestEndpoint().getToken().then((res) => {
+        TestEndpoint().getModules(),
+        TestEndpoint().getForms(),
+        TestEndpoint().getActionControls()
+      });
   runApp(const MyApp());
 }
 
@@ -15,14 +20,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    TestEndpoint().getToken().then((res) => {
-          TestEndpoint().getModules(),
-          TestEndpoint().getForms(),
-          TestEndpoint().getActionControls()
-        });
-
-    return
-     MaterialApp(
+    return MaterialApp(
       title: 'Rafiki',
       debugShowCheckedModeBanner: false,
       theme: AppTheme().appTheme,
