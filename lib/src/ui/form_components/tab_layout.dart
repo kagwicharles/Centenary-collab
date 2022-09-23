@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
-import 'package:rafiki/src/utils/utils.dart';
+import 'package:rafiki/src/utils/determine_render_widget.dart';
 
 class TabWidget extends StatelessWidget {
   List<FormItem> formItems;
@@ -89,10 +89,10 @@ class _TabWidgetListState extends State<TabWidgetList>
                   var controlText = widget.formItems[index].controlText;
                   bool? isMandatory = widget.formItems[index].isMandatory;
                   print("Sorted ${widget.formItems[index].displayOrder}");
-                  return CommonUtils.determineRenderWidget(controlType,
-                      text: controlText,
+                  return DetermineRenderWidget(controlType,
+                      text: controlText!,
                       formKey: _formKey,
-                      isMandatory: isMandatory,
+                      isMandatory: isMandatory!,
                       refreshParent: widget.updateState);
                 })));
   }

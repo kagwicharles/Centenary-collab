@@ -3,7 +3,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:lottie/lottie.dart';
-import 'package:rafiki/src/utils/utils.dart';
+import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/utils/determine_render_widget.dart';
 import 'package:vibration/vibration.dart';
 
 class DropdownButtonWidget extends StatefulWidget {
@@ -11,11 +12,8 @@ class DropdownButtonWidget extends StatefulWidget {
   String? controller;
   List<String> dropdownItems = [];
 
-  DropdownButtonWidget({
-    Key? key,
-    required this.text,
-    required this.controller,
-  }) : super(key: key);
+  DropdownButtonWidget({Key? key, required this.text, required this.controller})
+      : super(key: key);
 
   @override
   State<DropdownButtonWidget> createState() => _DropdownButtonWidgetState();
@@ -50,11 +48,18 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
 
 class TextInputWidget extends StatefulWidget {
   final String text;
-  bool isMandatory = false;
+  String? controlFormat;
+  bool isMandatory;
+  bool obscureText;
   var controller;
 
   TextInputWidget(
-      {Key? key, required this.text, this.isMandatory = false, this.controller})
+      {Key? key,
+      required this.text,
+      this.controlFormat,
+      this.isMandatory = false,
+      this.obscureText = false,
+      this.controller})
       : super(key: key);
 
   @override
@@ -67,13 +72,32 @@ class _TextInputWidgetState extends State<TextInputWidget> {
     print("texfield ${widget.isMandatory}");
     return TextFormField(
         controller: widget.controller,
+        obscureText: widget.obscureText,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: widget.text,
+          suffixIcon: widget.controlFormat == ControlFormat.PinNumber.name
+              ? IconButton(
+                  onPressed: () {
+                    if (widget.obscureText) {
+                      setState(() {
+                        widget.obscureText = false;
+                      });
+                    } else {
+                      setState(() {
+                        widget.obscureText = true;
+                      });
+                    }
+                  },
+                  icon: Icon(widget.obscureText
+                      ? Icons.visibility
+                      : Icons.visibility_off))
+              : null,
         ),
         style: const TextStyle(fontSize: 16),
         validator: (value) {
-          if (value == null || value.isEmpty && widget.isMandatory) {
+          DetermineRenderWidget.textfieldValues.add(value!);
+          if (value.isEmpty && widget.isMandatory) {
             return 'Input required*';
           }
           return null;
@@ -90,11 +114,11 @@ class ButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        CommonUtils.textfieldValues.clear();
+        // CommonUtils.textfieldValues.clear();
 
         if (formKey.currentState.validate()) {
           print("Form is okay...");
-          print(CommonUtils.textfieldValues.toString());
+          // print(CommonUtils.textfieldValues.toString());
         } else {
           Vibration.vibrate();
         }
@@ -142,20 +166,28 @@ class QRScannerFormWidget extends StatelessWidget {
   }
 }
 
-class PhonePickerFormWidget extends StatelessWidget {
-  final String text;
-
-  final _phoneInputController = TextEditingController();
-  String? number;
+class PhonePickerFormWidget extends StatefulWidget {
+  String? text;
 
   PhonePickerFormWidget({Key? key, required this.text}) : super(key: key);
+
+  @override
+  State<PhonePickerFormWidget> createState() => _PhonePickerFormWidgetState();
+}
+
+class _PhonePickerFormWidgetState extends State<PhonePickerFormWidget> {
+  String? number;
+
+  var controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _phoneInputController,
+    print("Text: text");
+    return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
-        hintText: text,
+        hintText: widget.text,
         suffixIcon: IconButton(
             icon: const Icon(
               Icons.contacts,
@@ -165,9 +197,12 @@ class PhonePickerFormWidget extends StatelessWidget {
               final PhoneContact contact =
                   await FlutterContactPicker.pickPhoneContact();
               number = contact.phoneNumber?.number;
-              _phoneInputController.text = number!;
+              controller.text = number!;
             }),
       ),
+      validator: (value) {
+        DetermineRenderWidget.textfieldValues.add(value!);
+      },
       style: const TextStyle(fontSize: 16),
     );
   }

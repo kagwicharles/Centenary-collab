@@ -3,7 +3,7 @@ import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:rafiki/src/ui/form_components/tab_layout.dart';
 import 'package:rafiki/src/ui/menu_item_widget.dart';
-import 'package:rafiki/src/utils/utils.dart';
+import 'package:rafiki/src/utils/determine_render_widget.dart';
 
 class ModulesListWidget extends StatelessWidget {
   final Future<List<ModuleItem>>? moduleItems;
@@ -127,10 +127,9 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                   var controlFormat =
                                       filteredFormItems[index].controlFormat;
 
-                                  return CommonUtils.determineRenderWidget(
-                                      controlType,
-                                      text: controlText,
-                                      isMandatory: isMandatory,
+                                  return DetermineRenderWidget(controlType,
+                                      text: controlText!,
+                                      isMandatory: isMandatory!,
                                       formKey: _formKey,
                                       controlFormat: controlFormat,
                                       refreshParent: updateState);

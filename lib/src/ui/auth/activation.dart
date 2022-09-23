@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
-import 'package:rafiki/src/utils/utils.dart';
+import 'package:rafiki/src/utils/determine_render_widget.dart';
 
 class AccountActivation extends StatefulWidget {
   @override
