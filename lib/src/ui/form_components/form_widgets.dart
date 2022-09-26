@@ -1,11 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
-import 'package:lottie/lottie.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/determine_render_widget.dart';
+import 'package:rafiki/src/utils/render_utils.dart';
 import 'package:vibration/vibration.dart';
 
 class InputUtil {
@@ -79,55 +78,46 @@ class TextInputWidget extends StatefulWidget {
 }
 
 class _TextInputWidgetState extends State<TextInputWidget> {
+  var inputType = TextInputType.text;
+  var suffixIcon;
+
   @override
   Widget build(BuildContext context) {
     print("texfield ${widget.isMandatory}");
     print("Control format ${widget.controlFormat}");
-    var isPinType = widget.controlFormat == ControlFormat.PinNumber.name ||
-            widget.controlFormat == ControlFormat.PIN.name
-        ? true
-        : false;
+    var texfieldParams = RenderUtils.checkControlFormat(widget.controlFormat!,
+        context: context,
+        isObscure: widget.isObscured,
+        refreshParent: refreshParent);
 
     return TextFormField(
         controller: widget.controller,
-        keyboardType: widget.controlFormat == ControlFormat.NUMERIC.name ||
-                widget.controlFormat == ControlFormat.Amount.name
-            ? TextInputType.number
-            : TextInputType.text,
+        keyboardType: texfieldParams['inputType'],
         obscureText: widget.isObscured,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: widget.text,
-          suffixIcon: widget.controlFormat == ControlFormat.PinNumber.name ||
-                  widget.controlFormat == ControlFormat.PIN.name
-              ? IconButton(
-                  onPressed: () {
-                    if (widget.isObscured) {
-                      setState(() {
-                        widget.isObscured = false;
-                      });
-                    } else {
-                      setState(() {
-                        widget.isObscured = true;
-                      });
-                    }
-                  },
-                  icon: Icon(widget.isObscured
-                      ? Icons.visibility
-                      : Icons.visibility_off))
-              : null,
+          suffixIcon: texfieldParams['suffixIcon'],
         ),
         style: const TextStyle(fontSize: 16),
         validator: (value) {
-          InputUtil.formInputValues.add({
-            widget.serviceParamId:
-                isPinType ? CryptLibImpl.encryptField(value!) : value!
-          });
-          if (value.isEmpty && widget.isMandatory) {
+          if (widget.isMandatory && value!.isEmpty) {
             return 'Input required*';
           }
+          InputUtil.formInputValues.add({
+            widget.serviceParamId:
+                widget.isObscured ? CryptLibImpl.encryptField(value!) : value
+          });
+          print("validator running...");
           return null;
         });
+  }
+
+  void refreshParent(bool status) {
+    print("refresh called!");
+    setState(() {
+      status;
+    });
   }
 }
 

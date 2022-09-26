@@ -58,12 +58,27 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
               isObscured: obscureText);
         }
         break;
+
+      case ViewType.DATE:
+        {
+          print(widget.controlFormat);
+
+          dynamicWidgetItem = TextInputWidget(
+            text: widget.text,
+            isMandatory: widget.isMandatory,
+            controlFormat: widget.controlFormat,
+            serviceParamId: widget.serviceParamId,
+          );
+        }
+        break;
+
       case ViewType.BUTTON:
         {
           dynamicWidgetItem =
               ButtonWidget(text: widget.text, formKey: widget.formKey);
         }
         break;
+
       case ViewType.DROPDOWN:
         {
           var currentValue = DetermineRenderWidget.dropdownItems.isNotEmpty
@@ -75,10 +90,12 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
           );
         }
         break;
+
       // case ViewType.RBUTTON:
       //   {
       //     return RButtonWidget(text: text);
       //   }
+
       case ViewType.LABEL:
         {
           dynamicWidgetItem = LabelWidget(text: widget.text);

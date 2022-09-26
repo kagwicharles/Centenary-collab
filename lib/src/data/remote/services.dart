@@ -50,6 +50,7 @@ class TestEndpoint {
 
   Future<int> getToken() async {
     var keys = "";
+    Map routeMap;
     var routes, device, iv = "";
     var data;
     var token;
@@ -73,7 +74,6 @@ class TestEndpoint {
 
     if (response.statusCode == 200) {
       final res = response.body.toString();
-      routes = jsonDecode(res)["payload"]["Routes"];
       device = jsonDecode(res)["payload"]["Device"];
       data = jsonDecode(res)["data"];
       token = jsonDecode(res)["token"];
@@ -85,8 +85,10 @@ class TestEndpoint {
       });
       iv = jsonDecode(res)["payload"]["Ran"];
       await SharedPrefLocal.addDeviceData(token, keys, iv);
-      print(
-          "\n\nROUTES REQ: ${CryptLibImpl.decrypt(routes, CryptLibImpl.toSHA256(keys, 32), iv)}");
+      routes = CryptLibImpl.decrypt(jsonDecode(res)["payload"]["Routes"],
+          CryptLibImpl.toSHA256(keys, 32), iv);
+      print("\n\nROUTES REQ: $routes");
+      await SharedPrefLocal.addRoutes(json.decode(routes));
       return response.statusCode;
     } else {
       return response.statusCode;
@@ -170,6 +172,10 @@ class TestEndpoint {
           }),
           logger.d("\n\nACTION CONTROLS REQ: $decrypted"),
         });
+  }
+
+  dynamicRequest() async{
+    
   }
 
   Future<String> activateMobile({mobileNumber, plainPin}) async {

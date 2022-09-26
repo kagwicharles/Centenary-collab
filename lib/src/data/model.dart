@@ -10,10 +10,11 @@ enum ViewType {
   TAB,
   LABEL,
   QRSCANNER,
-  PHONECONTACTS
+  PHONECONTACTS,
+  DATE
 }
 
-enum ControlFormat { PinNumber, PIN, NUMERIC, Amount }
+enum ControlFormat { PinNumber, PIN, NUMERIC, Amount, DATE }
 
 class CreditCard {
   final String balance;

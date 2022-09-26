@@ -9,6 +9,13 @@ class SharedPrefLocal {
     await prefs.setString('iv', iv);
   }
 
+  static addRoutes(Map routesMap) async {
+    final prefs = await SharedPreferences.getInstance();
+    routesMap.forEach((key, value) {
+      prefs.setString(key, value);
+    });
+  }
+
   static getLocalToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("token");
