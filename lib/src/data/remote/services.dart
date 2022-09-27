@@ -16,9 +16,14 @@ class TestEndpoint {
   Map<String, dynamic> tb = {};
   var logger = Logger();
 
+  final _sharedPref = SharedPrefLocal();
+
   final _moduleRepository = ModuleRepository();
   final _formRepository = FormsRepository();
   final _actionControlRepository = ActionControlRepository();
+  final _userCodeRepository = UserCodeRepository();
+  final _onlineAccountProductRepository = OnlineAccountProductRepository();
+  final _bankBranchRepository = BankBranchRepository();
 
   baseRequestSetUp(String formId) async {
     localDevice = await SharedPrefLocal.getLocalDevice();
@@ -175,7 +180,7 @@ class TestEndpoint {
   }
 
   getStaticData() async {
-    await baseRequestSetUp("ACTIONS");
+    await baseRequestSetUp("STATICDATA");
     String res, decrypted;
 
     final encryptedBody =
@@ -187,17 +192,29 @@ class TestEndpoint {
             ),
             data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
     response.then((value) async => {
-          _actionControlRepository.clearTable(),
+          _userCodeRepository.clearTable(),
+          _onlineAccountProductRepository.clearTable(),
+          _bankBranchRepository.clearTable(),
           res = value.data["Response"],
           decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
               base64.normalize(res),
               CryptLibImpl.toSHA256(localDevice, 32),
               localIv))),
-          json.decode(decrypted)[0]["ActionControls"].forEach((item) {
-            _actionControlRepository
-                .insertActionControl(ActionItem.fromJson(item));
+          await _sharedPref.addStaticDataVersion(
+              json.decode(decrypted)["StaticDataVersion"]),
+          await _sharedPref
+              .addAppIdleTimeout(json.decode(decrypted)["AppIdleTimeout"]),
+          json.decode(decrypted)["UserCode"].forEach((item) {
+            _userCodeRepository.insertUserCode(UserCode.fromJson(item));
           }),
-          logger.d("\n\nACTION CONTROLS REQ: $decrypted"),
+          json.decode(decrypted)["OnlineAccountProduct"].forEach((item) {
+            _onlineAccountProductRepository.insertOnlineAccountProduct(
+                OnlineAccountProduct.fromJson(item));
+          }),
+          json.decode(decrypted)["BankBranch"].forEach((item) {
+            _bankBranchRepository.insertBankBranch(BankBranch.fromJson(item));
+          }),
+          logger.d("\n\nSTATIC DATA REQ: $decrypted"),
         });
   }
 

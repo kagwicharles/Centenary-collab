@@ -71,3 +71,53 @@ class ActionControlRepository {
     actionControlDao.clearTable();
   }
 }
+
+class UserCodeRepository {
+  final userCodeDao = AppDatabase.getDatabaseInstance().userCodeDao;
+
+  void insertUserCode(UserCode userCode) async {
+    userCodeDao.insertUserCode(userCode);
+  }
+
+  Future<List<UserCode>> getUserCodesById(String id) async {
+    return userCodeDao.getFormsByModuleId(id);
+  }
+
+  void clearTable() async {
+    userCodeDao.clearTable();
+  }
+}
+
+class OnlineAccountProductRepository {
+  final onlineAccountProductDao =
+      AppDatabase.getDatabaseInstance().onlineAccountProductDao;
+
+  void insertOnlineAccountProduct(
+      OnlineAccountProduct onlineAccountProduct) async {
+    onlineAccountProductDao.insertOnlineAccountProduct(onlineAccountProduct);
+  }
+
+  Future<List<OnlineAccountProduct>> getAllOnlineAccountProducts() async {
+    return onlineAccountProductDao.getAllOnlineAccountProducts();
+  }
+
+  void clearTable() async {
+    onlineAccountProductDao.clearTable();
+  }
+}
+
+class BankBranchRepository {
+  final bankBranchDao = AppDatabase.getDatabaseInstance().bankBranchDao;
+
+  void insertBankBranch(BankBranch bankBranch) async {
+    bankBranchDao.insertUserCode(bankBranch);
+  }
+
+  Future<List<BankBranch>> getAllBankBranches() async {
+    return bankBranchDao.getAllBankBranchesd();
+  }
+
+  void clearTable() async {
+    bankBranchDao.clearTable();
+  }
+}

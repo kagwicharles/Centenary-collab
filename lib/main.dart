@@ -9,7 +9,8 @@ void main() {
   TestEndpoint().getToken().then((res) => {
         TestEndpoint().getModules(),
         TestEndpoint().getForms(),
-        TestEndpoint().getActionControls()
+        TestEndpoint().getActionControls(),
+        TestEndpoint().getStaticData()
       });
   runApp(const MyApp());
 }

@@ -1,6 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefLocal {
+  getSharedPrefInstance() async => await SharedPreferences.getInstance();
+
   static addDeviceData(String token, String device, String iv) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
@@ -14,6 +16,22 @@ class SharedPrefLocal {
     routesMap.forEach((key, value) {
       prefs.setString(key, value);
     });
+  }
+
+  addStaticDataVersion(int version) {
+    getSharedPrefInstance().setInt("currentDataVersion", version);
+  }
+
+  getStaticDataVersion() {
+    return getSharedPrefInstance().getString("currentDataVersion");
+  }
+
+  addAppIdleTimeout(int appIdleTimeout) {
+    getSharedPrefInstance().setInt("appIdleTimeout", appIdleTimeout);
+  }
+
+  getAppIdleTimeout() {
+    return getSharedPrefInstance().getString("appIdleTimeout");
   }
 
   static getLocalToken() async {

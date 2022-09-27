@@ -67,6 +67,12 @@ class _$AppDatabase extends AppDatabase {
 
   ActionControlDao? _actionControlDaoInstance;
 
+  UserCodeDao? _userCodeDaoInstance;
+
+  OnlineAccountProductDao? _onlineAccountProductDaoInstance;
+
+  BankBranchDao? _bankBranchDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -91,6 +97,12 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `actionId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ActionItem` (`no` INTEGER, `moduleId` TEXT NOT NULL, `actionType` TEXT NOT NULL, `actionId` TEXT NOT NULL, `serviceParamsIds` TEXT NOT NULL, `controlId` TEXT NOT NULL, `webHeader` TEXT NOT NULL, `merchantId` TEXT, `formId` TEXT, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `UserCode` (`no` INTEGER, `id` TEXT NOT NULL, `subCodeId` TEXT NOT NULL, `description` TEXT, `relationId` TEXT, `extraField` TEXT, `displayOrder` REAL, `isDefault` INTEGER, `extraFieldName` TEXT, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `OnlineAccountProduct` (`no` INTEGER, `id` TEXT, `description` TEXT, `relationId` TEXT, `url` TEXT, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `BankBranch` (`no` INTEGER, `description` TEXT, `relationId` TEXT, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -112,6 +124,22 @@ class _$AppDatabase extends AppDatabase {
   ActionControlDao get actionControlDao {
     return _actionControlDaoInstance ??=
         _$ActionControlDao(database, changeListener);
+  }
+
+  @override
+  UserCodeDao get userCodeDao {
+    return _userCodeDaoInstance ??= _$UserCodeDao(database, changeListener);
+  }
+
+  @override
+  OnlineAccountProductDao get onlineAccountProductDao {
+    return _onlineAccountProductDaoInstance ??=
+        _$OnlineAccountProductDao(database, changeListener);
+  }
+
+  @override
+  BankBranchDao get bankBranchDao {
+    return _bankBranchDaoInstance ??= _$BankBranchDao(database, changeListener);
   }
 }
 
@@ -282,5 +310,146 @@ class _$ActionControlDao extends ActionControlDao {
   Future<void> insertActionControl(ActionItem actionItem) async {
     await _actionItemInsertionAdapter.insert(
         actionItem, OnConflictStrategy.abort);
+  }
+}
+
+class _$UserCodeDao extends UserCodeDao {
+  _$UserCodeDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _userCodeInsertionAdapter = InsertionAdapter(
+            database,
+            'UserCode',
+            (UserCode item) => <String, Object?>{
+                  'no': item.no,
+                  'id': item.id,
+                  'subCodeId': item.subCodeId,
+                  'description': item.description,
+                  'relationId': item.relationId,
+                  'extraField': item.extraField,
+                  'displayOrder': item.displayOrder,
+                  'isDefault':
+                      item.isDefault == null ? null : (item.isDefault! ? 1 : 0),
+                  'extraFieldName': item.extraFieldName
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<UserCode> _userCodeInsertionAdapter;
+
+  @override
+  Future<List<UserCode>> getUserCodesById(String id) async {
+    return _queryAdapter.queryList('SELECT * FROM UserCode WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => UserCode(
+            id: row['id'] as String,
+            subCodeId: row['subCodeId'] as String,
+            description: row['description'] as String?,
+            relationId: row['relationId'] as String?,
+            extraField: row['extraField'] as String?,
+            displayOrder: row['displayOrder'] as double?,
+            isDefault: row['isDefault'] == null
+                ? null
+                : (row['isDefault'] as int) != 0,
+            extraFieldName: row['extraFieldName'] as String?),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM UserCode');
+  }
+
+  @override
+  Future<void> inserUserCode(UserCode userCode) async {
+    await _userCodeInsertionAdapter.insert(userCode, OnConflictStrategy.abort);
+  }
+}
+
+class _$OnlineAccountProductDao extends OnlineAccountProductDao {
+  _$OnlineAccountProductDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _onlineAccountProductInsertionAdapter = InsertionAdapter(
+            database,
+            'OnlineAccountProduct',
+            (OnlineAccountProduct item) => <String, Object?>{
+                  'no': item.no,
+                  'id': item.id,
+                  'description': item.description,
+                  'relationId': item.relationId,
+                  'url': item.url
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<OnlineAccountProduct>
+      _onlineAccountProductInsertionAdapter;
+
+  @override
+  Future<List<OnlineAccountProduct>> getAllOnlineAccountProducts() async {
+    return _queryAdapter.queryList('SELECT * FROM OnlineAccountProduct',
+        mapper: (Map<String, Object?> row) => OnlineAccountProduct(
+            id: row['id'] as String?,
+            description: row['description'] as String?,
+            relationId: row['relationId'] as String?,
+            url: row['url'] as String?));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM OnlineAccountProduct');
+  }
+
+  @override
+  Future<void> insertOnlineAccountProduct(
+      OnlineAccountProduct onlineAccountProduct) async {
+    await _onlineAccountProductInsertionAdapter.insert(
+        onlineAccountProduct, OnConflictStrategy.abort);
+  }
+}
+
+class _$BankBranchDao extends BankBranchDao {
+  _$BankBranchDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _bankBranchInsertionAdapter = InsertionAdapter(
+            database,
+            'BankBranch',
+            (BankBranch item) => <String, Object?>{
+                  'no': item.no,
+                  'description': item.description,
+                  'relationId': item.relationId
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<BankBranch> _bankBranchInsertionAdapter;
+
+  @override
+  Future<List<BankBranch>> getAllBankBranches() async {
+    return _queryAdapter.queryList('SELECT * FROM BankBranch',
+        mapper: (Map<String, Object?> row) => BankBranch(
+            description: row['description'] as String?,
+            relationId: row['relationId'] as String?));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM BankBranch');
+  }
+
+  @override
+  Future<void> insertBankBranch(BankBranch bankBranch) async {
+    await _bankBranchInsertionAdapter.insert(
+        bankBranch, OnConflictStrategy.abort);
   }
 }
