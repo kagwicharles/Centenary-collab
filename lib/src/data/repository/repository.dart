@@ -46,3 +46,26 @@ class FormsRepository {
     formItemDao.clearTable();
   }
 }
+
+class ActionControlRepository {
+  void insertActionControl(ActionItem actionItem) async {
+    final database =
+        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+    final actionControlDao = database.actionControlDao;
+    actionControlDao.insertActionControl(actionItem);
+  }
+
+  Future<List<ActionItem>> getActionControlById(String id) async {
+    final database =
+        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+    final actionControlDao = database.actionControlDao;
+    return actionControlDao.getActionControlById(id);
+  }
+
+  void clearTable() async {
+    final database =
+        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+    final actionControlDao = database.actionControlDao;
+    actionControlDao.clearTable();
+  }
+}

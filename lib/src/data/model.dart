@@ -113,14 +113,14 @@ class ActionItem {
   @primaryKey
   int? no;
   String moduleId;
-  String formId;
-  String? actionType;
-  String actionId;
+  String? formId;
+  String actionType;
+  String actionId; 
   String serviceParamsIds;
   String controlId;
 
   ActionItem(
-      {required this.formId,
+      {this.formId,
       required this.actionType,
       required this.moduleId,
       required this.actionId,

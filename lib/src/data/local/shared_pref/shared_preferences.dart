@@ -30,4 +30,9 @@ class SharedPrefLocal {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("iv");
   }
+
+  static getRoute(String routeName) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(routeName);
+  }
 }

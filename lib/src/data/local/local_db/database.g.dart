@@ -65,6 +65,8 @@ class _$AppDatabase extends AppDatabase {
 
   FormItemDao? _formItemDaoInstance;
 
+  ActionControlDao? _actionControlDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -87,6 +89,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, PRIMARY KEY (`moduleId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `ActionItem` (`no` INTEGER, `moduleId` TEXT NOT NULL, `formId` TEXT, `actionType` TEXT NOT NULL, `actionId` TEXT NOT NULL, `serviceParamsIds` TEXT NOT NULL, `controlId` TEXT NOT NULL, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -102,6 +106,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   FormItemDao get formItemDao {
     return _formItemDaoInstance ??= _$FormItemDao(database, changeListener);
+  }
+
+  @override
+  ActionControlDao get actionControlDao {
+    return _actionControlDaoInstance ??=
+        _$ActionControlDao(database, changeListener);
   }
 }
 
@@ -215,5 +225,55 @@ class _$FormItemDao extends FormItemDao {
   @override
   Future<void> insertFormItem(FormItem formItem) async {
     await _formItemInsertionAdapter.insert(formItem, OnConflictStrategy.abort);
+  }
+}
+
+class _$ActionControlDao extends ActionControlDao {
+  _$ActionControlDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _actionItemInsertionAdapter = InsertionAdapter(
+            database,
+            'ActionItem',
+            (ActionItem item) => <String, Object?>{
+                  'no': item.no,
+                  'moduleId': item.moduleId,
+                  'formId': item.formId,
+                  'actionType': item.actionType,
+                  'actionId': item.actionId,
+                  'serviceParamsIds': item.serviceParamsIds,
+                  'controlId': item.controlId
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<ActionItem> _actionItemInsertionAdapter;
+
+  @override
+  Future<List<ActionItem>> getActionControlById(String id) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM ActionItem WHERE moduleId = ?1',
+        mapper: (Map<String, Object?> row) => ActionItem(
+            formId: row['formId'] as String?,
+            actionType: row['actionType'] as String,
+            moduleId: row['moduleId'] as String,
+            actionId: row['actionId'] as String,
+            serviceParamsIds: row['serviceParamsIds'] as String,
+            controlId: row['controlId'] as String),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM ActionItem');
+  }
+
+  @override
+  Future<void> insertActionControl(ActionItem actionItem) async {
+    await _actionItemInsertionAdapter.insert(
+        actionItem, OnConflictStrategy.abort);
   }
 }

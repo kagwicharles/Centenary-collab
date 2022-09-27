@@ -18,6 +18,7 @@ class TestEndpoint {
 
   final _moduleRepository = ModuleRepository();
   final _formRepository = FormsRepository();
+  final _actionControlRepository = ActionControlRepository();
 
   baseRequestSetUp(String formId) async {
     localDevice = await SharedPrefLocal.getLocalDevice();
@@ -161,21 +162,49 @@ class TestEndpoint {
             ),
             data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
     response.then((value) async => {
-          _formRepository.clearTable(),
+          _actionControlRepository.clearTable(),
           res = value.data["Response"],
           decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
               base64.normalize(res),
               CryptLibImpl.toSHA256(localDevice, 32),
               localIv))),
           json.decode(decrypted)[0]["ActionControls"].forEach((item) {
-            // _formRepository.insertFormItem(FormItem.fromJson(item));
+            print("inserting>>>${ActionItem.fromJson(item).moduleId}");
+            _actionControlRepository
+                .insertActionControl(ActionItem.fromJson(item));
           }),
           logger.d("\n\nACTION CONTROLS REQ: $decrypted"),
         });
   }
 
-  dynamicRequest() async{
-    
+  dynamicRequest(String formID,
+      {required merchantId,
+      required moduleId,
+      required data,
+      required webHeader}) async {
+    await baseRequestSetUp(formID);
+    String res, decrypted;
+    tb["MerchantID"] = merchantId;
+    tb["ModuleID"] = moduleId;
+    tb["DynamicForm"] = data;
+    final encryptedBody =
+        CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
+    final route = await SharedPrefLocal.getRoute(webHeader);
+
+    var response = dio.post(route,
+        options: Options(
+          headers: {'T': localToken},
+        ),
+        data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
+    response.then((value) async => {
+          _formRepository.clearTable(),
+          res = value.data["Response"],
+          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
+              base64.normalize(res),
+              CryptLibImpl.toSHA256(localDevice, 32),
+              localIv))),
+          logger.d("\n\nDYNAMIC REQ: $decrypted"),
+        });
   }
 
   Future<String> activateMobile({mobileNumber, plainPin}) async {

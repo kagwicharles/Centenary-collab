@@ -91,6 +91,7 @@ class _TabWidgetListState extends State<TabWidgetList>
                   String? controlFormat = widget.formItems[index].controlFormat;
                   String? serviceParamId =
                       widget.formItems[index].serviceParamId;
+                  String? moduleId = widget.formItems[index].moduleId;
 
                   return DetermineRenderWidget(controlType,
                       text: controlText!,
@@ -98,6 +99,7 @@ class _TabWidgetListState extends State<TabWidgetList>
                       isMandatory: isMandatory!,
                       controlFormat: controlFormat,
                       serviceParamId: serviceParamId,
+                      moduleId: moduleId,
                       refreshParent: widget.updateState);
                 })));
   }

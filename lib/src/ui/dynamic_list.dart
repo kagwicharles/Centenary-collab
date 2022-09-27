@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
@@ -128,6 +129,8 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                       filteredFormItems[index].controlFormat;
                                   var serviceParamId =
                                       filteredFormItems[index].serviceParamId;
+                                  var moduleId =
+                                      filteredFormItems[index].moduleId;
 
                                   return DetermineRenderWidget(controlType,
                                       text: controlText!,
@@ -135,6 +138,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                       formKey: _formKey,
                                       controlFormat: controlFormat,
                                       serviceParamId: serviceParamId,
+                                      moduleId: moduleId,
                                       refreshParent: updateState);
                                 }))));
           }

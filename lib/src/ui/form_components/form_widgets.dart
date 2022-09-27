@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/determine_render_widget.dart';
 import 'package:rafiki/src/utils/render_utils.dart';
@@ -124,8 +125,12 @@ class _TextInputWidgetState extends State<TextInputWidget> {
 class ButtonWidget extends StatelessWidget {
   final String text;
   var formKey;
+  String moduleId;
+  final _actionControlRepository = ActionControlRepository();
 
-  ButtonWidget({Key? key, required this.text, this.formKey}) : super(key: key);
+  ButtonWidget(
+      {Key? key, required this.text, this.formKey, required this.moduleId})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -134,6 +139,9 @@ class ButtonWidget extends StatelessWidget {
         if (formKey.currentState.validate()) {
           print("Form is okay...");
           print(InputUtil.formInputValues.toString());
+          _actionControlRepository
+              .getActionControlById(moduleId)
+              .then((value) => {print(value.toList().toString())});
         } else {
           Vibration.vibrate();
         }
