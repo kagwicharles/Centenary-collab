@@ -55,11 +55,13 @@ class ActionControlRepository {
     actionControlDao.insertActionControl(actionItem);
   }
 
-  Future<List<ActionItem>> getActionControlById(String id) async {
+  Future<ActionItem?> getActionControlByModuleIdAndActionId(
+      String moduleId, actionId) async {
     final database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
     final actionControlDao = database.actionControlDao;
-    return actionControlDao.getActionControlById(id);
+    return actionControlDao.getActionControlByModuleIdAndActionId(
+        moduleId, actionId);
   }
 
   void clearTable() async {

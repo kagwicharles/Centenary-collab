@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
@@ -139,6 +138,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                       controlFormat: controlFormat,
                                       serviceParamId: serviceParamId,
                                       moduleId: moduleId,
+                                      formItem: filteredFormItems[index],
                                       refreshParent: updateState);
                                 }))));
           }

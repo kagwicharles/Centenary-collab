@@ -88,9 +88,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, PRIMARY KEY (`moduleId`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `actionId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ActionItem` (`no` INTEGER, `moduleId` TEXT NOT NULL, `formId` TEXT, `actionType` TEXT NOT NULL, `actionId` TEXT NOT NULL, `serviceParamsIds` TEXT NOT NULL, `controlId` TEXT NOT NULL, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `ActionItem` (`no` INTEGER, `moduleId` TEXT NOT NULL, `actionType` TEXT NOT NULL, `actionId` TEXT NOT NULL, `serviceParamsIds` TEXT NOT NULL, `controlId` TEXT NOT NULL, `webHeader` TEXT NOT NULL, `merchantId` TEXT, `formId` TEXT, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -174,6 +174,7 @@ class _$FormItemDao extends FormItemDao {
                   'controlText': item.controlText,
                   'moduleId': item.moduleId,
                   'controlId': item.controlId,
+                  'actionId': item.actionId,
                   'linkedToControl': item.linkedToControl,
                   'formSequence': item.formSequence,
                   'serviceParamId': item.serviceParamId,
@@ -204,6 +205,7 @@ class _$FormItemDao extends FormItemDao {
             moduleId: row['moduleId'] as String?,
             linkedToControl: row['linkedToControl'] as String?,
             controlId: row['controlId'] as String?,
+            actionId: row['actionId'] as String?,
             formSequence: row['formSequence'] as int?,
             serviceParamId: row['serviceParamId'] as String?,
             displayOrder: row['displayOrder'] as double?,
@@ -237,11 +239,13 @@ class _$ActionControlDao extends ActionControlDao {
             (ActionItem item) => <String, Object?>{
                   'no': item.no,
                   'moduleId': item.moduleId,
-                  'formId': item.formId,
                   'actionType': item.actionType,
                   'actionId': item.actionId,
                   'serviceParamsIds': item.serviceParamsIds,
-                  'controlId': item.controlId
+                  'controlId': item.controlId,
+                  'webHeader': item.webHeader,
+                  'merchantId': item.merchantId,
+                  'formId': item.formId
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -253,17 +257,20 @@ class _$ActionControlDao extends ActionControlDao {
   final InsertionAdapter<ActionItem> _actionItemInsertionAdapter;
 
   @override
-  Future<List<ActionItem>> getActionControlById(String id) async {
-    return _queryAdapter.queryList(
-        'SELECT * FROM ActionItem WHERE moduleId = ?1',
+  Future<ActionItem?> getActionControlByModuleIdAndActionId(
+      String moduleId, String actionId) async {
+    return _queryAdapter.query(
+        'SELECT * FROM ActionItem WHERE moduleId = ?1 AND actionId = ?2',
         mapper: (Map<String, Object?> row) => ActionItem(
-            formId: row['formId'] as String?,
-            actionType: row['actionType'] as String,
             moduleId: row['moduleId'] as String,
+            actionType: row['actionType'] as String,
             actionId: row['actionId'] as String,
             serviceParamsIds: row['serviceParamsIds'] as String,
-            controlId: row['controlId'] as String),
-        arguments: [id]);
+            controlId: row['controlId'] as String,
+            webHeader: row['webHeader'] as String,
+            formId: row['formId'] as String?,
+            merchantId: row['merchantId'] as String?),
+        arguments: [moduleId, actionId]);
   }
 
   @override

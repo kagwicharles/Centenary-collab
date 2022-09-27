@@ -44,8 +44,6 @@ class TestEndpoint {
       "CODEBASE": "ANDROID",
       "LATLON": "0.0,0.0"
     };
-    print("JSON ENCODE TEST: ${jsonEncode(tb)}");
-
     dio.interceptors.add(CurlLoggerDioInterceptor(printOnSuccess: true));
   }
 
@@ -169,7 +167,33 @@ class TestEndpoint {
               CryptLibImpl.toSHA256(localDevice, 32),
               localIv))),
           json.decode(decrypted)[0]["ActionControls"].forEach((item) {
-            print("inserting>>>${ActionItem.fromJson(item).moduleId}");
+            _actionControlRepository
+                .insertActionControl(ActionItem.fromJson(item));
+          }),
+          logger.d("\n\nACTION CONTROLS REQ: $decrypted"),
+        });
+  }
+
+  getStaticData() async {
+    await baseRequestSetUp("ACTIONS");
+    String res, decrypted;
+
+    final encryptedBody =
+        CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
+    var response =
+        dio.post(Constants.baseUrl + "/ElmaWebOtherDynamic/api/elma/other",
+            options: Options(
+              headers: {'T': localToken},
+            ),
+            data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
+    response.then((value) async => {
+          _actionControlRepository.clearTable(),
+          res = value.data["Response"],
+          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
+              base64.normalize(res),
+              CryptLibImpl.toSHA256(localDevice, 32),
+              localIv))),
+          json.decode(decrypted)[0]["ActionControls"].forEach((item) {
             _actionControlRepository
                 .insertActionControl(ActionItem.fromJson(item));
           }),
@@ -187,6 +211,8 @@ class TestEndpoint {
     tb["MerchantID"] = merchantId;
     tb["ModuleID"] = moduleId;
     tb["DynamicForm"] = data;
+    print('Raw request: $tb');
+
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
     final route = await SharedPrefLocal.getRoute(webHeader);
@@ -197,7 +223,7 @@ class TestEndpoint {
         ),
         data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
     response.then((value) async => {
-          _formRepository.clearTable(),
+          print('Raw response: $value'),
           res = value.data["Response"],
           decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
               base64.normalize(res),

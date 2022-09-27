@@ -15,6 +15,8 @@ class DetermineRenderWidget extends StatefulWidget {
   String imageUrl;
   String? serviceParamId;
   String? moduleId;
+  String? actionId;
+  FormItem formItem;
   var formKey;
 
   DetermineRenderWidget(this.widgetType,
@@ -26,6 +28,8 @@ class DetermineRenderWidget extends StatefulWidget {
       this.serviceParamId,
       this.formKey,
       this.moduleId,
+      this.actionId,
+      required this.formItem,
       refreshParent});
 
   @override
@@ -77,9 +81,10 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
       case ViewType.BUTTON:
         {
           dynamicWidgetItem = ButtonWidget(
-            text: widget.text,
+            text: widget.formItem.controlText!,
             formKey: widget.formKey,
-            moduleId: widget.moduleId!,
+            moduleId: widget.formItem.moduleId!,
+            actionId: widget.formItem.actionId!,
           );
         }
         break;

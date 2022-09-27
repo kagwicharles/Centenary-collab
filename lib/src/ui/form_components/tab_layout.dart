@@ -100,6 +100,7 @@ class _TabWidgetListState extends State<TabWidgetList>
                       controlFormat: controlFormat,
                       serviceParamId: serviceParamId,
                       moduleId: moduleId,
+                      formItem: widget.formItems[index],
                       refreshParent: widget.updateState);
                 })));
   }

@@ -71,6 +71,7 @@ class FormItem {
   String? controlText;
   String? moduleId;
   String? controlId;
+  String? actionId;
   String? linkedToControl;
   int? formSequence;
   String? serviceParamId;
@@ -85,6 +86,7 @@ class FormItem {
     required this.moduleId,
     this.linkedToControl,
     this.controlId,
+    this.actionId,
     this.formSequence,
     this.serviceParamId,
     this.displayOrder,
@@ -99,6 +101,7 @@ class FormItem {
     moduleId = json['ModuleID'];
     linkedToControl = json['LinkedToControl'];
     controlId = json['ControlID'];
+    actionId = json['ActionID'];
     formSequence = json['FormSequence'];
     serviceParamId = json['ServiceParamID'];
     displayOrder = json['DisplayOrder'];
@@ -113,27 +116,33 @@ class ActionItem {
   @primaryKey
   int? no;
   String moduleId;
-  String? formId;
   String actionType;
-  String actionId; 
+  String actionId;
   String serviceParamsIds;
   String controlId;
+  String webHeader;
+  String? merchantId;
+  String? formId;
 
   ActionItem(
-      {this.formId,
+      {required this.moduleId,
       required this.actionType,
-      required this.moduleId,
       required this.actionId,
       required this.serviceParamsIds,
-      required this.controlId});
+      required this.controlId,
+      required this.webHeader,
+      this.formId,
+      this.merchantId});
 
   ActionItem.fromJson(Map<String, dynamic> json)
-      : formId = json["FormID"],
+      : moduleId = json["ModuleID"],
         actionType = json["ActionType"],
-        moduleId = json["ModuleID"],
         actionId = json["ActionID"],
         serviceParamsIds = json["ServiceParamIDs"],
-        controlId = json["ControlID"];
+        controlId = json["ControlID"],
+        webHeader = json["WebHeader"],
+        formId = json["FormID"],
+        merchantId = json["MerchantID"];
 }
 
 class FavouriteItem {
