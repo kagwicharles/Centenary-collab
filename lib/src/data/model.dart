@@ -155,7 +155,7 @@ class UserCode {
   String? description;
   String? relationId;
   String? extraField;
-  double? displayOrder;
+  int? displayOrder;
   bool? isDefault;
   String? extraFieldName;
 
@@ -210,6 +210,22 @@ class BankBranch {
   BankBranch.fromJson(Map<String, dynamic> json)
       : description = json["Description"],
         relationId = json["RelationID"];
+}
+
+@entity
+class Carousel {
+  @primaryKey
+  int? no;
+  String? imageUrl;
+  String? imageInfoUrl;
+  String? imageCategory;
+
+  Carousel({this.no, this.imageUrl, this.imageInfoUrl, this.imageCategory});
+
+  Carousel.fromJson(Map<String, dynamic> json)
+      : imageUrl = json['ImageURL'],
+        imageInfoUrl = json['ImageInfoURL'],
+        imageCategory = json['ImageCategory'];
 }
 
 class FavouriteItem {

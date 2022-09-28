@@ -124,5 +124,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
   }
 
   @override
-  void dispose() {}
+  void dispose() {
+    super.dispose();
+  }
 }

@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:archive/archive.dart';
+import 'package:brotli/brotli.dart';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart';
 import "package:hex/hex.dart";
@@ -51,5 +54,9 @@ class CryptLibImpl {
     data = encrypt(decryptedString, key, serverIV);
     data = data.replaceAll("\\r\\n|\\r|\\n", "");
     return data;
+  }
+
+  static String gzipDecompressStaticData(String gzippedString) {
+    return utf8.decode(GZipDecoder().decodeBytes(base64.decode(gzippedString)));
   }
 }

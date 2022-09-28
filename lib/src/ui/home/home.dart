@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:sqlite_viewer/sqlite_viewer.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
@@ -21,20 +22,12 @@ class HomePage extends StatefulWidget {
     CreditCardWidget(),
   ];
 
-  final List<Widget> adverts = const [
-    AdvertWidget(
-      adResource: "assets/ads/doge-1.jpg",
-    ),
-    AdvertWidget(adResource: "assets/ads/doge.jpeg"),
-    AdvertWidget(adResource: "assets/ads/doge-1.jpg"),
-    AdvertWidget(adResource: "assets/ads/doge.jpeg"),
-  ];
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+
   @override
   Widget build(BuildContext context) {
     // Open local sqlite database here
@@ -43,7 +36,6 @@ class _HomePageState extends State<HomePage> {
     //   Navigator.push(
     //       context, MaterialPageRoute(builder: (_) => DatabaseList()));
     // });
-
     return Scaffold(
         appBar: PreferredSize(
             preferredSize:
@@ -132,18 +124,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 24,
             ),
-            Center(
-                child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    height: 150,
-                    constraints: const BoxConstraints(maxWidth: 450),
-                    child: Swiper(
-                        autoplay: true,
-                        pagination: const SwiperPagination(),
-                        itemCount: widget.adverts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return widget.adverts[index];
-                        }))),
+            AdvertsContainer(),
             const SizedBox(
               height: 24,
             ),

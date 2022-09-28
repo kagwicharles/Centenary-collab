@@ -73,6 +73,8 @@ class _$AppDatabase extends AppDatabase {
 
   BankBranchDao? _bankBranchDaoInstance;
 
+  CarouselItemDao? _carouselItemDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -98,11 +100,13 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ActionItem` (`no` INTEGER, `moduleId` TEXT NOT NULL, `actionType` TEXT NOT NULL, `actionId` TEXT NOT NULL, `serviceParamsIds` TEXT NOT NULL, `controlId` TEXT NOT NULL, `webHeader` TEXT NOT NULL, `merchantId` TEXT, `formId` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `UserCode` (`no` INTEGER, `id` TEXT NOT NULL, `subCodeId` TEXT NOT NULL, `description` TEXT, `relationId` TEXT, `extraField` TEXT, `displayOrder` REAL, `isDefault` INTEGER, `extraFieldName` TEXT, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `UserCode` (`no` INTEGER, `id` TEXT NOT NULL, `subCodeId` TEXT NOT NULL, `description` TEXT, `relationId` TEXT, `extraField` TEXT, `displayOrder` INTEGER, `isDefault` INTEGER, `extraFieldName` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `OnlineAccountProduct` (`no` INTEGER, `id` TEXT, `description` TEXT, `relationId` TEXT, `url` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BankBranch` (`no` INTEGER, `description` TEXT, `relationId` TEXT, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Carousel` (`no` INTEGER, `imageUrl` TEXT, `imageInfoUrl` TEXT, `imageCategory` TEXT, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -140,6 +144,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   BankBranchDao get bankBranchDao {
     return _bankBranchDaoInstance ??= _$BankBranchDao(database, changeListener);
+  }
+
+  @override
+  CarouselItemDao get carouselItemDao {
+    return _carouselItemDaoInstance ??=
+        _$CarouselItemDao(database, changeListener);
   }
 }
 
@@ -349,7 +359,7 @@ class _$UserCodeDao extends UserCodeDao {
             description: row['description'] as String?,
             relationId: row['relationId'] as String?,
             extraField: row['extraField'] as String?,
-            displayOrder: row['displayOrder'] as double?,
+            displayOrder: row['displayOrder'] as int?,
             isDefault: row['isDefault'] == null
                 ? null
                 : (row['isDefault'] as int) != 0,
@@ -363,7 +373,7 @@ class _$UserCodeDao extends UserCodeDao {
   }
 
   @override
-  Future<void> inserUserCode(UserCode userCode) async {
+  Future<void> insertUserCode(UserCode userCode) async {
     await _userCodeInsertionAdapter.insert(userCode, OnConflictStrategy.abort);
   }
 }
@@ -451,5 +461,47 @@ class _$BankBranchDao extends BankBranchDao {
   Future<void> insertBankBranch(BankBranch bankBranch) async {
     await _bankBranchInsertionAdapter.insert(
         bankBranch, OnConflictStrategy.abort);
+  }
+}
+
+class _$CarouselItemDao extends CarouselItemDao {
+  _$CarouselItemDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _carouselInsertionAdapter = InsertionAdapter(
+            database,
+            'Carousel',
+            (Carousel item) => <String, Object?>{
+                  'no': item.no,
+                  'imageUrl': item.imageUrl,
+                  'imageInfoUrl': item.imageInfoUrl,
+                  'imageCategory': item.imageCategory
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Carousel> _carouselInsertionAdapter;
+
+  @override
+  Future<List<Carousel>> getAllCarousels() async {
+    return _queryAdapter.queryList('SELECT * FROM Carousel',
+        mapper: (Map<String, Object?> row) => Carousel(
+            no: row['no'] as int?,
+            imageUrl: row['imageUrl'] as String?,
+            imageInfoUrl: row['imageInfoUrl'] as String?,
+            imageCategory: row['imageCategory'] as String?));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Carousel');
+  }
+
+  @override
+  Future<void> insertCarousel(Carousel carousel) async {
+    await _carouselInsertionAdapter.insert(carousel, OnConflictStrategy.abort);
   }
 }

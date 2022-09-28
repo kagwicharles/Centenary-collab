@@ -19,19 +19,27 @@ class SharedPrefLocal {
   }
 
   addStaticDataVersion(int version) {
-    getSharedPrefInstance().setInt("currentDataVersion", version);
+    getSharedPrefInstance().then((sharedPref) {
+      sharedPref.setInt("currentDataVersion", version);
+    });
   }
 
   getStaticDataVersion() {
-    return getSharedPrefInstance().getString("currentDataVersion");
+    return getSharedPrefInstance().then((sharedPref) {
+      sharedPref.getString("currentDataVersion");
+    });
   }
 
   addAppIdleTimeout(int appIdleTimeout) {
-    getSharedPrefInstance().setInt("appIdleTimeout", appIdleTimeout);
+    getSharedPrefInstance().then((sharedPref) {
+      sharedPref.setInt("appIdleTimeout", appIdleTimeout);
+    });
   }
 
   getAppIdleTimeout() {
-    return getSharedPrefInstance().getString("appIdleTimeout");
+    return getSharedPrefInstance().then((sharedPref) {
+      sharedPref.getString("appIdleTimeout");
+    });
   }
 
   static getLocalToken() async {

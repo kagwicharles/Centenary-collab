@@ -73,51 +73,89 @@ class ActionControlRepository {
 }
 
 class UserCodeRepository {
-  final userCodeDao = AppDatabase.getDatabaseInstance().userCodeDao;
-
   void insertUserCode(UserCode userCode) async {
-    userCodeDao.insertUserCode(userCode);
+    await AppDatabase.getDatabaseInstance().then((database) {
+      database.userCodeDao.insertUserCode(userCode);
+    });
   }
 
   Future<List<UserCode>> getUserCodesById(String id) async {
-    return userCodeDao.getFormsByModuleId(id);
+    return AppDatabase.getDatabaseInstance().then((database) {
+      database.userCodeDao.getFormsByModuleId(id);
+    });
   }
 
   void clearTable() async {
-    userCodeDao.clearTable();
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.userCodeDao.clearTable();
+    });
   }
 }
 
 class OnlineAccountProductRepository {
-  final onlineAccountProductDao =
-      AppDatabase.getDatabaseInstance().onlineAccountProductDao;
-
   void insertOnlineAccountProduct(
       OnlineAccountProduct onlineAccountProduct) async {
-    onlineAccountProductDao.insertOnlineAccountProduct(onlineAccountProduct);
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.onlineAccountProductDao
+          .insertOnlineAccountProduct(onlineAccountProduct);
+    });
   }
 
   Future<List<OnlineAccountProduct>> getAllOnlineAccountProducts() async {
-    return onlineAccountProductDao.getAllOnlineAccountProducts();
+    var onlineAccountProducts;
+    await AppDatabase.getDatabaseInstance().then((database) {
+      onlineAccountProducts =
+          database.onlineAccountProductDao.getAllOnlineAccountProducts();
+    });
+    return onlineAccountProducts;
   }
 
   void clearTable() async {
-    onlineAccountProductDao.clearTable();
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.onlineAccountProductDao.clearTable();
+    });
   }
 }
 
 class BankBranchRepository {
-  final bankBranchDao = AppDatabase.getDatabaseInstance().bankBranchDao;
-
   void insertBankBranch(BankBranch bankBranch) async {
-    bankBranchDao.insertUserCode(bankBranch);
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.bankBranchDao.insertBankBranch(bankBranch);
+    });
   }
 
   Future<List<BankBranch>> getAllBankBranches() async {
-    return bankBranchDao.getAllBankBranchesd();
+    return AppDatabase.getDatabaseInstance().then((database) {
+      database.bankBranchDao.getAllBankBranches();
+    });
   }
 
   void clearTable() async {
-    bankBranchDao.clearTable();
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.bankBranchDao.clearTable();
+    });
+  }
+}
+
+class CarouselRepository {
+  void insertBankBranch(Carousel carousel) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.carouselItemDao.insertCarousel(carousel);
+    });
+  }
+
+  Future<List<Carousel>> getAllCarousels() async {
+    var carousels;
+
+    await AppDatabase.getDatabaseInstance().then((database) {
+      carousels = database.carouselItemDao.getAllCarousels();
+    });
+    return carousels;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.carouselItemDao.clearTable();
+    });
   }
 }

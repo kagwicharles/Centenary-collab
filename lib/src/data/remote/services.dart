@@ -24,8 +24,9 @@ class TestEndpoint {
   final _userCodeRepository = UserCodeRepository();
   final _onlineAccountProductRepository = OnlineAccountProductRepository();
   final _bankBranchRepository = BankBranchRepository();
+  final _carouselRepository = CarouselRepository();
 
-  baseRequestSetUp(String formId) async {
+  baseRequestSetUp() async {
     localDevice = await SharedPrefLocal.getLocalDevice();
     localIv = await SharedPrefLocal.getLocalIv();
     localToken = await SharedPrefLocal.getLocalToken();
@@ -34,7 +35,6 @@ class TestEndpoint {
     print("Key: ${CryptLibImpl.toSHA256(localDevice, 32)}, Local IV: $localIv");
 
     tb = {
-      "FormID": formId,
       "UNIQUEID": "ffffffff-a104-c869-0000-00002eac7df5",
       "CustomerID": "25600116",
       "BankID": "16",
@@ -100,7 +100,8 @@ class TestEndpoint {
   }
 
   void getModules() async {
-    await baseRequestSetUp("MENU");
+    await baseRequestSetUp();
+    tb["FormID"] = "MENU";
     String res, decrypted;
 
     final encryptedBody =
@@ -127,7 +128,9 @@ class TestEndpoint {
   }
 
   getForms() async {
-    await baseRequestSetUp("FORMS");
+    await baseRequestSetUp();
+    tb["FormID"] = "FORMS";
+
     String res, decrypted;
 
     final encryptedBody =
@@ -153,7 +156,9 @@ class TestEndpoint {
   }
 
   getActionControls() async {
-    await baseRequestSetUp("ACTIONS");
+    await baseRequestSetUp();
+    tb["FormID"] = "ACTIONS";
+
     String res, decrypted;
 
     final encryptedBody =
@@ -180,26 +185,25 @@ class TestEndpoint {
   }
 
   getStaticData() async {
-    await baseRequestSetUp("STATICDATA");
     String res, decrypted;
+    await baseRequestSetUp();
+    tb["FormID"] = "STATICDATA";
+    tb["SessionID"] = "ffffffff-9ed9-414d-0000-00001d093e12";
+    print('Raw request: $tb');
 
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
-    var response =
-        dio.post(Constants.baseUrl + "/ElmaWebOtherDynamic/api/elma/other",
-            options: Options(
-              headers: {'T': localToken},
-            ),
-            data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
+    final route = await SharedPrefLocal.getRoute("staticdata");
+    print("Getting static data...");
+    var response = dio.post(route,
+        options: Options(
+          headers: {'T': localToken},
+        ),
+        data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
     response.then((value) async => {
-          _userCodeRepository.clearTable(),
-          _onlineAccountProductRepository.clearTable(),
-          _bankBranchRepository.clearTable(),
+          print('Raw response: $value'),
           res = value.data["Response"],
-          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
-              base64.normalize(res),
-              CryptLibImpl.toSHA256(localDevice, 32),
-              localIv))),
+          decrypted = CryptLibImpl.gzipDecompressStaticData(res),
           await _sharedPref.addStaticDataVersion(
               json.decode(decrypted)["StaticDataVersion"]),
           await _sharedPref
@@ -214,6 +218,9 @@ class TestEndpoint {
           json.decode(decrypted)["BankBranch"].forEach((item) {
             _bankBranchRepository.insertBankBranch(BankBranch.fromJson(item));
           }),
+          json.decode(decrypted)["Images"].forEach((item) {
+            _carouselRepository.insertBankBranch(Carousel.fromJson(item));
+          }),
           logger.d("\n\nSTATIC DATA REQ: $decrypted"),
         });
   }
@@ -223,8 +230,9 @@ class TestEndpoint {
       required moduleId,
       required data,
       required webHeader}) async {
-    await baseRequestSetUp(formID);
+    await baseRequestSetUp();
     String res, decrypted;
+    tb["FormID"] = "DBCALL";
     tb["MerchantID"] = merchantId;
     tb["ModuleID"] = moduleId;
     tb["DynamicForm"] = data;
@@ -255,9 +263,10 @@ class TestEndpoint {
     var status = "";
     var message = "";
 
-    await baseRequestSetUp("ACTIVATIONREQ");
+    await baseRequestSetUp();
     final encryptedPin =
         CryptLibImpl.encrypt(jsonEncode(plainPin), localDevice, localIv);
+    tb["FormID"] = "ACTIVATIONREQ";
     tb["SessionID"] = Constants.uniqueId;
     tb["MobileNumber"] = mobileNumber;
     tb["Activation"] = {};

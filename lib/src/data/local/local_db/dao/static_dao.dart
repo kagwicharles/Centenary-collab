@@ -7,7 +7,7 @@ abstract class UserCodeDao {
   Future<List<UserCode>> getUserCodesById(String id);
 
   @insert
-  Future<void> inserUserCode(UserCode userCode);
+  Future<void> insertUserCode(UserCode userCode);
 
   @Query('DELETE FROM UserCode')
   Future<void> clearTable();

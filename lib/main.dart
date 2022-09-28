@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/remote/services.dart';
-import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/ui/auth/activation.dart';
-import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/theme/app_theme.dart';
 
 void main() {

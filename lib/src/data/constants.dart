@@ -14,6 +14,7 @@ class Constants {
   static const baseUrl = "https://uat.craftsilicon.com";
   static var uuid = const Uuid();
   static const bankCustomerId = "25600116";
+  static const country = "UGANDATEST";
 
   var version = "";
 
