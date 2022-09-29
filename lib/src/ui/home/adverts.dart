@@ -9,7 +9,7 @@ class AdvertsContainer extends StatefulWidget {
   @override
   State<AdvertsContainer> createState() => _AdvertsContainerState();
 
-  final _carouselRepository = CarouselRepository();
+  final _imageDataRepository = ImageDataRepository();
 }
 
 class _AdvertsContainerState extends State<AdvertsContainer> {
@@ -31,20 +31,20 @@ class _AdvertsContainerState extends State<AdvertsContainer> {
                 child: Container(
                     height: 150,
                     constraints: const BoxConstraints(maxWidth: 450),
-                    child: FutureBuilder<List<Carousel>>(
+                    child: FutureBuilder<List<ImageData>>(
                         future: getAdverts(),
                         builder: (BuildContext context,
-                            AsyncSnapshot<List<Carousel>> snapshot) {
+                            AsyncSnapshot<List<ImageData>> snapshot) {
                           Widget child = const SizedBox();
                           if (snapshot.hasData) {
-                            var _carousels = snapshot.data;
+                            var _images = snapshot.data;
 
                             child = Swiper(
                                 autoplay: true,
-                                itemCount: _carousels?.length,
+                                itemCount: _images?.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  var _carousel = _carousels![index].imageUrl;
-                                  return AdvertWidget(adResource: _carousel!);
+                                  var _Image = _images![index].imageUrl;
+                                  return AdvertWidget(adResource: _Image!);
                                 });
                           }
                           print("No online products yet");
@@ -52,7 +52,7 @@ class _AdvertsContainerState extends State<AdvertsContainer> {
                         })))));
   }
 
-  getAdverts() => widget._carouselRepository.getAllCarousels();
+  getAdverts() => widget._imageDataRepository.getAllImages("ADDS");
 }
 
 class AdvertWidget extends StatelessWidget {
@@ -62,16 +62,14 @@ class AdvertWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12.0),
-          child: CachedNetworkImage(
-            imageUrl: adResource,
-            placeholder: (context, url) =>
-                Lottie.asset('assets/lottie/loading.json'),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-          ),
-        ));
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.0),
+      child: CachedNetworkImage(
+        imageUrl: adResource,
+        // placeholder: (context, url) =>
+        //     Lottie.asset('assets/lottie/loading.json'),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+      ),
+    );
   }
 }

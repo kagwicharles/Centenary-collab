@@ -78,6 +78,7 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
           Widget child = const Center(child: Text("Please wait..."));
           if (snapshot.hasData) {
             child = Container(
+
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: GridView.builder(
                     shrinkWrap: true,

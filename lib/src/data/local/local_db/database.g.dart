@@ -73,7 +73,7 @@ class _$AppDatabase extends AppDatabase {
 
   BankBranchDao? _bankBranchDaoInstance;
 
-  CarouselItemDao? _carouselItemDaoInstance;
+  ImageDataDao? _imageDataDaoInstance;
 
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
@@ -106,7 +106,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BankBranch` (`no` INTEGER, `description` TEXT, `relationId` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Carousel` (`no` INTEGER, `imageUrl` TEXT, `imageInfoUrl` TEXT, `imageCategory` TEXT, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `ImageData` (`no` INTEGER, `imageUrl` TEXT, `imageInfoUrl` TEXT, `imageCategory` TEXT, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -147,9 +147,8 @@ class _$AppDatabase extends AppDatabase {
   }
 
   @override
-  CarouselItemDao get carouselItemDao {
-    return _carouselItemDaoInstance ??=
-        _$CarouselItemDao(database, changeListener);
+  ImageDataDao get imageDataDao {
+    return _imageDataDaoInstance ??= _$ImageDataDao(database, changeListener);
   }
 }
 
@@ -464,13 +463,13 @@ class _$BankBranchDao extends BankBranchDao {
   }
 }
 
-class _$CarouselItemDao extends CarouselItemDao {
-  _$CarouselItemDao(this.database, this.changeListener)
+class _$ImageDataDao extends ImageDataDao {
+  _$ImageDataDao(this.database, this.changeListener)
       : _queryAdapter = QueryAdapter(database),
-        _carouselInsertionAdapter = InsertionAdapter(
+        _imageDataInsertionAdapter = InsertionAdapter(
             database,
-            'Carousel',
-            (Carousel item) => <String, Object?>{
+            'ImageData',
+            (ImageData item) => <String, Object?>{
                   'no': item.no,
                   'imageUrl': item.imageUrl,
                   'imageInfoUrl': item.imageInfoUrl,
@@ -483,25 +482,28 @@ class _$CarouselItemDao extends CarouselItemDao {
 
   final QueryAdapter _queryAdapter;
 
-  final InsertionAdapter<Carousel> _carouselInsertionAdapter;
+  final InsertionAdapter<ImageData> _imageDataInsertionAdapter;
 
   @override
-  Future<List<Carousel>> getAllCarousels() async {
-    return _queryAdapter.queryList('SELECT * FROM Carousel',
-        mapper: (Map<String, Object?> row) => Carousel(
+  Future<List<ImageData>> getAllImages(String imageType) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM ImageData WHERE imageCategory = ?1',
+        mapper: (Map<String, Object?> row) => ImageData(
             no: row['no'] as int?,
             imageUrl: row['imageUrl'] as String?,
             imageInfoUrl: row['imageInfoUrl'] as String?,
-            imageCategory: row['imageCategory'] as String?));
+            imageCategory: row['imageCategory'] as String?),
+        arguments: [imageType]);
   }
 
   @override
   Future<void> clearTable() async {
-    await _queryAdapter.queryNoReturn('DELETE FROM Carousel');
+    await _queryAdapter.queryNoReturn('DELETE FROM ImageData');
   }
 
   @override
-  Future<void> insertCarousel(Carousel carousel) async {
-    await _carouselInsertionAdapter.insert(carousel, OnConflictStrategy.abort);
+  Future<void> insertImage(ImageData imageData) async {
+    await _imageDataInsertionAdapter.insert(
+        imageData, OnConflictStrategy.abort);
   }
 }

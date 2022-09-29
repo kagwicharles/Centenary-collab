@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
@@ -8,6 +9,7 @@ import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/utils/app_logger.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 
 class TestEndpoint {
@@ -15,6 +17,11 @@ class TestEndpoint {
   final dio = Dio();
   Map<String, dynamic> tb = {};
   var logger = Logger();
+  String currrentBaseUrl = "";
+
+  TestEndpoint() {
+    currrentBaseUrl = Constants.test ? Constants.uat : Constants.live;
+  }
 
   final _sharedPref = SharedPrefLocal();
 
@@ -24,7 +31,7 @@ class TestEndpoint {
   final _userCodeRepository = UserCodeRepository();
   final _onlineAccountProductRepository = OnlineAccountProductRepository();
   final _bankBranchRepository = BankBranchRepository();
-  final _carouselRepository = CarouselRepository();
+  final _imageDataRepository = ImageDataRepository();
 
   baseRequestSetUp() async {
     localDevice = await SharedPrefLocal.getLocalDevice();
@@ -73,7 +80,7 @@ class TestEndpoint {
     };
 
     final response = await http.post(
-        Uri.parse("${Constants.baseUrl}/ElmaAuthDynamic/api/auth/apps"),
+        Uri.parse("$currrentBaseUrl/ElmaAuthDynamic/api/auth/apps"),
         body: requestBody);
 
     if (response.statusCode == 200) {
@@ -99,16 +106,16 @@ class TestEndpoint {
     }
   }
 
-  void getModules() async {
+  void getUIData(FormId formId) async {
+    String res, status, decrypted;
     await baseRequestSetUp();
-    tb["FormID"] = "MENU";
-    String res, decrypted;
+    tb["FormID"] = formId.name;
 
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
 
     var response =
-        dio.post(Constants.baseUrl + "/ElmaWebOtherDynamic/api/elma/other",
+        dio.post(currrentBaseUrl + "/ElmaWebDataDynamic/api/elma/data",
             options: Options(
               headers: {'T': localToken},
             ),
@@ -116,71 +123,9 @@ class TestEndpoint {
     response.then((value) => {
           _moduleRepository.clearTable(),
           res = value.data["Response"],
-          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
-              base64.normalize(res),
-              CryptLibImpl.toSHA256(localDevice, 32),
-              localIv))),
-          json.decode(decrypted)[0]["Modules"].forEach((item) {
-            _moduleRepository.insertModuleItem(ModuleItem.fromJson(item));
-          }),
-          print("\n\nMODULES REQ: $decrypted}")
-        });
-  }
-
-  getForms() async {
-    await baseRequestSetUp();
-    tb["FormID"] = "FORMS";
-
-    String res, decrypted;
-
-    final encryptedBody =
-        CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
-    var response =
-        dio.post(Constants.baseUrl + "/ElmaWebOtherDynamic/api/elma/other",
-            options: Options(
-              headers: {'T': localToken},
-            ),
-            data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
-    response.then((value) async => {
-          _formRepository.clearTable(),
-          res = value.data["Response"],
-          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
-              base64.normalize(res),
-              CryptLibImpl.toSHA256(localDevice, 32),
-              localIv))),
-          json.decode(decrypted)[0]["FormControls"].forEach((item) {
-            _formRepository.insertFormItem(FormItem.fromJson(item));
-          }),
-          print("\n\nFORMS REQ: $decrypted"),
-        });
-  }
-
-  getActionControls() async {
-    await baseRequestSetUp();
-    tb["FormID"] = "ACTIONS";
-
-    String res, decrypted;
-
-    final encryptedBody =
-        CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
-    var response =
-        dio.post(Constants.baseUrl + "/ElmaWebOtherDynamic/api/elma/other",
-            options: Options(
-              headers: {'T': localToken},
-            ),
-            data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
-    response.then((value) async => {
-          _actionControlRepository.clearTable(),
-          res = value.data["Response"],
-          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
-              base64.normalize(res),
-              CryptLibImpl.toSHA256(localDevice, 32),
-              localIv))),
-          json.decode(decrypted)[0]["ActionControls"].forEach((item) {
-            _actionControlRepository
-                .insertActionControl(ActionItem.fromJson(item));
-          }),
-          logger.d("\n\nACTION CONTROLS REQ: $decrypted"),
+          decrypted = CryptLibImpl.gzipDecompressStaticData(res),
+          AppLogger.appLog(tag: "\n\n$formId REQ", message: decrypted),
+          addDataToLocalDb(formId, decryptedData: decrypted)
         });
   }
 
@@ -189,7 +134,6 @@ class TestEndpoint {
     await baseRequestSetUp();
     tb["FormID"] = "STATICDATA";
     tb["SessionID"] = "ffffffff-9ed9-414d-0000-00001d093e12";
-    print('Raw request: $tb');
 
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
@@ -200,29 +144,32 @@ class TestEndpoint {
           headers: {'T': localToken},
         ),
         data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
-    response.then((value) async => {
-          print('Raw response: $value'),
-          res = value.data["Response"],
-          decrypted = CryptLibImpl.gzipDecompressStaticData(res),
-          await _sharedPref.addStaticDataVersion(
-              json.decode(decrypted)["StaticDataVersion"]),
-          await _sharedPref
-              .addAppIdleTimeout(json.decode(decrypted)["AppIdleTimeout"]),
-          json.decode(decrypted)["UserCode"].forEach((item) {
-            _userCodeRepository.insertUserCode(UserCode.fromJson(item));
-          }),
-          json.decode(decrypted)["OnlineAccountProduct"].forEach((item) {
-            _onlineAccountProductRepository.insertOnlineAccountProduct(
-                OnlineAccountProduct.fromJson(item));
-          }),
-          json.decode(decrypted)["BankBranch"].forEach((item) {
-            _bankBranchRepository.insertBankBranch(BankBranch.fromJson(item));
-          }),
-          json.decode(decrypted)["Images"].forEach((item) {
-            _carouselRepository.insertBankBranch(Carousel.fromJson(item));
-          }),
-          logger.d("\n\nSTATIC DATA REQ: $decrypted"),
-        });
+    try {
+      response.then((value) async => {
+            res = value.data["Response"],
+            decrypted = CryptLibImpl.gzipDecompressStaticData(res),
+            AppLogger.appLog(tag: "\n\nSTATIC DATA REQ:", message: decrypted),
+            await _sharedPref.addStaticDataVersion(
+                json.decode(decrypted)["StaticDataVersion"]),
+            await _sharedPref
+                .addAppIdleTimeout(json.decode(decrypted)["AppIdleTimeout"]),
+            json.decode(decrypted)["UserCode"].forEach((item) {
+              _userCodeRepository.insertUserCode(UserCode.fromJson(item));
+            }),
+            json.decode(decrypted)["OnlineAccountProduct"].forEach((item) {
+              _onlineAccountProductRepository.insertOnlineAccountProduct(
+                  OnlineAccountProduct.fromJson(item));
+            }),
+            json.decode(decrypted)["BankBranch"].forEach((item) {
+              _bankBranchRepository.insertBankBranch(BankBranch.fromJson(item));
+            }),
+            json.decode(decrypted)["Images"].forEach((item) {
+              _imageDataRepository.insertImageData(ImageData.fromJson(item));
+            }),
+          });
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   dynamicRequest(String formID,
@@ -274,7 +221,7 @@ class TestEndpoint {
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(tb), localDevice, localIv);
     var response = dio
-        .post(Constants.baseUrl + "/ElmaWebAuthDynamic/api/elma/authentication",
+        .post(currrentBaseUrl + "/ElmaWebAuthDynamic/api/elma/authentication",
             options: Options(
               headers: {'T': localToken},
             ),
@@ -291,5 +238,34 @@ class TestEndpoint {
         });
     print("Message: $message");
     return message;
+  }
+
+  addDataToLocalDb(FormId formId, {required decryptedData}) {
+    switch (formId) {
+      case FormId.MENU:
+        {
+          json
+              .decode(decryptedData)[0][DynamicDataType.Modules.name]
+              .forEach((item) {
+            _moduleRepository.insertModuleItem(ModuleItem.fromJson(item));
+          });
+        }
+        break;
+      case FormId.FORMS:
+        json
+            .decode(decryptedData)[0][DynamicDataType.FormControls.name]
+            .forEach((item) {
+          _formRepository.insertFormItem(FormItem.fromJson(item));
+        });
+        break;
+      case FormId.ACTIONS:
+        json
+            .decode(decryptedData)[0][DynamicDataType.ActionControls.name]
+            .forEach((item) {
+          _actionControlRepository
+              .insertActionControl(ActionItem.fromJson(item));
+        });
+        break;
+    }
   }
 }

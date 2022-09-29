@@ -17,6 +17,10 @@ enum ViewType {
 
 enum ControlFormat { PinNumber, PIN, NUMERIC, Amount, DATE }
 
+enum FormId { MENU, FORMS, ACTIONS }
+
+enum DynamicDataType { Modules, ActionControls, FormControls }
+
 class CreditCard {
   final String balance;
   final String currency;
@@ -213,16 +217,16 @@ class BankBranch {
 }
 
 @entity
-class Carousel {
+class ImageData {
   @primaryKey
   int? no;
   String? imageUrl;
   String? imageInfoUrl;
   String? imageCategory;
 
-  Carousel({this.no, this.imageUrl, this.imageInfoUrl, this.imageCategory});
+  ImageData({this.no, this.imageUrl, this.imageInfoUrl, this.imageCategory});
 
-  Carousel.fromJson(Map<String, dynamic> json)
+  ImageData.fromJson(Map<String, dynamic> json)
       : imageUrl = json['ImageURL'],
         imageInfoUrl = json['ImageInfoURL'],
         imageCategory = json['ImageCategory'];

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/ui/auth/activation.dart';
 import 'package:rafiki/theme/app_theme.dart';
 
 void main() {
   TestEndpoint().getToken().then((res) => {
-        TestEndpoint().getModules(),
-        TestEndpoint().getForms(),
-        TestEndpoint().getActionControls(),
+        TestEndpoint().getUIData(FormId.MENU),
+        TestEndpoint().getUIData(FormId.FORMS),
+        TestEndpoint().getUIData(FormId.ACTIONS),
         TestEndpoint().getStaticData()
       });
   runApp(const MyApp());

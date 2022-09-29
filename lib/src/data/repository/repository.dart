@@ -137,25 +137,25 @@ class BankBranchRepository {
   }
 }
 
-class CarouselRepository {
-  void insertBankBranch(Carousel carousel) async {
+class ImageDataRepository {
+  void insertImageData(ImageData imageData) async {
     AppDatabase.getDatabaseInstance().then((database) {
-      database.carouselItemDao.insertCarousel(carousel);
+      database.imageDataDao.insertImage(imageData);
     });
   }
 
-  Future<List<Carousel>> getAllCarousels() async {
-    var carousels;
+  Future<List<ImageData>> getAllImages(String imageType) async {
+    var Images;
 
     await AppDatabase.getDatabaseInstance().then((database) {
-      carousels = database.carouselItemDao.getAllCarousels();
+      Images = database.imageDataDao.getAllImages(imageType);
     });
-    return carousels;
+    return Images;
   }
 
   void clearTable() async {
     AppDatabase.getDatabaseInstance().then((database) {
-      database.carouselItemDao.clearTable();
+      database.imageDataDao.clearTable();
     });
   }
 }
