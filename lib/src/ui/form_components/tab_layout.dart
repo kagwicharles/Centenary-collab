@@ -69,9 +69,9 @@ class TabWidgetList extends StatefulWidget {
   State<TabWidgetList> createState() => _TabWidgetListState();
 }
 
-class _TabWidgetListState extends State<TabWidgetList>
-    with AutomaticKeepAliveClientMixin {
+class _TabWidgetListState extends State<TabWidgetList> {
   var _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Padding(

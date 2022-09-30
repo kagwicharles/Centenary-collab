@@ -152,6 +152,7 @@ class TestEndpoint {
                 json.decode(decrypted)["StaticDataVersion"]),
             await _sharedPref
                 .addAppIdleTimeout(json.decode(decrypted)["AppIdleTimeout"]),
+           await clearAllStaticData(),
             json.decode(decrypted)["UserCode"].forEach((item) {
               _userCodeRepository.insertUserCode(UserCode.fromJson(item));
             }),
@@ -269,5 +270,12 @@ class TestEndpoint {
         });
         break;
     }
+  }
+
+  clearAllStaticData() async {
+    _userCodeRepository.clearTable();
+    _onlineAccountProductRepository.clearTable();
+    _bankBranchRepository.clearTable();
+    _imageDataRepository.clearTable();
   }
 }

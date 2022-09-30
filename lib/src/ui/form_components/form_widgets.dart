@@ -16,10 +16,7 @@ class InputUtil {
 class DropdownButtonWidget extends StatefulWidget {
   final String text;
   String? serviceParamId;
-  List<String> dropdownItems = [];
   String? dataSourceId;
-
-  final _userCodeRepository = UserCodeRepository();
 
   DropdownButtonWidget(
       {Key? key, required this.text, this.serviceParamId, this.dataSourceId})
@@ -30,39 +27,57 @@ class DropdownButtonWidget extends StatefulWidget {
 }
 
 class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
+  List<String> dropdownItems = [];
+
+  final _userCodeRepository = UserCodeRepository();
+
+  List<UserCode>? _dropDownItems;
+
+  String? _currentValue;
+
   @override
   Widget build(BuildContext context) {
-    var currentValue =
-        widget.dropdownItems.isNotEmpty ? widget.dropdownItems[0] : null;
-
-    return FutureBuilder<List<UserCode>>(
+    return FutureBuilder<List<UserCode>?>(
         future: getDropDownItems(),
         builder:
-            (BuildContext context, AsyncSnapshot<List<UserCode>> snapshot) {
-          Widget child = const SizedBox();
+            (BuildContext context, AsyncSnapshot<List<UserCode>?> snapshot) {
+          Widget child = DropdownButtonFormField2(
+            value: _currentValue,
+            hint: Text(
+              widget.text,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            isExpanded: true,
+            style: const TextStyle(fontSize: 16, color: Colors.black),
+            items: const [],
+          );
           if (snapshot.hasData) {
-            var _images = snapshot.data;
-
+            _dropDownItems?.clear();
+            print("*After clear>>$_dropDownItems");
+            _dropDownItems = snapshot.data;
+            print("*After add..$_dropDownItems");
+            print("Current dropdown value>>>$_currentValue");
             child = DropdownButtonFormField2(
-              value: currentValue,
+              value: _currentValue,
               hint: Text(
                 widget.text,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               isExpanded: true,
               style: const TextStyle(fontSize: 16, color: Colors.black),
-              onChanged: (value) {
-                setState(() {
-                  // InputUtil.formInputValues.add(value.toString());
-                });
-              },
+              onChanged: ((value) => {_currentValue = value.toString()}),
               validator: (value) {
-                InputUtil.formInputValues.add({widget.serviceParamId: value});
+                InputUtil.formInputValues
+                    .add({widget.serviceParamId: _currentValue});
               },
-              items: widget.dropdownItems.map((value) {
+              items: _dropDownItems?.map((value) {
+                print(value.description);
                 return DropdownMenuItem(
-                  value: value,
-                  child: Text(value),
+                  value: value.description,
+                  child: Text(
+                    value.description!,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
                 );
               }).toList(),
             );
@@ -71,8 +86,11 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
         });
   }
 
-  getDropDownItems() =>
-      widget._userCodeRepository.getUserCodesById(widget.dataSourceId!);
+  getDropDownItems() {
+    if (widget.dataSourceId != null) {
+      return _userCodeRepository.getUserCodesById(widget.dataSourceId);
+    }
+  }
 }
 
 class TextInputWidget extends StatefulWidget {

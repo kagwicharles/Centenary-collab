@@ -5,7 +5,7 @@ import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:vibration/vibration.dart';
 
-class DetermineRenderWidget extends StatefulWidget {
+class DetermineRenderWidget extends StatelessWidget {
   static List<String> textfieldValues = [];
   static List<String> dropdownItems = [];
   ViewType? widgetType;
@@ -32,48 +32,45 @@ class DetermineRenderWidget extends StatefulWidget {
       required this.formItem,
       refreshParent});
 
-  @override
-  State<DetermineRenderWidget> createState() => _DetermineRenderWidgetState();
-}
-
-class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
   Function()? refreshParent;
 
   String? selectedItem;
+
   bool obscureText = false;
+
   String? number = "";
 
   Widget? dynamicWidgetItem;
 
   @override
   Widget build(BuildContext context) {
-    print("Widget type: ${widget.widgetType}");
-    switch (widget.widgetType) {
+    print("Widget type: $widgetType");
+    switch (widgetType) {
       case ViewType.TEXT:
         {
-          print(widget.controlFormat);
-          obscureText = widget.controlFormat == ControlFormat.PinNumber.name ||
-                  widget.controlFormat == ControlFormat.PIN.name
+          print(controlFormat);
+          obscureText = controlFormat == ControlFormat.PinNumber.name ||
+                  controlFormat == ControlFormat.PIN.name
               ? true
               : false;
           dynamicWidgetItem = TextInputWidget(
-              text: widget.text,
-              isMandatory: widget.isMandatory,
-              controlFormat: widget.controlFormat,
-              serviceParamId: widget.serviceParamId,
+              text: text,
+              isMandatory: isMandatory,
+              controlFormat: controlFormat,
+              serviceParamId: serviceParamId,
               isObscured: obscureText);
         }
         break;
 
       case ViewType.DATE:
         {
-          print(widget.controlFormat);
+          print(controlFormat);
 
           dynamicWidgetItem = TextInputWidget(
-            text: widget.text,
-            isMandatory: widget.isMandatory,
-            controlFormat: widget.controlFormat,
-            serviceParamId: widget.serviceParamId,
+            text: text,
+            isMandatory: isMandatory,
+            controlFormat: controlFormat,
+            serviceParamId: serviceParamId,
           );
         }
         break;
@@ -81,23 +78,20 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
       case ViewType.BUTTON:
         {
           dynamicWidgetItem = ButtonWidget(
-            text: widget.formItem.controlText!,
-            formKey: widget.formKey,
-            moduleId: widget.formItem.moduleId!,
-            actionId: widget.formItem.actionId!,
+            text: formItem.controlText!,
+            formKey: formKey,
+            moduleId: formItem.moduleId!,
+            actionId: formItem.actionId!,
           );
         }
         break;
 
       case ViewType.DROPDOWN:
         {
-          var currentValue = DetermineRenderWidget.dropdownItems.isNotEmpty
-              ? DetermineRenderWidget.dropdownItems[0]
-              : null;
           dynamicWidgetItem = DropdownButtonWidget(
-            text: widget.text,
-            serviceParamId: widget.serviceParamId,
-            dataSourceId: widget.formItem.dataSourceId,
+            text: text,
+            serviceParamId: serviceParamId,
+            dataSourceId: formItem.dataSourceId,
           );
         }
         break;
@@ -109,7 +103,7 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
 
       case ViewType.LABEL:
         {
-          dynamicWidgetItem = LabelWidget(text: widget.text);
+          dynamicWidgetItem = LabelWidget(text: text);
         }
         break;
 
@@ -122,8 +116,8 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
       case ViewType.PHONECONTACTS:
         {
           dynamicWidgetItem = PhonePickerFormWidget(
-            text: widget.text,
-            serviceParamId: widget.serviceParamId,
+            text: text,
+            serviceParamId: serviceParamId,
           );
         }
         break;

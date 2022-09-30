@@ -78,10 +78,13 @@ class UserCodeRepository {
     });
   }
 
-  Future<List<UserCode>> getUserCodesById(String id) async {
-    return AppDatabase.getDatabaseInstance().then((database) {
-      database.userCodeDao.getFormsByModuleId(id);
+  Future<List<UserCode>> getUserCodesById(String? id) async {
+    var _userCodes;
+    await AppDatabase.getDatabaseInstance().then((database) {
+      _userCodes = database.userCodeDao.getUserCodesById(id);
+      print("Usercodes....$_userCodes");
     });
+    return _userCodes;
   }
 
   void clearTable() async {
