@@ -5,13 +5,17 @@ import 'package:rafiki/src/ui/auth/activation.dart';
 import 'package:rafiki/theme/app_theme.dart';
 
 void main() {
-  TestEndpoint().getToken().then((res) => {
+  getAppData();
+  runApp(const MyApp());
+}
+
+getAppData() async {
+  TestEndpoint().getToken().then((res) async => {
         TestEndpoint().getUIData(FormId.MENU),
         TestEndpoint().getUIData(FormId.FORMS),
         TestEndpoint().getUIData(FormId.ACTIONS),
         TestEndpoint().getStaticData()
       });
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

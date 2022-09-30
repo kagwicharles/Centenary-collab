@@ -17,8 +17,12 @@ class DropdownButtonWidget extends StatefulWidget {
   final String text;
   String? serviceParamId;
   List<String> dropdownItems = [];
+  String? dataSourceId;
 
-  DropdownButtonWidget({Key? key, required this.text, this.serviceParamId})
+  final _userCodeRepository = UserCodeRepository();
+
+  DropdownButtonWidget(
+      {Key? key, required this.text, this.serviceParamId, this.dataSourceId})
       : super(key: key);
 
   @override
@@ -31,30 +35,44 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
     var currentValue =
         widget.dropdownItems.isNotEmpty ? widget.dropdownItems[0] : null;
 
-    return DropdownButtonFormField2(
-      value: currentValue,
-      hint: Text(
-        widget.text,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-      ),
-      isExpanded: true,
-      style: const TextStyle(fontSize: 16, color: Colors.black),
-      onChanged: (value) {
-        setState(() {
-          // InputUtil.formInputValues.add(value.toString());
+    return FutureBuilder<List<UserCode>>(
+        future: getDropDownItems(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<UserCode>> snapshot) {
+          Widget child = const SizedBox();
+          if (snapshot.hasData) {
+            var _images = snapshot.data;
+
+            child = DropdownButtonFormField2(
+              value: currentValue,
+              hint: Text(
+                widget.text,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              isExpanded: true,
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+              onChanged: (value) {
+                setState(() {
+                  // InputUtil.formInputValues.add(value.toString());
+                });
+              },
+              validator: (value) {
+                InputUtil.formInputValues.add({widget.serviceParamId: value});
+              },
+              items: widget.dropdownItems.map((value) {
+                return DropdownMenuItem(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            );
+          }
+          return child;
         });
-      },
-      validator: (value) {
-        InputUtil.formInputValues.add({widget.serviceParamId: value});
-      },
-      items: widget.dropdownItems.map((value) {
-        return DropdownMenuItem(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
   }
+
+  getDropDownItems() =>
+      widget._userCodeRepository.getUserCodesById(widget.dataSourceId!);
 }
 
 class TextInputWidget extends StatefulWidget {

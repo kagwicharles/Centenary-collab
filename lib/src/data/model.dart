@@ -82,6 +82,7 @@ class FormItem {
   String? serviceParamId;
   double? displayOrder;
   String? controlFormat;
+  String? dataSourceId;
   bool? isMandatory;
   bool? isEncrypted;
 
@@ -96,6 +97,7 @@ class FormItem {
     this.serviceParamId,
     this.displayOrder,
     this.controlFormat,
+    this.dataSourceId,
     this.isMandatory,
     this.isEncrypted,
   });
@@ -113,6 +115,7 @@ class FormItem {
     isMandatory = json['IsMandatory'];
     isEncrypted = json['IsEncrypted'];
     controlFormat = json['ControlFormat'];
+    dataSourceId = json['DataSourceID'];
   }
 }
 

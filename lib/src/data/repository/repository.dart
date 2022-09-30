@@ -2,25 +2,24 @@ import 'package:rafiki/src/data/local/local_db/database.dart';
 import 'package:rafiki/src/data/model.dart';
 
 class ModuleRepository {
-  insertModuleItem(ModuleItem moduleItem) async {
-    final database =
-        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-    final moduleItemDao = database.moduleItemDao;
-    moduleItemDao.insertModuleItem(moduleItem);
+  void insertModuleItem(ModuleItem moduleItem) async {
+    await AppDatabase.getDatabaseInstance().then((database) {
+      database.moduleItemDao.insertModuleItem(moduleItem);
+    });
   }
 
   Future<List<ModuleItem>> getModulesById(String id) async {
-    final database =
-        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-    final moduleItemDao = database.moduleItemDao;
-    return moduleItemDao.getModulesById(id);
+    var modules;
+    await AppDatabase.getDatabaseInstance().then((database) {
+      modules = database.moduleItemDao.getModulesById(id);
+    });
+    return modules;
   }
 
   void clearTable() async {
-    final database =
-        await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-    final moduleItemDao = database.moduleItemDao;
-    moduleItemDao.clearTable();
+    await AppDatabase.getDatabaseInstance().then((database) {
+      database.moduleItemDao.clearTable();
+    });
   }
 }
 

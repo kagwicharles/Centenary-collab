@@ -97,6 +97,7 @@ class _DetermineRenderWidgetState extends State<DetermineRenderWidget> {
           dynamicWidgetItem = DropdownButtonWidget(
             text: widget.text,
             serviceParamId: widget.serviceParamId,
+            dataSourceId: widget.formItem.dataSourceId,
           );
         }
         break;

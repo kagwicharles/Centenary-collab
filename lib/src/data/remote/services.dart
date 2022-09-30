@@ -121,7 +121,6 @@ class TestEndpoint {
             ),
             data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
     response.then((value) => {
-          _moduleRepository.clearTable(),
           res = value.data["Response"],
           decrypted = CryptLibImpl.gzipDecompressStaticData(res),
           AppLogger.appLog(tag: "\n\n$formId REQ", message: decrypted),
@@ -244,6 +243,7 @@ class TestEndpoint {
     switch (formId) {
       case FormId.MENU:
         {
+          _moduleRepository.clearTable();
           json
               .decode(decryptedData)[0][DynamicDataType.Modules.name]
               .forEach((item) {
@@ -252,6 +252,7 @@ class TestEndpoint {
         }
         break;
       case FormId.FORMS:
+        _formRepository.clearTable();
         json
             .decode(decryptedData)[0][DynamicDataType.FormControls.name]
             .forEach((item) {
@@ -259,6 +260,7 @@ class TestEndpoint {
         });
         break;
       case FormId.ACTIONS:
+        _actionControlRepository.clearTable();
         json
             .decode(decryptedData)[0][DynamicDataType.ActionControls.name]
             .forEach((item) {
