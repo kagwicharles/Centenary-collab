@@ -74,8 +74,14 @@ class _TabWidgetListState extends State<TabWidgetList> {
 
   @override
   Widget build(BuildContext context) {
+    bool containsQR = widget.formItems
+        .map((item) => item.controlType)
+        .contains(ViewType.QRSCANNER.name);
+
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        padding: containsQR
+            ? EdgeInsets.zero
+            : const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
         child: Form(
             key: _formKey,
             child: ListView.builder(

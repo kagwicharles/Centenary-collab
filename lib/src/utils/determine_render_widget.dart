@@ -109,7 +109,7 @@ class DetermineRenderWidget extends StatelessWidget {
 
       case ViewType.QRSCANNER:
         {
-          dynamicWidgetItem = QRScannerFormWidget();
+          dynamicWidgetItem = QRCodeScanner();
         }
         break;
 

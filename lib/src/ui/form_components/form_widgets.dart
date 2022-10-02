@@ -1,6 +1,9 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+// import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
@@ -8,6 +11,9 @@ import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/determine_render_widget.dart';
 import 'package:rafiki/src/utils/render_utils.dart';
 import 'package:vibration/vibration.dart';
+
+import 'package:qrscan/qrscan.dart' as scanner;
+
 
 class InputUtil {
   static List<Map<String?, dynamic>> formInputValues = [];
@@ -52,11 +58,11 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
             items: const [],
           );
           if (snapshot.hasData) {
-            _dropDownItems?.clear();
-            print("*After clear>>$_dropDownItems");
+            // _dropDownItems?.clear();
+            // print("*After clear>>$_dropDownItems");
             _dropDownItems = snapshot.data;
-            print("*After add..$_dropDownItems");
-            print("Current dropdown value>>>$_currentValue");
+            // print("*After add..$_dropDownItems");
+            // print("Current dropdown value>>>$_currentValue");
             child = DropdownButtonFormField2(
               value: _currentValue,
               hint: Text(
@@ -173,6 +179,7 @@ class ButtonWidget extends StatelessWidget {
     required this.moduleId,
     required this.actionId,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -196,6 +203,7 @@ class RButtonWidget extends StatelessWidget {
   final String text;
 
   RButtonWidget({Key? key, required this.text}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -209,6 +217,7 @@ class LabelWidget extends StatelessWidget {
   final String text;
 
   LabelWidget({required this.text});
+
   @override
   Widget build(BuildContext context) {
     return Text(
@@ -218,16 +227,29 @@ class LabelWidget extends StatelessWidget {
   }
 }
 
-class QRScannerFormWidget extends StatelessWidget {
+class QRCodeScanner extends StatefulWidget {
+  QRCodeScanner({Key? key}) : super(key: key);
+  // MobileScannerController cameraController = MobileScannerController();
+
+  @override
+  State<QRCodeScanner> createState() => _QRCodeScannerState();
+
+  Uint8List bytes = Uint8List(0);
+}
+
+class _QRCodeScannerState extends State<QRCodeScanner> {
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      "assets/images/qr-code.png",
-      height: 100,
-      width: 100,
-    );
+    return TextButton(onPressed: (){_scanPhoto();}, child: Text("Scan QR"));
+  }
+
+  Future _scanPhoto() async {
+    // await Permission.storage.request();
+    String? barcode = await scanner.scan();
+    print("Scanned...$barcode");
   }
 }
+
 
 class PhonePickerFormWidget extends StatefulWidget {
   String? text;
