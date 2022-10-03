@@ -2,18 +2,15 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
-// import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:permission_handler/permission_handler.dart';
+
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
-import 'package:rafiki/src/utils/determine_render_widget.dart';
 import 'package:rafiki/src/utils/render_utils.dart';
 import 'package:vibration/vibration.dart';
-
-import 'package:qrscan/qrscan.dart' as scanner;
-
+import 'dart:io';
 
 class InputUtil {
   static List<Map<String?, dynamic>> formInputValues = [];
@@ -229,7 +226,6 @@ class LabelWidget extends StatelessWidget {
 
 class QRCodeScanner extends StatefulWidget {
   QRCodeScanner({Key? key}) : super(key: key);
-  // MobileScannerController cameraController = MobileScannerController();
 
   @override
   State<QRCodeScanner> createState() => _QRCodeScannerState();
@@ -238,18 +234,79 @@ class QRCodeScanner extends StatefulWidget {
 }
 
 class _QRCodeScannerState extends State<QRCodeScanner> {
+  QRViewController? controller;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  Barcode? result;
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller!.pauseCamera();
+    }
+    controller!.resumeCamera();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: (){_scanPhoto();}, child: Text("Scan QR"));
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 150.0
+        : 300.0;
+    var appBarHeight = AppBar().preferredSize.height;
+    print("Appbar height***#$appBarHeight");
+
+    return Container(
+        height: MediaQuery.of(context).size.height - appBarHeight,
+        width: MediaQuery.of(context).size.width,
+        child: QRView(
+          key: qrKey,
+          onQRViewCreated: _onQRViewCreated,
+          overlay: QrScannerOverlayShape(
+              borderColor: Colors.red,
+              borderRadius: 10,
+              borderLength: 30,
+              borderWidth: 10,
+              cutOutSize: scanArea),
+          onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+        ));
   }
 
-  Future _scanPhoto() async {
-    // await Permission.storage.request();
-    String? barcode = await scanner.scan();
-    print("Scanned...$barcode");
+  // return TextButton(onPressed: (){_scanPhoto();}, child: Text("Scan QR"));
+
+  void _onQRViewCreated(QRViewController controller) {
+    setState(() {
+      controller = controller;
+      controller.resumeCamera();
+    });
+    controller.scannedDataStream.listen((scanData) {
+      setState(() {
+        result = scanData;
+        Vibration.vibrate();
+      });
+    });
   }
+
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('no Permission')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+//
+// Future _scanPhoto() async {
+//   // await Permission.storage.request();
+//   String? barcode = await scanner.scan();
+//   print("Scanned...$barcode");
+// }
 }
-
 
 class PhonePickerFormWidget extends StatefulWidget {
   String? text;
