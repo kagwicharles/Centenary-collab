@@ -19,7 +19,7 @@ class AppTheme {
     ),
     textTheme: const TextTheme(
         titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-        titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
         labelSmall: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w800,

@@ -59,6 +59,7 @@ dependencies:
   permission_handler: ^10.0.2
   #qrscan: ^0.3.3
   qr_code_scanner: ^1.0.1
+  get: ^4.6.5
 
 dev_dependencies:
   flutter_test:

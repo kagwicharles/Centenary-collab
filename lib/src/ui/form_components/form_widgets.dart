@@ -11,6 +11,7 @@ import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/render_utils.dart';
 import 'package:vibration/vibration.dart';
 import 'dart:io';
+import 'package:get/get.dart';
 
 class InputUtil {
   static List<Map<String?, dynamic>> formInputValues = [];
@@ -185,6 +186,7 @@ class ButtonWidget extends StatelessWidget {
         if (formKey.currentState.validate()) {
           print("Form is okay...");
           print(InputUtil.formInputValues.toString());
+
           _dynamicRequest.dynamicRequest(moduleId, actionId,
               dataObj: InputUtil.formInputValues);
         } else {
@@ -253,11 +255,12 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
             MediaQuery.of(context).size.height < 400)
         ? 150.0
         : 300.0;
-    var appBarHeight = AppBar().preferredSize.height;
-    print("Appbar height***#$appBarHeight");
+    var paddingTop = Get.statusBarHeight;
+    var containerHeight = MediaQuery.of(context).size.height - paddingTop;
+    print("Appbar height***#$paddingTop]");
 
     return Container(
-        height: MediaQuery.of(context).size.height - appBarHeight,
+        height: containerHeight,
         width: MediaQuery.of(context).size.width,
         child: QRView(
           key: qrKey,

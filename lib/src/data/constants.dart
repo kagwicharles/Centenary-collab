@@ -11,12 +11,12 @@ class Constants {
   static const appName = "CENTEMOBILE";
   static const codeBase = "ANDROID";
   static const device = "e3623c468d9ddcd5";
-  static const mobileNumber = "25600116";
+  static const mobileNumber = "4570670220";
   static const rashi =
       "ccd7216a4fe5ddd5dd1d48a55072b62b868f55f88646abae1a83a30a9ec70b08";
   static const uniqueId = "00000000-7440-856d-0000-00001d093e12";
   static var uuid = const Uuid();
-  static const bankCustomerId = "25600116";
+  static const bankCustomerId = "4570670220";
   static const country = "UGANDATEST";
 
   var version = "";

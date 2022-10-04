@@ -21,6 +21,17 @@ enum FormId { MENU, FORMS, ACTIONS }
 
 enum DynamicDataType { Modules, ActionControls, FormControls }
 
+enum ActionType {
+  DBCALL,
+  ACTIVATIONREQ,
+  PAYBILL,
+  VALIDATE,
+  LOGIN,
+  CHANGEPIN,
+  ACTIVATE,
+  BENEFICIARY
+}
+
 class CreditCard {
   final String balance;
   final String currency;

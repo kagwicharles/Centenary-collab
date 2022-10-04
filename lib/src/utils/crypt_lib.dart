@@ -7,8 +7,9 @@ import 'package:encrypt/encrypt.dart';
 import "package:hex/hex.dart";
 
 class CryptLibImpl {
-  static const staticEncryptKey = "KBSB&er3bflx9%";
+  static const staticEncryptKey = "csXDRzpcEPm_jMny";
   static const staticEncryptIv = "84jfkfndl3ybdfkf";
+  static const staticLogKeyValue = "KBSB&er3bflx9%";
 
   static String toSHA256(String key, int length) {
     var bytes1 = utf8.encode(key); // data being hashed
@@ -42,7 +43,7 @@ class CryptLibImpl {
   }
 
   static String encryptField(String plainText) {
-    final hashKey = toSHA256(staticEncryptKey, 32);
+    final hashKey = toSHA256(staticLogKeyValue, 32);
     final encryptedText = encrypt(plainText, hashKey, staticEncryptIv);
     return encryptedText.replaceAll('\n', "");
   }
