@@ -1,18 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
-import 'package:rafiki/src/data/test/test.dart';
 import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/dynamic.dart';
 import 'package:rafiki/src/ui/menu_item_widget.dart';
 
 class MainMenuWidget extends StatefulWidget {
-  MainMenuWidget({Key? key}) : super(key: key);
+  const MainMenuWidget({Key? key}) : super(key: key);
 
   @override
   State<MainMenuWidget> createState() => _MainMenuWidgetState();
@@ -35,7 +33,7 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
         future: getModuleItems(),
         builder: (BuildContext context,
             AsyncSnapshot<List<FrequentAccessedModule>> snapshot) {
-          Widget child = SizedBox();
+          Widget child = const SizedBox();
           if (snapshot.hasData) {
             child = ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -90,7 +88,7 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
 }
 
 class SubMenuWidget extends StatefulWidget {
-  SubMenuWidget({Key? key}) : super(key: key);
+  const SubMenuWidget({Key? key}) : super(key: key);
 
   @override
   State<SubMenuWidget> createState() => _SubMenuWidgetState();

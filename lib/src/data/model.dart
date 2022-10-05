@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:floor/floor.dart';
-import 'package:flutter/foundation.dart';
 
 enum ViewType {
   TEXT,
@@ -63,20 +62,23 @@ class ModuleItem {
   String? moduleUrl;
   String moduleName;
   String moduleCategory;
+  String? merchantID;
 
   ModuleItem(
       {required this.parentModule,
       required this.moduleUrl,
       required this.moduleId,
       required this.moduleName,
-      required this.moduleCategory});
+      required this.moduleCategory,
+      required this.merchantID});
 
   ModuleItem.fromJson(Map<String, dynamic> json)
       : parentModule = json["ParentModule"],
         moduleUrl = json["ModuleURL"],
         moduleId = json["ModuleID"],
         moduleName = json["ModuleName"],
-        moduleCategory = json["ModuleCategory"];
+        moduleCategory = json["ModuleCategory"],
+        merchantID = json["MerchantID"];
 }
 
 @entity

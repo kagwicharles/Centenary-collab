@@ -104,7 +104,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, PRIMARY KEY (`moduleId`))');
+            'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, `merchantID` TEXT, PRIMARY KEY (`moduleId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `actionId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `dataSourceId` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
         await database.execute(
@@ -120,7 +120,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BankAccount` (`no` INTEGER, `bankAccountId` TEXT NOT NULL, `aliasName` TEXT NOT NULL, `currencyID` TEXT NOT NULL, `accountType` TEXT NOT NULL, `groupAccount` INTEGER NOT NULL, `defaultAccount` INTEGER NOT NULL, PRIMARY KEY (`no`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `FrequentAccessedModule` (`no` INTEGER, `parentModule` TEXT NOT NULL, `moduleID` TEXT NOT NULL, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, `moduleUrl` TEXT NOT NULL, `badgeColor` TEXT, `badgeText` TEXT, `merchantId` TEXT, `displayOrder` REAL, `containerID` TEXT, `lastAccessed` TEXT, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `FrequentAccessedModule` (`no` INTEGER, `parentModule` TEXT NOT NULL, `moduleID` TEXT NOT NULL, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, `moduleUrl` TEXT NOT NULL, `badgeColor` TEXT, `badgeText` TEXT, `merchantID` TEXT, `displayOrder` REAL, `containerID` TEXT, `lastAccessed` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Beneficiary` (`no` INTEGER, `merchantID` TEXT NOT NULL, `merchantName` TEXT NOT NULL, `accountID` TEXT NOT NULL, `accountAlias` TEXT NOT NULL, `bankID` TEXT, `branchID` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
@@ -213,7 +213,8 @@ class _$ModuleItemDao extends ModuleItemDao {
                   'parentModule': item.parentModule,
                   'moduleUrl': item.moduleUrl,
                   'moduleName': item.moduleName,
-                  'moduleCategory': item.moduleCategory
+                  'moduleCategory': item.moduleCategory,
+                  'merchantID': item.merchantID
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -233,7 +234,8 @@ class _$ModuleItemDao extends ModuleItemDao {
             moduleUrl: row['moduleUrl'] as String?,
             moduleId: row['moduleId'] as String,
             moduleName: row['moduleName'] as String,
-            moduleCategory: row['moduleCategory'] as String),
+            moduleCategory: row['moduleCategory'] as String,
+            merchantID: row['merchantID'] as String?),
         arguments: [parentModule]);
   }
 
@@ -623,7 +625,7 @@ class _$FrequentAccessedModuleDao extends FrequentAccessedModuleDao {
                   'moduleUrl': item.moduleUrl,
                   'badgeColor': item.badgeColor,
                   'badgeText': item.badgeText,
-                  'merchantId': item.merchantId,
+                  'merchantID': item.merchantID,
                   'displayOrder': item.displayOrder,
                   'containerID': item.containerID,
                   'lastAccessed': item.lastAccessed
@@ -647,7 +649,7 @@ class _$FrequentAccessedModuleDao extends FrequentAccessedModuleDao {
             moduleName: row['moduleName'] as String,
             moduleCategory: row['moduleCategory'] as String,
             moduleUrl: row['moduleUrl'] as String,
-            merchantId: row['merchantId'] as String?,
+            merchantID: row['merchantID'] as String?,
             badgeColor: row['badgeColor'] as String?,
             badgeText: row['badgeText'] as String?,
             displayOrder: row['displayOrder'] as double?,

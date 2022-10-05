@@ -51,7 +51,7 @@ class FrequentAccessedModule {
   String moduleUrl;
   String? badgeColor;
   String? badgeText;
-  String? merchantId;
+  String? merchantID;
   double? displayOrder;
   String? containerID;
   String? lastAccessed;
@@ -62,7 +62,7 @@ class FrequentAccessedModule {
       required this.moduleName,
       required this.moduleCategory,
       required this.moduleUrl,
-      required this.merchantId,
+      required this.merchantID,
       this.badgeColor,
       this.badgeText,
       this.displayOrder,
@@ -75,6 +75,7 @@ class FrequentAccessedModule {
         moduleName = json["ModuleName"],
         moduleCategory = json["ModuleCategory"],
         moduleUrl = json["ModuleURL"],
+        merchantID = json["MerchantID"],
         badgeColor = json["BadgeColor"],
         badgeText = json["BadgeText"],
         displayOrder = json["DisplayOrder"],

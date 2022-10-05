@@ -12,12 +12,12 @@ class ModuleItemWidget extends StatelessWidget {
   bool isMain = false;
 
   ModuleItemWidget(
-      {required this.imageUrl,
+      {Key? key, required this.imageUrl,
       required this.moduleName,
       required this.moduleId,
       required this.parentModule,
       required this.moduleCategory,
-      this.isMain = false});
+      this.isMain = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

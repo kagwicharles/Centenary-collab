@@ -43,7 +43,6 @@ class TestEndpoint {
     localDevice = await SharedPrefLocal.getLocalDevice();
     localIv = await SharedPrefLocal.getLocalIv();
     localToken = await SharedPrefLocal.getLocalToken();
-    print("Key: ${CryptLibImpl.toSHA256(localDevice, 32)}, Local IV: $localIv");
   }
 
   baseRequestSetUp() async {
@@ -133,7 +132,9 @@ class TestEndpoint {
           res = value.data["Response"],
           decrypted = CryptLibImpl.gzipDecompressStaticData(res),
           AppLogger.appLogI(tag: "\n\n$formId REQ", message: decrypted),
-          addDataToLocalDb(formId, decryptedData: decrypted)
+          addDataToLocalDb(formId, decryptedData: decrypted),
+          AppLogger.writeResponseToFile(
+              fileName: formId.name, response: decrypted)
         });
   }
 
