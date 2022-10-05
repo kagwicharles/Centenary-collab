@@ -9,6 +9,7 @@ import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/utils/app_logger.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 
@@ -32,6 +33,11 @@ class TestEndpoint {
   final _onlineAccountProductRepository = OnlineAccountProductRepository();
   final _bankBranchRepository = BankBranchRepository();
   final _imageDataRepository = ImageDataRepository();
+  final _bankAccountRepository = BankAccountRepository();
+  final _frequentAccessedModulesRepository = FrequentAccessedModuleRepository();
+  final _beneficiaryRepository = BeneficiaryRepository();
+  final _moduleToHideRepository = ModuleToHideRepository();
+  final _moduleToDisableRepository = ModuleToDisableRepository();
 
   securityFeatureSetUp() async {
     localDevice = await SharedPrefLocal.getLocalDevice();
@@ -126,7 +132,7 @@ class TestEndpoint {
     response.then((value) => {
           res = value.data["Response"],
           decrypted = CryptLibImpl.gzipDecompressStaticData(res),
-          AppLogger.appLog(tag: "\n\n$formId REQ", message: decrypted),
+          AppLogger.appLogI(tag: "\n\n$formId REQ", message: decrypted),
           addDataToLocalDb(formId, decryptedData: decrypted)
         });
   }
@@ -151,7 +157,7 @@ class TestEndpoint {
       response.then((value) async => {
             res = value.data["Response"],
             decrypted = CryptLibImpl.gzipDecompressStaticData(res),
-            AppLogger.appLog(tag: "\n\nSTATIC DATA REQ:", message: decrypted),
+            AppLogger.appLogI(tag: "\n\nSTATIC DATA REQ:", message: decrypted),
             await _sharedPref.addStaticDataVersion(
                 json.decode(decrypted)["StaticDataVersion"]),
             await _sharedPref
@@ -203,18 +209,20 @@ class TestEndpoint {
 
   login(String pin) async {
     String res, decrypted, status, message = "";
+    var jsonData;
     await securityFeatureSetUp();
     final encryptedPin = CryptLibImpl.encryptField(pin);
     await baseRequestSetUp();
-    requestObj["FormID"] = "LOGIN ";
+    requestObj["FormID"] = "LOGIN";
     requestObj["MobileNumber"] = "256782993168";
     requestObj["SessionID"] = "ffffffff-84c8-e77e-0000-00001d093e12";
     requestObj["AppNotificationID"] =
         "fA7TX2IURGmcf7RvUgs-8t:APA91bFj_J3wSeFaUa14L5Zort_Pg3aSaPgksbnPt8dnAaO-2Q5X4pPlmCPPZE4yIlNYyWZF75r8CeJ-6ItxEVigmae8xWZYcsEfg4oA3jPeB8a5wbwfC57PER1w4mchbkk7bzQ8EcxQ";
     requestObj["Login"] = {"LoginType": "PIN"};
-    requestObj["EncryptedFields"] = {"PIN": "ifQnUKt1FJLWlyJoLdY3vQ=="};
+    requestObj["EncryptedFields"] = {"PIN": "$encryptedPin"};
 
-    print("Request..." + jsonEncode(requestObj));
+    AppLogger.appLogE(
+        tag: "\n\nLOGIN REQUEST", message: jsonEncode(requestObj));
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(requestObj), localDevice, localIv);
     var response = dio.post(
@@ -229,9 +237,15 @@ class TestEndpoint {
               base64.normalize(res),
               CryptLibImpl.toSHA256(localDevice, 32),
               localIv))),
-          status = json.decode(decrypted)["Status"],
-          message = json.decode(decrypted)["Message"],
-          logger.d("\n\nACTIVATION RESPONSE: $decrypted"),
+          jsonData = json.decode(decrypted),
+          status = jsonData["Status"],
+          message = jsonData["Message"],
+          if (status == "000")
+            {clearAllUserData(), addUserAccountData(jsonData)},
+          AppLogger.appLogI(
+              tag: "\n\nnACTIVATION RESPONSE", message: decrypted),
+          AppLogger.writeResponseToFile(
+              fileName: "Login_res", response: decrypted)
         });
     debugPrint("Message: $message");
     return message;
@@ -302,6 +316,48 @@ class TestEndpoint {
         });
         break;
     }
+  }
+
+  addUserAccountData(Map<String, dynamic> jsonData) {
+    _sharedPref.addUserAccountData(
+        key: UserAccountData.FirstName.name, value: jsonData["FirstName"]);
+    _sharedPref.addUserAccountData(
+        key: UserAccountData.LastName.name, value: jsonData["LastName"]);
+    _sharedPref.addUserAccountData(
+        key: UserAccountData.IDNumber.name, value: jsonData["IDNumber"]);
+    _sharedPref.addUserAccountData(
+        key: UserAccountData.EmailID.name, value: jsonData["EMailID"]);
+    _sharedPref.addUserAccountData(
+        key: UserAccountData.ImageUrl.name, value: jsonData["ImageURL"]);
+    _sharedPref.addUserAccountData(
+        key: UserAccountData.LastLoginDateTime.name,
+        value: jsonData["LastLoginDateTime"]);
+    _sharedPref.addStaticDataVersion(jsonData["StaticDataVersion"]);
+    jsonData["Accounts"].forEach((item) {
+      _bankAccountRepository.insertBankAccount(BankAccount.fromJson(item));
+    });
+    jsonData["FrequentAccessedModules"].forEach((item) {
+      _frequentAccessedModulesRepository
+          .insertFrequentModule(FrequentAccessedModule.fromJson(item));
+    });
+    jsonData["Beneficiary"].forEach((item) {
+      _beneficiaryRepository.insertBeneficiary(Beneficiary.fromJson(item));
+    });
+    jsonData["ModulesToHide"].forEach((item) {
+      _moduleToHideRepository.insertModuleToHide(ModuleToHide.fromJson(item));
+    });
+    jsonData["ModulesToDisable"].forEach((item) {
+      _moduleToDisableRepository
+          .insertModuleToDisable(ModuleToDisable.fromJson(item));
+    });
+  }
+
+  clearAllUserData() {
+    _bankAccountRepository.clearTable();
+    _frequentAccessedModulesRepository.clearTable();
+    _beneficiaryRepository.clearTable();
+    _moduleToDisableRepository.clearTable();
+    _moduleToHideRepository.clearTable();
   }
 
   clearAllStaticData() async {

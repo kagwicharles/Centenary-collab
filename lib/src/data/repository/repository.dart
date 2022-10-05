@@ -1,5 +1,6 @@
 import 'package:rafiki/src/data/local/local_db/database.dart';
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/user_model.dart';
 
 class ModuleRepository {
   void insertModuleItem(ModuleItem moduleItem) async {
@@ -158,6 +159,124 @@ class ImageDataRepository {
   void clearTable() async {
     AppDatabase.getDatabaseInstance().then((database) {
       database.imageDataDao.clearTable();
+    });
+  }
+}
+
+class BankAccountRepository {
+  void insertBankAccount(BankAccount bankAccount) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.bankAccountDao.insertBankAccount(bankAccount);
+    });
+  }
+
+  Future<Future<List<BankAccount>>?> getAllBankAccounts() async {
+    Future<List<BankAccount>>? bankAccounts;
+
+    await AppDatabase.getDatabaseInstance().then((database) {
+      bankAccounts = database.bankAccountDao.getAllBankAccounts();
+    });
+    return bankAccounts;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.bankAccountDao.clearTable();
+    });
+  }
+}
+
+class FrequentAccessedModuleRepository {
+  void insertFrequentModule(
+      FrequentAccessedModule frequentAccessedModule) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.frequentAccessedModuleDao
+          .insertFrequentModule(frequentAccessedModule);
+    });
+  }
+
+  Future<Future<List<FrequentAccessedModule>>?> getAllFrequentModules() async {
+    Future<List<FrequentAccessedModule>>? frequentAccessedModules;
+
+    await AppDatabase.getDatabaseInstance().then((database) {
+      frequentAccessedModules =
+          database.frequentAccessedModuleDao.getAllFrequentModules();
+    });
+    return frequentAccessedModules;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.frequentAccessedModuleDao.clearTable();
+    });
+  }
+}
+
+class BeneficiaryRepository {
+  void insertBeneficiary(Beneficiary beneficiary) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.beneficiaryDao.insertBeneficiary(beneficiary);
+    });
+  }
+
+  Future<Future<List<Beneficiary>>?> getAllBeneficiaries() async {
+    Future<List<Beneficiary>>? beneficiaries;
+
+    await AppDatabase.getDatabaseInstance().then((database) {
+      beneficiaries = database.beneficiaryDao.getAllBeneficiaries();
+    });
+    return beneficiaries;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.beneficiaryDao.clearTable();
+    });
+  }
+}
+
+class ModuleToHideRepository {
+  void insertModuleToHide(ModuleToHide moduleToHide) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.moduleToHideDao.insertModuleToHide(moduleToHide);
+    });
+  }
+
+  Future<Future<List<ModuleToHide>>?> getAllModulesToHide() async {
+    Future<List<ModuleToHide>>? modulesToHide;
+
+    await AppDatabase.getDatabaseInstance().then((database) {
+      modulesToHide = database.moduleToHideDao.getAllModulesToHide();
+    });
+    return modulesToHide;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.moduleToHideDao.clearTable();
+    });
+  }
+}
+
+class ModuleToDisableRepository {
+  void insertModuleToDisable(ModuleToDisable moduleToDisable) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.moduleToDisableDao.insertModuleToDisable(moduleToDisable);
+    });
+  }
+
+  Future<Future<List<ModuleToDisable>>?> getAllModulesToDisable() async {
+    Future<List<ModuleToDisable>>? modulesToDisable;
+
+    await AppDatabase.getDatabaseInstance().then((database) {
+      modulesToDisable = database.moduleToDisableDao.getAllModulesToDisable();
+    });
+    return modulesToDisable;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.moduleToDisableDao.clearTable();
     });
   }
 }

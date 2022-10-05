@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
+import 'package:rafiki/src/utils/crypt_lib.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -63,6 +64,8 @@ class _LoginState extends State<Login> {
                               setState(() {
                                 loading = true;
                               });
+                              // debugPrint(
+                              //     "Encrypted pin...${CryptLibImpl.encryptField(pinController.text)}");
                               Future.delayed(const Duration(milliseconds: 500),
                                   () {
                                 _services

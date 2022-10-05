@@ -42,6 +42,18 @@ class SharedPrefLocal {
     });
   }
 
+  addUserAccountData({required key, required value}) {
+    getSharedPrefInstance().then((sharedPref) {
+      sharedPref.setString(key, value);
+    });
+  }
+
+  String getUserData({sharedPref, key}) {
+    String value = "";
+    value = sharedPref.getString(key);
+    return value;
+  }
+
   static getLocalToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("token");

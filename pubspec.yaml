@@ -60,6 +60,7 @@ dependencies:
   #qrscan: ^0.3.3
   qr_code_scanner: ^1.0.1
   get: ^4.6.5
+  path_provider: ^2.0.11
 
 dev_dependencies:
   flutter_test:

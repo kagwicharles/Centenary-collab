@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CommonWidgets {
-  static var snackBarDuration = const Duration(seconds: 4);
+  static var snackBarDuration = const Duration(seconds: 6);
   static const snackBarBehavior = SnackBarBehavior.floating;
   static var errorColor = Colors.red;
   static var successColor = Colors.green[600];

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
-import 'package:rafiki/src/utils/determine_render_widget.dart';
 
 class AccountActivation extends StatefulWidget {
   @override
@@ -19,9 +18,9 @@ class _AccountActivationState extends State<AccountActivation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Mobile Activation"),
+        title: const Text("Mobile Activation"),
         leading: IconButton(
-          icon: Icon(Icons.cancel),
+          icon: const Icon(Icons.cancel),
           onPressed: (() {
             Navigator.push(
               context,
@@ -34,17 +33,18 @@ class _AccountActivationState extends State<AccountActivation> {
         ),
       ),
       body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 TextFormField(
                   controller: mobileController,
-                  decoration: InputDecoration(hintText: "Enter Mobile Number"),
+                  decoration:
+                      const InputDecoration(hintText: "Enter Mobile Number"),
                   keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -53,12 +53,12 @@ class _AccountActivationState extends State<AccountActivation> {
                     return null;
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 TextFormField(
                   controller: pinController,
-                  decoration: InputDecoration(hintText: "Enter PIN"),
+                  decoration: const InputDecoration(hintText: "Enter PIN"),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter pin';
@@ -66,7 +66,7 @@ class _AccountActivationState extends State<AccountActivation> {
                     return null;
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 34,
                 ),
                 ElevatedButton(
@@ -96,14 +96,14 @@ class _AccountActivationState extends State<AccountActivation> {
                     child: loading
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                            children: const [
                                 CircularProgressIndicator(),
                                 SizedBox(
                                   width: 15,
                                 ),
                                 Text("Please wait...")
                               ])
-                        : Text("ACTIVATE ACCOUNT"))
+                        : const Text("ACTIVATE ACCOUNT"))
               ],
             ),
           )),

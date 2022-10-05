@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:rafiki/src/data/repository/repository.dart';
-import 'package:sqlite_viewer/sqlite_viewer.dart';
-import 'package:rafiki/src/data/model.dart';
-import 'package:rafiki/src/data/remote/services.dart';
-import 'package:rafiki/src/data/test/test.dart';
+import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
+import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
 import 'package:rafiki/src/ui/home/credit_card.dart';
 import 'package:rafiki/src/ui/home/home_menu_items.dart';
 import 'package:rafiki/src/ui/home/top_home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
   final String title;
-  final String user = "Kagwi";
   final String lastLogin = "Jul 12 2022 11:50AM";
 
   final List<Widget> creditCards = [
@@ -27,6 +23,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String _user = "";
+  final _sharedPref = SharedPrefLocal();
 
   @override
   Widget build(BuildContext context) {
@@ -44,44 +42,56 @@ class _HomePageState extends State<HomePage> {
                 automaticallyImplyLeading: false,
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
-                title: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      child: Image.asset("assets/images/user.png"),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 18,
-                        ),
-                        Text(
-                          "Hello ${widget.user}",
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Text(
-                          "Last Login ${widget.lastLogin}",
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.more_vert))
-                  ],
-                ))),
+                title: FutureBuilder<SharedPreferences>(
+                    future: SharedPreferences.getInstance(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<SharedPreferences> snapshot) {
+                      Widget child = SizedBox();
+                      if (snapshot.hasData) {
+                        var sharedPref = snapshot.data;
+                        child = Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              child: Image.asset("assets/images/user.png"),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 18,
+                                ),
+                                Text(
+                                  "Hello ${_sharedPref.getUserData(sharedPref: sharedPref, key: UserAccountData.FirstName.name)}",
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                Text(
+                                  "Last Login ${_sharedPref.getUserData(sharedPref: sharedPref, key: UserAccountData.LastLoginDateTime.name)}",
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.more_vert))
+                          ],
+                        );
+                      }
+                      return child;
+                    }))),
         body: ListView(
           children: [
             const SizedBox(

@@ -75,6 +75,16 @@ class _$AppDatabase extends AppDatabase {
 
   ImageDataDao? _imageDataDaoInstance;
 
+  BankAccountDao? _bankAccountDaoInstance;
+
+  FrequentAccessedModuleDao? _frequentAccessedModuleDaoInstance;
+
+  BeneficiaryDao? _beneficiaryDaoInstance;
+
+  ModuleToHideDao? _moduleToHideDaoInstance;
+
+  ModuleToDisableDao? _moduleToDisableDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -107,6 +117,16 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `BankBranch` (`no` INTEGER, `description` TEXT, `relationId` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ImageData` (`no` INTEGER, `imageUrl` TEXT, `imageInfoUrl` TEXT, `imageCategory` TEXT, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `BankAccount` (`no` INTEGER, `bankAccountId` TEXT NOT NULL, `aliasName` TEXT NOT NULL, `currencyID` TEXT NOT NULL, `accountType` TEXT NOT NULL, `groupAccount` INTEGER NOT NULL, `defaultAccount` INTEGER NOT NULL, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `FrequentAccessedModule` (`no` INTEGER, `parentModule` TEXT NOT NULL, `moduleID` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, `moduleUrl` TEXT NOT NULL, `badgeColor` TEXT, `badgeText` TEXT, `merchantId` TEXT, `displayOrder` REAL, `containerID` TEXT, `lastAccessed` TEXT, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Beneficiary` (`no` INTEGER, `merchantID` TEXT NOT NULL, `merchantName` TEXT NOT NULL, `accountID` TEXT NOT NULL, `accountAlias` TEXT NOT NULL, `bankID` TEXT, `branchID` TEXT, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `ModuleToHide` (`no` INTEGER, `moduleId` TEXT NOT NULL, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `ModuleToDisable` (`no` INTEGER, `moduleID` TEXT NOT NULL, `merchantID` TEXT, `displayMessage` TEXT, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -149,6 +169,36 @@ class _$AppDatabase extends AppDatabase {
   @override
   ImageDataDao get imageDataDao {
     return _imageDataDaoInstance ??= _$ImageDataDao(database, changeListener);
+  }
+
+  @override
+  BankAccountDao get bankAccountDao {
+    return _bankAccountDaoInstance ??=
+        _$BankAccountDao(database, changeListener);
+  }
+
+  @override
+  FrequentAccessedModuleDao get frequentAccessedModuleDao {
+    return _frequentAccessedModuleDaoInstance ??=
+        _$FrequentAccessedModuleDao(database, changeListener);
+  }
+
+  @override
+  BeneficiaryDao get beneficiaryDao {
+    return _beneficiaryDaoInstance ??=
+        _$BeneficiaryDao(database, changeListener);
+  }
+
+  @override
+  ModuleToHideDao get moduleToHideDao {
+    return _moduleToHideDaoInstance ??=
+        _$ModuleToHideDao(database, changeListener);
+  }
+
+  @override
+  ModuleToDisableDao get moduleToDisableDao {
+    return _moduleToDisableDaoInstance ??=
+        _$ModuleToDisableDao(database, changeListener);
   }
 }
 
@@ -507,5 +557,237 @@ class _$ImageDataDao extends ImageDataDao {
   Future<void> insertImage(ImageData imageData) async {
     await _imageDataInsertionAdapter.insert(
         imageData, OnConflictStrategy.abort);
+  }
+}
+
+class _$BankAccountDao extends BankAccountDao {
+  _$BankAccountDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _bankAccountInsertionAdapter = InsertionAdapter(
+            database,
+            'BankAccount',
+            (BankAccount item) => <String, Object?>{
+                  'no': item.no,
+                  'bankAccountId': item.bankAccountId,
+                  'aliasName': item.aliasName,
+                  'currencyID': item.currencyID,
+                  'accountType': item.accountType,
+                  'groupAccount': item.groupAccount ? 1 : 0,
+                  'defaultAccount': item.defaultAccount ? 1 : 0
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<BankAccount> _bankAccountInsertionAdapter;
+
+  @override
+  Future<List<BankAccount>> getAllBankAccounts() async {
+    return _queryAdapter.queryList('SELECT * FROM BankAccount',
+        mapper: (Map<String, Object?> row) => BankAccount(
+            bankAccountId: row['bankAccountId'] as String,
+            aliasName: row['aliasName'] as String,
+            currencyID: row['currencyID'] as String,
+            accountType: row['accountType'] as String,
+            groupAccount: (row['groupAccount'] as int) != 0,
+            defaultAccount: (row['defaultAccount'] as int) != 0));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM BankAccount');
+  }
+
+  @override
+  Future<void> insertBankAccount(BankAccount bankAccount) async {
+    await _bankAccountInsertionAdapter.insert(
+        bankAccount, OnConflictStrategy.abort);
+  }
+}
+
+class _$FrequentAccessedModuleDao extends FrequentAccessedModuleDao {
+  _$FrequentAccessedModuleDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _frequentAccessedModuleInsertionAdapter = InsertionAdapter(
+            database,
+            'FrequentAccessedModule',
+            (FrequentAccessedModule item) => <String, Object?>{
+                  'no': item.no,
+                  'parentModule': item.parentModule,
+                  'moduleID': item.moduleID,
+                  'moduleCategory': item.moduleCategory,
+                  'moduleUrl': item.moduleUrl,
+                  'badgeColor': item.badgeColor,
+                  'badgeText': item.badgeText,
+                  'merchantId': item.merchantId,
+                  'displayOrder': item.displayOrder,
+                  'containerID': item.containerID,
+                  'lastAccessed': item.lastAccessed
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<FrequentAccessedModule>
+      _frequentAccessedModuleInsertionAdapter;
+
+  @override
+  Future<List<FrequentAccessedModule>> getAllFrequentModules() async {
+    return _queryAdapter.queryList('SELECT * FROM FrequentAccessedModule',
+        mapper: (Map<String, Object?> row) => FrequentAccessedModule(
+            parentModule: row['parentModule'] as String,
+            moduleID: row['moduleID'] as String,
+            moduleCategory: row['moduleCategory'] as String,
+            moduleUrl: row['moduleUrl'] as String,
+            merchantId: row['merchantId'] as String?,
+            badgeColor: row['badgeColor'] as String?,
+            badgeText: row['badgeText'] as String?,
+            displayOrder: row['displayOrder'] as double?,
+            containerID: row['containerID'] as String?,
+            lastAccessed: row['lastAccessed'] as String?));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM FrequentAccessedModule');
+  }
+
+  @override
+  Future<void> insertFrequentModule(
+      FrequentAccessedModule frequentAccessedModule) async {
+    await _frequentAccessedModuleInsertionAdapter.insert(
+        frequentAccessedModule, OnConflictStrategy.abort);
+  }
+}
+
+class _$BeneficiaryDao extends BeneficiaryDao {
+  _$BeneficiaryDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _beneficiaryInsertionAdapter = InsertionAdapter(
+            database,
+            'Beneficiary',
+            (Beneficiary item) => <String, Object?>{
+                  'no': item.no,
+                  'merchantID': item.merchantID,
+                  'merchantName': item.merchantName,
+                  'accountID': item.accountID,
+                  'accountAlias': item.accountAlias,
+                  'bankID': item.bankID,
+                  'branchID': item.branchID
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Beneficiary> _beneficiaryInsertionAdapter;
+
+  @override
+  Future<List<Beneficiary>> getAllBeneficiaries() async {
+    return _queryAdapter.queryList('SELECT * FROM Beneficiary',
+        mapper: (Map<String, Object?> row) => Beneficiary(
+            merchantID: row['merchantID'] as String,
+            merchantName: row['merchantName'] as String,
+            accountID: row['accountID'] as String,
+            accountAlias: row['accountAlias'] as String,
+            bankID: row['bankID'] as String?,
+            branchID: row['branchID'] as String?));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Beneficiary');
+  }
+
+  @override
+  Future<void> insertBeneficiary(Beneficiary beneficiary) async {
+    await _beneficiaryInsertionAdapter.insert(
+        beneficiary, OnConflictStrategy.abort);
+  }
+}
+
+class _$ModuleToHideDao extends ModuleToHideDao {
+  _$ModuleToHideDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _moduleToHideInsertionAdapter = InsertionAdapter(
+            database,
+            'ModuleToHide',
+            (ModuleToHide item) =>
+                <String, Object?>{'no': item.no, 'moduleId': item.moduleId});
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<ModuleToHide> _moduleToHideInsertionAdapter;
+
+  @override
+  Future<List<ModuleToHide>> getAllModulesToHide() async {
+    return _queryAdapter.queryList('SELECT * FROM ModuleToHide',
+        mapper: (Map<String, Object?> row) =>
+            ModuleToHide(moduleId: row['moduleId'] as String));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM ModuleToHide');
+  }
+
+  @override
+  Future<void> insertModuleToHide(ModuleToHide moduleToHide) async {
+    await _moduleToHideInsertionAdapter.insert(
+        moduleToHide, OnConflictStrategy.abort);
+  }
+}
+
+class _$ModuleToDisableDao extends ModuleToDisableDao {
+  _$ModuleToDisableDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _moduleToDisableInsertionAdapter = InsertionAdapter(
+            database,
+            'ModuleToDisable',
+            (ModuleToDisable item) => <String, Object?>{
+                  'no': item.no,
+                  'moduleID': item.moduleID,
+                  'merchantID': item.merchantID,
+                  'displayMessage': item.displayMessage
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<ModuleToDisable> _moduleToDisableInsertionAdapter;
+
+  @override
+  Future<List<ModuleToDisable>> getAllModulesToDisable() async {
+    return _queryAdapter.queryList('SELECT * FROM ModuleToDisable',
+        mapper: (Map<String, Object?> row) => ModuleToDisable(
+            moduleID: row['moduleID'] as String,
+            merchantID: row['merchantID'] as String?,
+            displayMessage: row['displayMessage'] as String?));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM ModuleToDisable');
+  }
+
+  @override
+  Future<void> insertModuleToDisable(ModuleToDisable moduleToDisable) async {
+    await _moduleToDisableInsertionAdapter.insert(
+        moduleToDisable, OnConflictStrategy.abort);
   }
 }

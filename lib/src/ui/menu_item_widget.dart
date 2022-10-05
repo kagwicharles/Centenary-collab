@@ -63,7 +63,7 @@ class ModuleItemWidget extends StatelessWidget {
                       // overflow: TextOverflow.fade,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible,
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: Theme.of(context).textTheme.titleMedium,
                     )),
                   ]),
             )));
