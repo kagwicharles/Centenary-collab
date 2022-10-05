@@ -120,7 +120,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BankAccount` (`no` INTEGER, `bankAccountId` TEXT NOT NULL, `aliasName` TEXT NOT NULL, `currencyID` TEXT NOT NULL, `accountType` TEXT NOT NULL, `groupAccount` INTEGER NOT NULL, `defaultAccount` INTEGER NOT NULL, PRIMARY KEY (`no`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `FrequentAccessedModule` (`no` INTEGER, `parentModule` TEXT NOT NULL, `moduleID` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, `moduleUrl` TEXT NOT NULL, `badgeColor` TEXT, `badgeText` TEXT, `merchantId` TEXT, `displayOrder` REAL, `containerID` TEXT, `lastAccessed` TEXT, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `FrequentAccessedModule` (`no` INTEGER, `parentModule` TEXT NOT NULL, `moduleID` TEXT NOT NULL, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, `moduleUrl` TEXT NOT NULL, `badgeColor` TEXT, `badgeText` TEXT, `merchantId` TEXT, `displayOrder` REAL, `containerID` TEXT, `lastAccessed` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Beneficiary` (`no` INTEGER, `merchantID` TEXT NOT NULL, `merchantName` TEXT NOT NULL, `accountID` TEXT NOT NULL, `accountAlias` TEXT NOT NULL, `bankID` TEXT, `branchID` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
@@ -618,6 +618,7 @@ class _$FrequentAccessedModuleDao extends FrequentAccessedModuleDao {
                   'no': item.no,
                   'parentModule': item.parentModule,
                   'moduleID': item.moduleID,
+                  'moduleName': item.moduleName,
                   'moduleCategory': item.moduleCategory,
                   'moduleUrl': item.moduleUrl,
                   'badgeColor': item.badgeColor,
@@ -643,6 +644,7 @@ class _$FrequentAccessedModuleDao extends FrequentAccessedModuleDao {
         mapper: (Map<String, Object?> row) => FrequentAccessedModule(
             parentModule: row['parentModule'] as String,
             moduleID: row['moduleID'] as String,
+            moduleName: row['moduleName'] as String,
             moduleCategory: row['moduleCategory'] as String,
             moduleUrl: row['moduleUrl'] as String,
             merchantId: row['merchantId'] as String?,

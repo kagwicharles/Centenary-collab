@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
-import 'package:rafiki/src/utils/crypt_lib.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -21,18 +21,12 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Login"),
-        leading: IconButton(
-          icon: const Icon(Icons.cancel),
-          onPressed: (() {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HomePage(
-                        title: 'Rafiki',
-                      )),
-            );
-          }),
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.cancel),
+        //   onPressed: (() {
+        //
+        //   }),
+        // ),
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -74,8 +68,23 @@ class _LoginState extends State<Login> {
                                           setState(() {
                                             loading = false;
                                           }),
-                                          CommonWidgets.buildNormalSnackBar(
-                                              context: context, message: value)
+                                          if (value == StatusCode.success)
+                                            {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomePage(
+                                                          title: 'Rafiki',
+                                                        )),
+                                              )
+                                            }
+                                          else
+                                            {
+                                              CommonWidgets.buildNormalSnackBar(
+                                                  context: context,
+                                                  message: value)
+                                            }
                                         });
                               });
                             }

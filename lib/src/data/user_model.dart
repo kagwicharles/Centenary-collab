@@ -46,6 +46,7 @@ class FrequentAccessedModule {
   int? no;
   String parentModule;
   String moduleID;
+  String moduleName;
   String moduleCategory;
   String moduleUrl;
   String? badgeColor;
@@ -58,6 +59,7 @@ class FrequentAccessedModule {
   FrequentAccessedModule(
       {required this.parentModule,
       required this.moduleID,
+      required this.moduleName,
       required this.moduleCategory,
       required this.moduleUrl,
       required this.merchantId,
@@ -70,6 +72,7 @@ class FrequentAccessedModule {
   FrequentAccessedModule.fromJson(Map<String, dynamic> json)
       : parentModule = json["ParentModule"],
         moduleID = json["ModuleID"],
+        moduleName = json["ModuleName"],
         moduleCategory = json["ModuleCategory"],
         moduleUrl = json["ModuleURL"],
         badgeColor = json["BadgeColor"],
@@ -131,9 +134,9 @@ class ModuleToDisable {
       {required this.moduleID, this.merchantID, this.displayMessage});
 
   ModuleToDisable.fromJson(Map<String, dynamic> json)
-      : moduleID = json[""],
-        merchantID = json[""],
-        displayMessage = json[""];
+      : moduleID = json["ModuleID"],
+        merchantID = json["MerchantID"],
+        displayMessage = json["DisplayMessage"];
 }
 
 //TODO Add Entity for service alerts

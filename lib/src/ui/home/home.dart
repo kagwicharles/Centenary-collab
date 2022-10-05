@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
-import 'package:rafiki/src/ui/home/credit_card.dart';
 import 'package:rafiki/src/ui/home/home_menu_items.dart';
 import 'package:rafiki/src/ui/home/top_home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,18 +11,11 @@ class HomePage extends StatefulWidget {
   final String title;
   final String lastLogin = "Jul 12 2022 11:50AM";
 
-  final List<Widget> creditCards = [
-    CreditCardWidget(),
-    CreditCardWidget(),
-    CreditCardWidget(),
-  ];
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String _user = "";
   final _sharedPref = SharedPrefLocal();
 
   @override

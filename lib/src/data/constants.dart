@@ -46,3 +46,8 @@ class Constants {
     return "0.000";
   }
 }
+
+class StatusCode{
+  static const success = "000";
+  static const wrongPin = "091";
+}

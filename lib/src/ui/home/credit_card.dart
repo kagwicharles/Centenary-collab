@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 class CreditCardWidget extends StatefulWidget {
-  CreditCardWidget({Key? key}) : super(key: key);
+  CreditCardWidget({Key? key, required this.bankAccountID}) : super(key: key);
+  String bankAccountID;
 
   @override
   State<CreditCardWidget> createState() => _CreditCardWidgetState();
 }
 
 class _CreditCardWidgetState extends State<CreditCardWidget> {
-  bool hideAvailableBalance = false;
+  bool hideAvailableBalance = true;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,10 @@ class _CreditCardWidgetState extends State<CreditCardWidget> {
                           fontSize: 18,
                           fontWeight: FontWeight.w600),
                     ),
-                    Icon(Icons.info,color: Color.fromRGBO(227, 242, 253, 1),),
+                    Icon(
+                      Icons.info,
+                      color: Color.fromRGBO(227, 242, 253, 1),
+                    ),
                   ]),
               const SizedBox(
                 height: 6,
@@ -75,14 +79,14 @@ class _CreditCardWidgetState extends State<CreditCardWidget> {
                         hideAvailableBalance
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Color.fromARGB(255, 216, 213, 213),
+                        color: const Color.fromARGB(255, 216, 213, 213),
                       )),
                 ],
               ),
               const SizedBox(
                 height: 2,
               ),
-              const TextLarge(text: "4055 8923 9321 1213"),
+              TextLarge(text: widget.bankAccountID),
             ])));
   }
 }

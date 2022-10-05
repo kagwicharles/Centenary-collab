@@ -170,8 +170,8 @@ class BankAccountRepository {
     });
   }
 
-  Future<Future<List<BankAccount>>?> getAllBankAccounts() async {
-    Future<List<BankAccount>>? bankAccounts;
+  Future<List<BankAccount>> getAllBankAccounts() async {
+    var bankAccounts;
 
     await AppDatabase.getDatabaseInstance().then((database) {
       bankAccounts = database.bankAccountDao.getAllBankAccounts();
@@ -195,9 +195,8 @@ class FrequentAccessedModuleRepository {
     });
   }
 
-  Future<Future<List<FrequentAccessedModule>>?> getAllFrequentModules() async {
-    Future<List<FrequentAccessedModule>>? frequentAccessedModules;
-
+  Future<List<FrequentAccessedModule>> getAllFrequentModules() async {
+    var frequentAccessedModules;
     await AppDatabase.getDatabaseInstance().then((database) {
       frequentAccessedModules =
           database.frequentAccessedModuleDao.getAllFrequentModules();

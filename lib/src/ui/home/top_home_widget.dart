@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/home/credit_card.dart';
 
 class TopHomeWidget extends StatefulWidget {
@@ -10,12 +13,8 @@ class TopHomeWidget extends StatefulWidget {
 
 class _TopHomeWidgetState extends State<TopHomeWidget>
     with SingleTickerProviderStateMixin {
-  final List<Widget> creditCards = [
-    CreditCardWidget(),
-    CreditCardWidget(),
-    CreditCardWidget(),
-  ];
   bool viewCreditCardState = true;
+  final _bankAccountRepository = BankAccountRepository();
 
   var transitionBuilder = (Widget child, Animation<double> animation) {
     // return ScaleTransition(scale: animation, child: child);
@@ -26,6 +25,8 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
         ).animate(animation),
         child: child);
   };
+
+  getBankAccounts() => _bankAccountRepository.getAllBankAccounts();
 
   @override
   Widget build(BuildContext context) {
@@ -99,13 +100,26 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
                           key: ValueKey<bool>(viewCreditCardState),
                           height: 177,
                           constraints: const BoxConstraints(maxWidth: 277),
-                          child: Swiper(
-                              scrollDirection: Axis.horizontal,
-                              autoplay: false,
-                              autoplayDelay: 5000,
-                              itemCount: creditCards.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return creditCards[index];
+                          child: FutureBuilder<List<BankAccount>>(
+                              future: getBankAccounts(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<BankAccount>> snapshot) {
+                                Widget child = SizedBox();
+                                if (snapshot.hasData) {
+                                  var bankAccounts = snapshot.data;
+                                  child = Swiper(
+                                      scrollDirection: Axis.horizontal,
+                                      autoplay: false,
+                                      autoplayDelay: 5000,
+                                      itemCount: bankAccounts?.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return CreditCardWidget(
+                                            bankAccountID: bankAccounts![index]
+                                                .bankAccountId);
+                                      });
+                                }
+                                return child;
                               })))
                   : AnimatedSwitcher(
                       transitionBuilder: transitionBuilder,

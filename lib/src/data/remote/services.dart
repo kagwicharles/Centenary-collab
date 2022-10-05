@@ -207,8 +207,9 @@ class TestEndpoint {
         });
   }
 
-  login(String pin) async {
-    String res, decrypted, status, message = "";
+  Future<String?> login(String pin) async {
+    String res, decrypted, message = "";
+    String? status;
     var jsonData;
     await securityFeatureSetUp();
     final encryptedPin = CryptLibImpl.encryptField(pin);
@@ -248,7 +249,7 @@ class TestEndpoint {
               fileName: "Login_res", response: decrypted)
         });
     debugPrint("Message: $message");
-    return message;
+    return status;
   }
 
   Future<String> activateMobile({mobileNumber, plainPin}) async {
