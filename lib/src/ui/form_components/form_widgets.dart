@@ -7,6 +7,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/render_utils.dart';
 import 'package:vibration/vibration.dart';
@@ -65,7 +66,8 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
               value: _currentValue,
               hint: Text(
                 widget.text,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               isExpanded: true,
               style: const TextStyle(fontSize: 16, color: Colors.black),
@@ -125,21 +127,19 @@ class _TextInputWidgetState extends State<TextInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("texfield ${widget.isMandatory}");
-    print("Control format ${widget.controlFormat}");
-    var texfieldParams = RenderUtils.checkControlFormat(widget.controlFormat!,
+    var textFieldParams = RenderUtils.checkControlFormat(widget.controlFormat!,
         context: context,
         isObscure: widget.isObscured,
         refreshParent: refreshParent);
 
     return TextFormField(
         controller: widget.controller,
-        keyboardType: texfieldParams['inputType'],
+        keyboardType: textFieldParams['inputType'],
         obscureText: widget.isObscured,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: widget.text,
-          suffixIcon: texfieldParams['suffixIcon'],
+          suffixIcon: textFieldParams['suffixIcon'],
         ),
         style: const TextStyle(fontSize: 16),
         validator: (value) {
@@ -235,10 +235,36 @@ class QRCodeScanner extends StatefulWidget {
   Uint8List bytes = Uint8List(0);
 }
 
-class _QRCodeScannerState extends State<QRCodeScanner> {
+class _QRCodeScannerState extends State<QRCodeScanner>
+    with WidgetsBindingObserver {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
+  bool hasScanned = false;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        rebuildWidget();
+        break;
+      case AppLifecycleState.inactive:
+        print("app in inactive");
+        break;
+      case AppLifecycleState.paused:
+        print("app in paused");
+        break;
+      case AppLifecycleState.detached:
+        print("app in detached");
+        break;
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
 
   @override
   void reassemble() {
@@ -256,8 +282,10 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
         ? 150.0
         : 300.0;
     var paddingTop = Get.statusBarHeight;
-    var containerHeight = MediaQuery.of(context).size.height - paddingTop;
-    print("Appbar height***#$paddingTop]");
+    var totalHeight = MediaQuery.of(context).size.height;
+    debugPrint("Status bar height...$paddingTop...Total height...$totalHeight");
+    var containerHeight = totalHeight - paddingTop;
+    print("Container height...$containerHeight");
 
     return Container(
         height: containerHeight,
@@ -266,7 +294,7 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
           key: qrKey,
           onQRViewCreated: _onQRViewCreated,
           overlay: QrScannerOverlayShape(
-              borderColor: Colors.red,
+              borderColor: hasScanned ? Colors.blue : Colors.red,
               borderRadius: 10,
               borderLength: 30,
               borderWidth: 10,
@@ -286,6 +314,17 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
       setState(() {
         result = scanData;
         Vibration.vibrate();
+        var code = result?.code;
+        debugPrint("Scan result...$code");
+        hasScanned = true;
+        controller.pauseCamera();
+        try {
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            CommonLibs.openUrl(Uri.parse(code!));
+          });
+        } catch (e) {
+          debugPrint(e.toString());
+        }
       });
     });
   }
@@ -296,6 +335,14 @@ class _QRCodeScannerState extends State<QRCodeScanner> {
         const SnackBar(content: Text('no Permission')),
       );
     }
+  }
+
+  void rebuildWidget() async {
+    // if (mounted) {
+    setState(() {
+      hasScanned = false;
+      Navigator.pop(context);
+    });
   }
 
   @override

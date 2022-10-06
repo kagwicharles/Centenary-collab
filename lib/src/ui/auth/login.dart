@@ -39,6 +39,7 @@ class _LoginState extends State<Login> {
                 ),
                 TextFormField(
                   controller: pinController,
+                  obscureText: true,
                   decoration: const InputDecoration(hintText: "Enter PIN"),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
