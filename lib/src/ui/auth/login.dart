@@ -72,7 +72,8 @@ class _LoginState extends State<Login> {
                                           setState(() {
                                             loading = false;
                                           }),
-                                          if (value == StatusCode.success)
+                                          if (value["Status"] ==
+                                              StatusCode.success)
                                             {
                                               Navigator.push(
                                                 context,
@@ -87,7 +88,7 @@ class _LoginState extends State<Login> {
                                             {
                                               CommonWidgets.buildNormalSnackBar(
                                                   context: context,
-                                                  message: value)
+                                                  message: value["Message"])
                                             }
                                         });
                               });

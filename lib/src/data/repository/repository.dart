@@ -309,7 +309,7 @@ class BranchLocationRepository {
     });
   }
 
-  Future<List<AtmLocation>> getAllAtmLocations() async {
+  Future<List<BranchLocation>> getAllBranchLocations() async {
     var branchLocations;
     await AppDatabase.getDatabaseInstance().then((database) {
       branchLocations = database.branchLocationDao.getAllBranchLocations();

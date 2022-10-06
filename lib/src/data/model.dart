@@ -248,6 +248,19 @@ class ImageData {
         imageCategory = json['ImageCategory'];
 }
 
+class AppLocation {
+  double longitude;
+  double latitude;
+  double distance;
+  String location;
+
+  AppLocation(
+      {required this.longitude,
+      required this.latitude,
+      required this.distance,
+      required this.location});
+}
+
 @entity
 class AtmLocation {
   @primaryKey

@@ -218,7 +218,7 @@ class TestEndpoint {
         });
   }
 
-  Future<String?> login(String pin) async {
+  Future<Map<String, dynamic>> login(String pin) async {
     String res, decrypted, message = "";
     String? status;
     var jsonData;
@@ -260,7 +260,10 @@ class TestEndpoint {
               fileName: "Login_res", response: decrypted)
         });
     debugPrint("Message: $message");
-    return status;
+    Map<String, dynamic> encodedResponse = {};
+    encodedResponse["Status"] = status;
+    encodedResponse["Message"] = message;
+    return encodedResponse;
   }
 
   Future<String> activateMobile({mobileNumber, plainPin}) async {
