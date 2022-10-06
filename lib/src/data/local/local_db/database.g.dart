@@ -85,6 +85,10 @@ class _$AppDatabase extends AppDatabase {
 
   ModuleToDisableDao? _moduleToDisableDaoInstance;
 
+  AtmLocationDao? _atmLocationDaoInstance;
+
+  BranchLocationDao? _branchLocationDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -127,6 +131,10 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `ModuleToHide` (`no` INTEGER, `moduleId` TEXT NOT NULL, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ModuleToDisable` (`no` INTEGER, `moduleID` TEXT NOT NULL, `merchantID` TEXT, `displayMessage` TEXT, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `AtmLocation` (`no` INTEGER, `longitude` REAL NOT NULL, `latitude` REAL NOT NULL, `distance` REAL NOT NULL, `location` TEXT NOT NULL, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `BranchLocation` (`no` INTEGER, `longitude` REAL NOT NULL, `latitude` REAL NOT NULL, `distance` REAL NOT NULL, `location` TEXT NOT NULL, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -199,6 +207,18 @@ class _$AppDatabase extends AppDatabase {
   ModuleToDisableDao get moduleToDisableDao {
     return _moduleToDisableDaoInstance ??=
         _$ModuleToDisableDao(database, changeListener);
+  }
+
+  @override
+  AtmLocationDao get atmLocationDao {
+    return _atmLocationDaoInstance ??=
+        _$AtmLocationDao(database, changeListener);
+  }
+
+  @override
+  BranchLocationDao get branchLocationDao {
+    return _branchLocationDaoInstance ??=
+        _$BranchLocationDao(database, changeListener);
   }
 }
 
@@ -793,5 +813,93 @@ class _$ModuleToDisableDao extends ModuleToDisableDao {
   Future<void> insertModuleToDisable(ModuleToDisable moduleToDisable) async {
     await _moduleToDisableInsertionAdapter.insert(
         moduleToDisable, OnConflictStrategy.abort);
+  }
+}
+
+class _$AtmLocationDao extends AtmLocationDao {
+  _$AtmLocationDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _atmLocationInsertionAdapter = InsertionAdapter(
+            database,
+            'AtmLocation',
+            (AtmLocation item) => <String, Object?>{
+                  'no': item.no,
+                  'longitude': item.longitude,
+                  'latitude': item.latitude,
+                  'distance': item.distance,
+                  'location': item.location
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<AtmLocation> _atmLocationInsertionAdapter;
+
+  @override
+  Future<List<AtmLocation>> getAllAtmLocations() async {
+    return _queryAdapter.queryList('SELECT * FROM AtmLocation',
+        mapper: (Map<String, Object?> row) => AtmLocation(
+            longitude: row['longitude'] as double,
+            latitude: row['latitude'] as double,
+            distance: row['distance'] as double,
+            location: row['location'] as String));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM AtmLocation');
+  }
+
+  @override
+  Future<void> insertAtmLocation(AtmLocation atmLocation) async {
+    await _atmLocationInsertionAdapter.insert(
+        atmLocation, OnConflictStrategy.abort);
+  }
+}
+
+class _$BranchLocationDao extends BranchLocationDao {
+  _$BranchLocationDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _branchLocationInsertionAdapter = InsertionAdapter(
+            database,
+            'BranchLocation',
+            (BranchLocation item) => <String, Object?>{
+                  'no': item.no,
+                  'longitude': item.longitude,
+                  'latitude': item.latitude,
+                  'distance': item.distance,
+                  'location': item.location
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<BranchLocation> _branchLocationInsertionAdapter;
+
+  @override
+  Future<List<BranchLocation>> getAllBranchLocations() async {
+    return _queryAdapter.queryList('SELECT * FROM BranchLocation',
+        mapper: (Map<String, Object?> row) => BranchLocation(
+            longitude: row['longitude'] as double,
+            latitude: row['latitude'] as double,
+            distance: row['distance'] as double,
+            location: row['location'] as String));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM BranchLocation');
+  }
+
+  @override
+  Future<void> insertBranchLocation(BranchLocation branchLocation) async {
+    await _branchLocationInsertionAdapter.insert(
+        branchLocation, OnConflictStrategy.abort);
   }
 }

@@ -25,7 +25,9 @@ part 'database.g.dart';
   FrequentAccessedModule,
   Beneficiary,
   ModuleToHide,
-  ModuleToDisable
+  ModuleToDisable,
+  AtmLocation,
+  BranchLocation
 ])
 abstract class AppDatabase extends FloorDatabase {
   ModuleItemDao get moduleItemDao;
@@ -51,6 +53,10 @@ abstract class AppDatabase extends FloorDatabase {
   ModuleToHideDao get moduleToHideDao;
 
   ModuleToDisableDao get moduleToDisableDao;
+
+  AtmLocationDao get atmLocationDao;
+
+  BranchLocationDao get branchLocationDao;
 
   static getDatabaseInstance() async {
     return await $FloorAppDatabase.databaseBuilder('app_database.db').build();

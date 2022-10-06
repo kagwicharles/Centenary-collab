@@ -1,4 +1,5 @@
 import 'package:floor/floor.dart';
+import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/user_model.dart';
 
 @dao
@@ -59,5 +60,29 @@ abstract class ModuleToDisableDao {
   Future<void> insertModuleToDisable(ModuleToDisable moduleToDisable);
 
   @Query('DELETE FROM ModuleToDisable')
+  Future<void> clearTable();
+}
+
+@dao
+abstract class BranchLocationDao {
+  @Query('SELECT * FROM BranchLocation')
+  Future<List<BranchLocation>> getAllBranchLocations();
+
+  @insert
+  Future<void> insertBranchLocation(BranchLocation branchLocation);
+
+  @Query('DELETE FROM BranchLocation')
+  Future<void> clearTable();
+}
+
+@dao
+abstract class AtmLocationDao {
+  @Query('SELECT * FROM AtmLocation')
+  Future<List<AtmLocation>> getAllAtmLocations();
+
+  @insert
+  Future<void> insertAtmLocation(AtmLocation atmLocation);
+
+  @Query('DELETE FROM AtmLocation')
   Future<void> clearTable();
 }

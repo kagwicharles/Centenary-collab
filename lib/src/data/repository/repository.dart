@@ -279,3 +279,47 @@ class ModuleToDisableRepository {
     });
   }
 }
+
+class AtmLocationRepository {
+  void insertAtmLocation(AtmLocation atmLocation) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.atmLocationDao.insertAtmLocation(atmLocation);
+    });
+  }
+
+  Future<List<AtmLocation>> getAllAtmLocations() async {
+    var atmLocations;
+    await AppDatabase.getDatabaseInstance().then((database) {
+      atmLocations = database.atmLocationDao.getAllAtmLocations();
+    });
+    return atmLocations;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.atmLocationDao.clearTable();
+    });
+  }
+}
+
+class BranchLocationRepository {
+  void insertBranchLocation(BranchLocation branchLocation) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.branchLocationDao.insertBranchLocation(branchLocation);
+    });
+  }
+
+  Future<List<AtmLocation>> getAllAtmLocations() async {
+    var branchLocations;
+    await AppDatabase.getDatabaseInstance().then((database) {
+      branchLocations = database.branchLocationDao.getAllBranchLocations();
+    });
+    return branchLocations;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.branchLocationDao.clearTable();
+    });
+  }
+}

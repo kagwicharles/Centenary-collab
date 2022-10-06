@@ -38,6 +38,8 @@ class TestEndpoint {
   final _beneficiaryRepository = BeneficiaryRepository();
   final _moduleToHideRepository = ModuleToHideRepository();
   final _moduleToDisableRepository = ModuleToDisableRepository();
+  final _atmLocationRepository = AtmLocationRepository();
+  final _branchLocationRepository = BranchLocationRepository();
 
   securityFeatureSetUp() async {
     localDevice = await SharedPrefLocal.getLocalDevice();
@@ -176,6 +178,14 @@ class TestEndpoint {
             }),
             json.decode(decrypted)["Images"].forEach((item) {
               _imageDataRepository.insertImageData(ImageData.fromJson(item));
+            }),
+            json.decode(decrypted)["ATMLocations"].forEach((item) {
+              _atmLocationRepository
+                  .insertAtmLocation(AtmLocation.fromJson(item));
+            }),
+            json.decode(decrypted)["BranchLocations"].forEach((item) {
+              _branchLocationRepository
+                  .insertBranchLocation(BranchLocation.fromJson(item));
             }),
           });
     } catch (e) {
@@ -367,5 +377,7 @@ class TestEndpoint {
     _onlineAccountProductRepository.clearTable();
     _bankBranchRepository.clearTable();
     _imageDataRepository.clearTable();
+    _branchLocationRepository.clearTable();
+    _atmLocationRepository.clearTable();
   }
 }

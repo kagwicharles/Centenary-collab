@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/ui/home/home.dart';
+import 'package:rafiki/src/ui/others/map_view.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
 
 class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
+
   @override
   State<Login> createState() => _LoginState();
 }
@@ -100,7 +103,18 @@ class _LoginState extends State<Login> {
                                 ),
                                 Text("Please wait...")
                               ])
-                        : const Text("LOGIN"))
+                        : const Text("LOGIN")),
+                const SizedBox(
+                  height: 60,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MapView()));
+                    },
+                    child: const Text("Show maps"))
               ],
             ),
           )),

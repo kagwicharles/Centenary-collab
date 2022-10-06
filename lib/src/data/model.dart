@@ -248,6 +248,50 @@ class ImageData {
         imageCategory = json['ImageCategory'];
 }
 
+@entity
+class AtmLocation {
+  @primaryKey
+  int? no;
+  double longitude;
+  double latitude;
+  double distance;
+  String location;
+
+  AtmLocation(
+      {required this.longitude,
+      required this.latitude,
+      required this.distance,
+      required this.location});
+
+  AtmLocation.fromJson(Map<String, dynamic> json)
+      : longitude = json["Longitude"],
+        latitude = json["Latitude"],
+        distance = json["Distance"],
+        location = json["Location"];
+}
+
+@entity
+class BranchLocation {
+  @primaryKey
+  int? no;
+  double longitude;
+  double latitude;
+  double distance;
+  String location;
+
+  BranchLocation(
+      {required this.longitude,
+      required this.latitude,
+      required this.distance,
+      required this.location});
+
+  BranchLocation.fromJson(Map<String, dynamic> json)
+      : longitude = json["Longitude"],
+        latitude = json["Latitude"],
+        distance = json["Distance"],
+        location = json["Location"];
+}
+
 class FavouriteItem {
   String imageUrl;
   String title;
