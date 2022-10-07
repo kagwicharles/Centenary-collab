@@ -6,7 +6,7 @@ class DynamicRequest {
   final _actionControlRepository = ActionControlRepository();
   final _services = TestEndpoint();
 
-  dynamicRequest(String moduleId, String actionId, {dataObj}) {
+  dynamicRequest(String moduleId, String actionId, {dataObj, merchantID}) {
     ActionType actionType;
     Map requestObj;
     _actionControlRepository
@@ -20,7 +20,7 @@ class DynamicRequest {
           {
             requestObj = await dbCall(
                 actionType: actionType.name,
-                merchantId: actionControl.merchantId,
+                merchantId: merchantID,
                 moduleId: moduleId,
                 data: dataObj);
             TestEndpoint().dynamicRequest(
@@ -37,7 +37,7 @@ class DynamicRequest {
           {
             requestObj = await validateCall(
                 actionType: actionType.name,
-                merchantId: actionControl.merchantId,
+                merchantId: merchantID,
                 moduleId: moduleId,
                 data: dataObj);
             TestEndpoint().dynamicRequest(
@@ -67,6 +67,7 @@ class DynamicRequest {
     requestObj["FormID"] = actionType;
     requestObj["MerchantID"] = merchantId;
     requestObj["ModuleID"] = moduleId;
+    requestObj["SessionID"] = "00000000-13f7-a5b8-0000-00001d093e12";
     requestObj["DynamicForm"] = data;
     print("Current request obj...$requestObj");
     return requestObj;

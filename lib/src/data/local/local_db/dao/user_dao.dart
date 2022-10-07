@@ -29,8 +29,8 @@ abstract class FrequentAccessedModuleDao {
 
 @dao
 abstract class BeneficiaryDao {
-  @Query('SELECT * FROM Beneficiary')
-  Future<List<Beneficiary>> getAllBeneficiaries();
+  @Query('SELECT * FROM Beneficiary WHERE merchantID =:merchantID')
+  Future<List<Beneficiary>> getAllBeneficiaries(String merchantID);
 
   @insert
   Future<void> insertBeneficiary(Beneficiary beneficiary);

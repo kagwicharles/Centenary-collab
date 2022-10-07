@@ -9,15 +9,19 @@ class ModuleItemWidget extends StatelessWidget {
   final String moduleId;
   final String parentModule;
   final String moduleCategory;
+  String? merchantID;
   bool isMain = false;
 
   ModuleItemWidget(
-      {Key? key, required this.imageUrl,
+      {Key? key,
+      required this.imageUrl,
       required this.moduleName,
       required this.moduleId,
       required this.parentModule,
       required this.moduleCategory,
-      this.isMain = false}) : super(key: key);
+      this.merchantID,
+      this.isMain = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +32,11 @@ class ModuleItemWidget extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DynamicWidget(
-                        moduleId: moduleId,
-                        moduleName: moduleName,
-                        parentModule: parentModule,
-                        moduleCategory: moduleCategory,
-                      )));
+                      moduleId: moduleId,
+                      moduleName: moduleName,
+                      parentModule: parentModule,
+                      moduleCategory: moduleCategory,
+                      merchantID: merchantID)));
             },
             child: Container(
               padding: const EdgeInsets.all(2.0),

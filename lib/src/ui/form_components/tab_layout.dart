@@ -10,12 +10,14 @@ class TabWidget extends StatelessWidget {
   List<TabWidgetList> tabWidgetList = [];
   List<String> linkControls = [];
   String title;
+  String? merchantID;
   Function? updateState;
 
   TabWidget(
       {required this.title,
       required this.formItems,
       required this.moduleName,
+      this.merchantID,
       this.updateState});
 
   @override
@@ -32,6 +34,7 @@ class TabWidget extends StatelessWidget {
 
     linkControls.asMap().forEach((index, linkControl) {
       tabWidgetList.add(TabWidgetList(
+          merchantID: merchantID,
           formItems: formItems
               .where((formItem) =>
                   formItem.linkedToControl == linkControl ||
@@ -62,8 +65,9 @@ class TabWidget extends StatelessWidget {
 class TabWidgetList extends StatefulWidget {
   final List<FormItem> formItems;
   Function? updateState;
+  String? merchantID;
 
-  TabWidgetList({required this.formItems, this.updateState});
+  TabWidgetList({required this.formItems, this.updateState, this.merchantID});
 
   @override
   State<TabWidgetList> createState() => _TabWidgetListState();
@@ -92,20 +96,10 @@ class _TabWidgetListState extends State<TabWidgetList> {
                     controlType = ViewType.values
                         .byName(widget.formItems[index].controlType!);
                   } catch (e) {}
-                  var controlText = widget.formItems[index].controlText;
-                  bool? isMandatory = widget.formItems[index].isMandatory;
-                  String? controlFormat = widget.formItems[index].controlFormat;
-                  String? serviceParamId =
-                      widget.formItems[index].serviceParamId;
-                  String? moduleId = widget.formItems[index].moduleId;
 
                   return DetermineRenderWidget(controlType,
-                      text: controlText!,
                       formKey: _formKey,
-                      isMandatory: isMandatory!,
-                      controlFormat: controlFormat,
-                      serviceParamId: serviceParamId,
-                      moduleId: moduleId,
+                      merchantID: widget.merchantID,
                       formItem: widget.formItems[index],
                       refreshParent: widget.updateState);
                 })));

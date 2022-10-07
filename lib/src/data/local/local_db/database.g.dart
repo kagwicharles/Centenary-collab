@@ -715,15 +715,17 @@ class _$BeneficiaryDao extends BeneficiaryDao {
   final InsertionAdapter<Beneficiary> _beneficiaryInsertionAdapter;
 
   @override
-  Future<List<Beneficiary>> getAllBeneficiaries() async {
-    return _queryAdapter.queryList('SELECT * FROM Beneficiary',
+  Future<List<Beneficiary>> getAllBeneficiaries(String merchantID) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Beneficiary WHERE merchantID =?1',
         mapper: (Map<String, Object?> row) => Beneficiary(
             merchantID: row['merchantID'] as String,
             merchantName: row['merchantName'] as String,
             accountID: row['accountID'] as String,
             accountAlias: row['accountAlias'] as String,
             bankID: row['bankID'] as String?,
-            branchID: row['branchID'] as String?));
+            branchID: row['branchID'] as String?),
+        arguments: [merchantID]);
   }
 
   @override

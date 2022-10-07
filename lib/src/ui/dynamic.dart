@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
-import 'package:rafiki/src/data/test/test.dart';
 import 'package:rafiki/src/ui/dynamic_list.dart';
 
 class DynamicWidget extends StatelessWidget {
@@ -9,6 +8,7 @@ class DynamicWidget extends StatelessWidget {
   final String moduleName;
   final String parentModule;
   final String moduleCategory;
+  String? merchantID;
   List<FormItem> content = [];
   final _moduleRepository = ModuleRepository();
   final _formsRepository = FormsRepository();
@@ -21,7 +21,8 @@ class DynamicWidget extends StatelessWidget {
       required this.moduleId,
       required this.moduleName,
       required this.parentModule,
-      required this.moduleCategory})
+      required this.moduleCategory,
+      this.merchantID})
       : super(key: key);
 
   @override
@@ -40,7 +41,7 @@ class DynamicWidget extends StatelessWidget {
             formItems: _formItems,
             parentModule: parentModule,
             moduleName: moduleName,
-          )
+            merchantID: merchantID)
         : ModulesListWidget(
             orientation: orientation,
             moduleItems: _moduleItems,

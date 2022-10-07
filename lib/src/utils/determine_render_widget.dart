@@ -1,6 +1,4 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:vibration/vibration.dart';
@@ -9,28 +7,18 @@ class DetermineRenderWidget extends StatelessWidget {
   static List<String> textfieldValues = [];
   static List<String> dropdownItems = [];
   ViewType? widgetType;
-  String? controlFormat;
-  bool isMandatory;
-  String text;
-  String imageUrl;
-  String? serviceParamId;
-  String? moduleId;
-  String? actionId;
+  String? merchantID;
   FormItem formItem;
   var formKey;
 
   DetermineRenderWidget(this.widgetType,
-      {this.text = "",
-      this.imageUrl = "",
-      this.isMandatory = false,
+      {Key? key,
       formWidgets,
-      this.controlFormat,
-      this.serviceParamId,
       this.formKey,
-      this.moduleId,
-      this.actionId,
+      this.merchantID,
       required this.formItem,
-      refreshParent});
+      refreshParent})
+      : super(key: key);
 
   Function()? refreshParent;
 
@@ -44,33 +32,30 @@ class DetermineRenderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Widget type: $widgetType");
     switch (widgetType) {
       case ViewType.TEXT:
         {
-          print(controlFormat);
-          obscureText = controlFormat == ControlFormat.PinNumber.name ||
-                  controlFormat == ControlFormat.PIN.name
-              ? true
-              : false;
+          obscureText =
+              formItem.controlFormat == ControlFormat.PinNumber.name ||
+                      formItem.controlFormat == ControlFormat.PIN.name
+                  ? true
+                  : false;
           dynamicWidgetItem = TextInputWidget(
-              text: text,
-              isMandatory: isMandatory,
-              controlFormat: controlFormat,
-              serviceParamId: serviceParamId,
+              text: formItem.controlText!,
+              isMandatory: formItem.isMandatory!,
+              controlFormat: formItem.controlFormat,
+              serviceParamId: formItem.serviceParamId,
               isObscured: obscureText);
         }
         break;
 
       case ViewType.DATE:
         {
-          print(controlFormat);
-
           dynamicWidgetItem = TextInputWidget(
-            text: text,
-            isMandatory: isMandatory,
-            controlFormat: controlFormat,
-            serviceParamId: serviceParamId,
+            text: formItem.controlText!,
+            isMandatory: formItem.isMandatory!,
+            controlFormat: formItem.controlFormat,
+            serviceParamId: formItem.serviceParamId,
           );
         }
         break;
@@ -78,32 +63,29 @@ class DetermineRenderWidget extends StatelessWidget {
       case ViewType.BUTTON:
         {
           dynamicWidgetItem = ButtonWidget(
-            text: formItem.controlText!,
-            formKey: formKey,
-            moduleId: formItem.moduleId!,
-            actionId: formItem.actionId!,
-          );
+              text: formItem.controlText!,
+              formKey: formKey,
+              moduleId: formItem.moduleId!,
+              actionId: formItem.actionId!,
+              merchantID: merchantID);
         }
         break;
 
       case ViewType.DROPDOWN:
         {
           dynamicWidgetItem = DropdownButtonWidget(
-              text: text,
-              serviceParamId: serviceParamId,
-              dataSourceId: formItem.dataSourceId,
-              controlID: formItem.controlId);
+            text: formItem.controlText!,
+            serviceParamId: formItem.serviceParamId!,
+            dataSourceId: formItem.dataSourceId,
+            controlID: formItem.controlId,
+            merchantID: merchantID,
+          );
         }
         break;
 
-      // case ViewType.RBUTTON:
-      //   {
-      //     return RButtonWidget(text: text);
-      //   }
-
       case ViewType.LABEL:
         {
-          dynamicWidgetItem = LabelWidget(text: text);
+          dynamicWidgetItem = LabelWidget(text: formItem.controlText!);
         }
         break;
 
@@ -116,8 +98,8 @@ class DetermineRenderWidget extends StatelessWidget {
       case ViewType.PHONECONTACTS:
         {
           dynamicWidgetItem = PhonePickerFormWidget(
-            text: text,
-            serviceParamId: serviceParamId,
+            text: formItem.controlText,
+            serviceParamId: formItem.serviceParamId,
           );
         }
         break;

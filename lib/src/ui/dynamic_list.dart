@@ -10,6 +10,7 @@ class ModulesListWidget extends StatelessWidget {
   final orientation;
   final String parentModule;
   final String moduleName;
+
   ModulesListWidget(
       {required this.orientation,
       required this.moduleItems,
@@ -43,6 +44,7 @@ class ModulesListWidget extends StatelessWidget {
                           var moduleId = snapshot.data![index].moduleId;
                           var moduleCategory =
                               snapshot.data![index].moduleCategory;
+                          var merchantID = snapshot.data![index].merchantID;
 
                           return ModuleItemWidget(
                             imageUrl: imageUrl!,
@@ -50,6 +52,7 @@ class ModulesListWidget extends StatelessWidget {
                             moduleId: moduleId,
                             parentModule: parentModule,
                             moduleCategory: moduleCategory,
+                            merchantID: merchantID,
                           );
                         }));
               }
@@ -63,12 +66,14 @@ class FormsListWidget extends StatefulWidget {
   final orientation;
   final String parentModule;
   final String moduleName;
+  String? merchantID;
 
   FormsListWidget(
       {required this.orientation,
       required this.formItems,
       required this.parentModule,
-      required this.moduleName});
+      required this.moduleName,
+      this.merchantID});
 
   @override
   State<FormsListWidget> createState() => _FormsListWidgetState();
@@ -79,10 +84,6 @@ class _FormsListWidgetState extends State<FormsListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    double deviceHeight = MediaQuery.of(context).size.height;
-
-    List<TextFormField> formWidgets = [];
-
     return FutureBuilder<List<FormItem>>(
         future: widget.formItems,
         builder:
@@ -102,6 +103,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                     title: "test",
                     formItems: filteredFormItems,
                     moduleName: widget.moduleName,
+                    merchantID: widget.merchantID,
                     updateState: updateState)
                 : Scaffold(
                     appBar: AppBar(title: Text(widget.moduleName)),
@@ -119,26 +121,10 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                     controlType = ViewType.values.byName(
                                         filteredFormItems[index].controlType!);
                                   } catch (e) {}
-
-                                  var controlText =
-                                      filteredFormItems[index].controlText;
-                                  var isMandatory =
-                                      filteredFormItems[index].isMandatory;
-                                  var controlFormat =
-                                      filteredFormItems[index].controlFormat;
-                                  var serviceParamId =
-                                      filteredFormItems[index].serviceParamId;
-                                  var moduleId =
-                                      filteredFormItems[index].moduleId;
-
                                   return DetermineRenderWidget(controlType,
-                                      text: controlText!,
-                                      isMandatory: isMandatory!,
                                       formKey: _formKey,
-                                      controlFormat: controlFormat,
-                                      serviceParamId: serviceParamId,
-                                      moduleId: moduleId,
                                       formItem: filteredFormItems[index],
+                                      merchantID: widget.merchantID,
                                       refreshParent: updateState);
                                 }))));
           }

@@ -218,11 +218,11 @@ class BeneficiaryRepository {
     });
   }
 
-  Future<Future<List<Beneficiary>>?> getAllBeneficiaries() async {
-    Future<List<Beneficiary>>? beneficiaries;
+  Future<List<Beneficiary>?> getAllBeneficiaries(String merchantID) async {
+    var beneficiaries;
 
     await AppDatabase.getDatabaseInstance().then((database) {
-      beneficiaries = database.beneficiaryDao.getAllBeneficiaries();
+      beneficiaries = database.beneficiaryDao.getAllBeneficiaries(merchantID);
     });
     return beneficiaries;
   }

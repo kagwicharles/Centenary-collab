@@ -195,7 +195,7 @@ class TestEndpoint {
 
   dynamicRequest({required requestObj, required webHeader}) async {
     String res, decrypted;
-    print('Raw request: $requestObj');
+    AppLogger.appLogE(tag: "Raw request", message: jsonEncode(requestObj));
     await securityFeatureSetUp();
 
     final encryptedBody =

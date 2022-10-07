@@ -16,7 +16,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 
 class InputUtil {
-  static List<Map<String?, dynamic>> formInputValues = [];
+  static Map<String?, dynamic> formInputValues = {};
 }
 
 class DropdownButtonWidget extends StatelessWidget {
@@ -24,13 +24,16 @@ class DropdownButtonWidget extends StatelessWidget {
   String? serviceParamId;
   String? dataSourceId;
   String? controlID;
+  ControlID? currentControlID;
+  String? merchantID;
 
   DropdownButtonWidget(
       {Key? key,
       required this.text,
       this.serviceParamId,
       this.dataSourceId,
-      this.controlID})
+      this.controlID,
+      this.merchantID = ""})
       : super(key: key);
 
   final _userCodeRepository = UserCodeRepository();
@@ -39,13 +42,15 @@ class DropdownButtonWidget extends StatelessWidget {
 
   List<UserCode>? _userCodes;
   List<BankAccount>? _bankAccounts;
+  List<Beneficiary>? _beneficiaries;
   List<dynamic>? _dropdownItems;
+  List<DropdownMenuItem<String>>? _dropdownPicks;
   String? _currentValue;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>?>(
-        future: getDropDownItems(),
+        future: getDropDownItems(context: context),
         builder:
             (BuildContext context, AsyncSnapshot<List<dynamic>?> snapshot) {
           Widget child = DropdownButtonFormField2(
@@ -59,16 +64,43 @@ class DropdownButtonWidget extends StatelessWidget {
             items: const [],
           );
           if (snapshot.hasData) {
-            // _userCodes?.clear();
-            // print("*After clear>>$_userCodes");
             _dropdownItems = snapshot.data;
-            if (checkIfAccountID()) {
+            if (currentControlID == ControlID.BANKACCOUNTID) {
               _bankAccounts = List<BankAccount>.from(_dropdownItems!);
+              _dropdownPicks = _bankAccounts?.map((value) {
+                return DropdownMenuItem(
+                  value: value.bankAccountId,
+                  child: Text(
+                    value.bankAccountId,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                );
+              }).toList();
+            } else if (currentControlID == ControlID.BENEFICIARYACCOUNTID) {
+              print("Merchant id...$merchantID");
+              _beneficiaries = List<Beneficiary>.from(_dropdownItems!);
+              _dropdownPicks = _beneficiaries?.map((value) {
+                return DropdownMenuItem(
+                  value: value.merchantID,
+                  child: Text(
+                    value.merchantID,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                );
+              }).toList();
             } else {
               _userCodes = List<UserCode>.from(_dropdownItems!);
+              _dropdownPicks = _userCodes?.map((value) {
+                return DropdownMenuItem(
+                  value: value.description,
+                  child: Text(
+                    value.description!,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                );
+              }).toList();
             }
-            // print("*After add..$_userCodes");
-            // print("Current dropdown value>>>$_currentValue");
+
             child = DropdownButtonFormField2(
               value: _currentValue,
               hint: Text(
@@ -80,56 +112,40 @@ class DropdownButtonWidget extends StatelessWidget {
               style: const TextStyle(fontSize: 16, color: Colors.black),
               onChanged: ((value) => {_currentValue = value.toString()}),
               validator: (value) {
-                InputUtil.formInputValues.add({serviceParamId: _currentValue});
+                InputUtil.formInputValues[serviceParamId] = _currentValue;
               },
-              items: checkIfAccountID()
-                  ? _bankAccounts?.map((value) {
-                      print(value.bankAccountId);
-                      return DropdownMenuItem(
-                        value: value.bankAccountId,
-                        child: Text(
-                          value.bankAccountId!,
-                          style: Theme.of(context).textTheme.labelSmall,
-                        ),
-                      );
-                    }).toList()
-                  : _userCodes?.map((value) {
-                      print(value.description);
-                      return DropdownMenuItem(
-                        value: value.description,
-                        child: Text(
-                          value.description!,
-                          style: Theme.of(context).textTheme.labelSmall,
-                        ),
-                      );
-                    }).toList(),
+              items: _dropdownPicks,
             );
           }
           return child;
         });
   }
 
-  bool checkIfAccountID() {
-    if (controlID == ControlID.BANKACCOUNTID.name) {
-      return true;
-    }
-    return false;
-  }
-
-  getDropDownItems() {
+  getDropDownItems({required context}) {
     debugPrint("Control ID...$controlID");
-    var controlIDType = ControlID.values.byName(controlID!);
+    var controlIDType;
+    try {
+      controlIDType = ControlID.values.byName(controlID!);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
     switch (controlIDType) {
       case ControlID.BANKACCOUNTID:
         {
+          currentControlID = controlIDType;
           return _bankAccountRepository.getAllBankAccounts();
         }
       case ControlID.BENEFICIARYACCOUNTID:
         {
-          return _beneficiaryRepository.getAllBeneficiaries();
+          currentControlID = controlIDType;
+          print("Merchant id...$merchantID");
+          merchantID ??= "";
+          return _beneficiaryRepository.getAllBeneficiaries(merchantID!);
         }
       default:
         {
+          currentControlID = ControlID.OTHER;
           return _userCodeRepository.getUserCodesById(dataSourceId);
         }
     }
@@ -183,10 +199,8 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           if (widget.isMandatory && value!.isEmpty) {
             return 'Input required*';
           }
-          InputUtil.formInputValues.add({
-            widget.serviceParamId:
-                widget.isObscured ? CryptLibImpl.encryptField(value!) : value
-          });
+          InputUtil.formInputValues[widget.serviceParamId] =
+              widget.isObscured ? CryptLibImpl.encryptField(value!) : value;
           print("validator running...");
           return null;
         });
@@ -205,27 +219,29 @@ class ButtonWidget extends StatelessWidget {
   var formKey;
   String moduleId;
   String actionId;
+  String? merchantID;
   final _dynamicRequest = DynamicRequest();
 
-  ButtonWidget({
-    Key? key,
-    required this.text,
-    this.formKey,
-    required this.moduleId,
-    required this.actionId,
-  }) : super(key: key);
+  ButtonWidget(
+      {Key? key,
+      required this.text,
+      this.formKey,
+      required this.moduleId,
+      required this.actionId,
+      this.merchantID})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        InputUtil.formInputValues.clear();
+        // InputUtil.formInputValues.clear();
         if (formKey.currentState.validate()) {
           print("Form is okay...");
           print(InputUtil.formInputValues.toString());
 
           _dynamicRequest.dynamicRequest(moduleId, actionId,
-              dataObj: InputUtil.formInputValues);
+              dataObj: InputUtil.formInputValues, merchantID: merchantID);
         } else {
           Vibration.vibrate();
         }
@@ -432,7 +448,7 @@ class _PhonePickerFormWidgetState extends State<PhonePickerFormWidget> {
             }),
       ),
       validator: (value) {
-        InputUtil.formInputValues.add({widget.serviceParamId: value!});
+        InputUtil.formInputValues[widget.serviceParamId] = value;
       },
       style: const TextStyle(fontSize: 16),
     );

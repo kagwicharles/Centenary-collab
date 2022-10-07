@@ -137,6 +137,7 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
                                     snapshot.data![index].parentModule,
                                 moduleCategory:
                                     snapshot.data![index].moduleCategory,
+                                merchantID: snapshot.data![index].merchantID,
                                 isMain: true,
                               ))));
                     }));
