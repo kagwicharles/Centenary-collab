@@ -34,17 +34,13 @@ class DropdownButtonWidget extends StatelessWidget {
       : super(key: key);
 
   final _userCodeRepository = UserCodeRepository();
-
   final _bankAccountRepository = BankAccountRepository();
+  final _beneficiaryRepository = BeneficiaryRepository();
 
   List<UserCode>? _userCodes;
-
   List<BankAccount>? _bankAccounts;
   List<dynamic>? _dropdownItems;
-
   String? _currentValue;
-
-  Object? globalType;
 
   @override
   Widget build(BuildContext context) {
@@ -122,12 +118,20 @@ class DropdownButtonWidget extends StatelessWidget {
 
   getDropDownItems() {
     debugPrint("Control ID...$controlID");
-    if (dataSourceId != null) {
-      return _userCodeRepository.getUserCodesById(dataSourceId);
-    }
-    if (controlID == ControlID.BANKACCOUNTID.name) {
-      debugPrint("Bank accounts..dropdown");
-      return _bankAccountRepository.getAllBankAccounts();
+    var controlIDType = ControlID.values.byName(controlID!);
+    switch (controlIDType) {
+      case ControlID.BANKACCOUNTID:
+        {
+          return _bankAccountRepository.getAllBankAccounts();
+        }
+      case ControlID.BENEFICIARYACCOUNTID:
+        {
+          return _beneficiaryRepository.getAllBeneficiaries();
+        }
+      default:
+        {
+          return _userCodeRepository.getUserCodesById(dataSourceId);
+        }
     }
   }
 }

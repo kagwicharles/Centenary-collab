@@ -20,7 +20,7 @@ enum FormId { MENU, FORMS, ACTIONS }
 
 enum DynamicDataType { Modules, ActionControls, FormControls }
 
-enum ControlID { BANKACCOUNTID }
+enum ControlID { BANKACCOUNTID, BENEFICIARYACCOUNTID }
 
 enum ActionType {
   DBCALL,
