@@ -89,10 +89,10 @@ class DetermineRenderWidget extends StatelessWidget {
       case ViewType.DROPDOWN:
         {
           dynamicWidgetItem = DropdownButtonWidget(
-            text: text,
-            serviceParamId: serviceParamId,
-            dataSourceId: formItem.dataSourceId,
-          );
+              text: text,
+              serviceParamId: serviceParamId,
+              dataSourceId: formItem.dataSourceId,
+              controlID: formItem.controlId);
         }
         break;
 

@@ -7,6 +7,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/render_utils.dart';
@@ -18,54 +19,64 @@ class InputUtil {
   static List<Map<String?, dynamic>> formInputValues = [];
 }
 
-class DropdownButtonWidget extends StatefulWidget {
+class DropdownButtonWidget extends StatelessWidget {
   final String text;
   String? serviceParamId;
   String? dataSourceId;
+  String? controlID;
 
   DropdownButtonWidget(
-      {Key? key, required this.text, this.serviceParamId, this.dataSourceId})
+      {Key? key,
+      required this.text,
+      this.serviceParamId,
+      this.dataSourceId,
+      this.controlID})
       : super(key: key);
-
-  @override
-  State<DropdownButtonWidget> createState() => _DropdownButtonWidgetState();
-}
-
-class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
-  List<String> dropdownItems = [];
 
   final _userCodeRepository = UserCodeRepository();
 
-  List<UserCode>? _dropDownItems;
+  final _bankAccountRepository = BankAccountRepository();
+
+  List<UserCode>? _userCodes;
+
+  List<BankAccount>? _bankAccounts;
+  List<dynamic>? _dropdownItems;
 
   String? _currentValue;
 
+  Object? globalType;
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<UserCode>?>(
+    return FutureBuilder<List<dynamic>?>(
         future: getDropDownItems(),
         builder:
-            (BuildContext context, AsyncSnapshot<List<UserCode>?> snapshot) {
+            (BuildContext context, AsyncSnapshot<List<dynamic>?> snapshot) {
           Widget child = DropdownButtonFormField2(
             value: _currentValue,
             hint: Text(
-              widget.text,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              text,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             isExpanded: true,
             style: const TextStyle(fontSize: 16, color: Colors.black),
             items: const [],
           );
           if (snapshot.hasData) {
-            // _dropDownItems?.clear();
-            // print("*After clear>>$_dropDownItems");
-            _dropDownItems = snapshot.data;
-            // print("*After add..$_dropDownItems");
+            // _userCodes?.clear();
+            // print("*After clear>>$_userCodes");
+            _dropdownItems = snapshot.data;
+            if (checkIfAccountID()) {
+              _bankAccounts = List<BankAccount>.from(_dropdownItems!);
+            } else {
+              _userCodes = List<UserCode>.from(_dropdownItems!);
+            }
+            // print("*After add..$_userCodes");
             // print("Current dropdown value>>>$_currentValue");
             child = DropdownButtonFormField2(
               value: _currentValue,
               hint: Text(
-                widget.text,
+                text,
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
@@ -73,28 +84,50 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
               style: const TextStyle(fontSize: 16, color: Colors.black),
               onChanged: ((value) => {_currentValue = value.toString()}),
               validator: (value) {
-                InputUtil.formInputValues
-                    .add({widget.serviceParamId: _currentValue});
+                InputUtil.formInputValues.add({serviceParamId: _currentValue});
               },
-              items: _dropDownItems?.map((value) {
-                print(value.description);
-                return DropdownMenuItem(
-                  value: value.description,
-                  child: Text(
-                    value.description!,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                );
-              }).toList(),
+              items: checkIfAccountID()
+                  ? _bankAccounts?.map((value) {
+                      print(value.bankAccountId);
+                      return DropdownMenuItem(
+                        value: value.bankAccountId,
+                        child: Text(
+                          value.bankAccountId!,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      );
+                    }).toList()
+                  : _userCodes?.map((value) {
+                      print(value.description);
+                      return DropdownMenuItem(
+                        value: value.description,
+                        child: Text(
+                          value.description!,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      );
+                    }).toList(),
             );
           }
           return child;
         });
   }
 
+  bool checkIfAccountID() {
+    if (controlID == ControlID.BANKACCOUNTID.name) {
+      return true;
+    }
+    return false;
+  }
+
   getDropDownItems() {
-    if (widget.dataSourceId != null) {
-      return _userCodeRepository.getUserCodesById(widget.dataSourceId);
+    debugPrint("Control ID...$controlID");
+    if (dataSourceId != null) {
+      return _userCodeRepository.getUserCodesById(dataSourceId);
+    }
+    if (controlID == ControlID.BANKACCOUNTID.name) {
+      debugPrint("Bank accounts..dropdown");
+      return _bankAccountRepository.getAllBankAccounts();
     }
   }
 }

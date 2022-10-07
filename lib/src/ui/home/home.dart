@@ -85,6 +85,7 @@ class _HomePageState extends State<HomePage> {
                       return child;
                     }))),
         body: ListView(
+          physics: const BouncingScrollPhysics(),
           children: [
             const SizedBox(
               height: 24,

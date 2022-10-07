@@ -9,7 +9,7 @@ class AppTheme {
     fontFamily: "Poppins",
     appBarTheme: const AppBarTheme(
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.blue,
+        statusBarColor: Color(0xffC92265),
         statusBarIconBrightness: Brightness.light, // For Android (dark icons)
         statusBarBrightness: Brightness.dark, // For iOS (dark icons)
       ),

@@ -5,6 +5,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/home/credit_card.dart';
+import 'package:shimmer/shimmer.dart';
 
 class TopHomeWidget extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
     with SingleTickerProviderStateMixin {
   bool viewCreditCardState = true;
   final _bankAccountRepository = BankAccountRepository();
+  final bool _enabled = true;
 
   var transitionBuilder = (Widget child, Animation<double> animation) {
     // return ScaleTransition(scale: animation, child: child);
@@ -86,7 +88,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
                           )))
                 ],
               )),
-              SizedBox(
+              const SizedBox(
                 height: 4,
               ),
               viewCreditCardState
@@ -104,7 +106,13 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
                               future: getBankAccounts(),
                               builder: (BuildContext context,
                                   AsyncSnapshot<List<BankAccount>> snapshot) {
-                                Widget child = SizedBox();
+                                Widget child = Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[100]!,
+                                    enabled: _enabled,
+                                    child: const SizedBox(
+                                      width: 275,
+                                    ));
                                 if (snapshot.hasData) {
                                   var bankAccounts = snapshot.data;
                                   child = Swiper(
