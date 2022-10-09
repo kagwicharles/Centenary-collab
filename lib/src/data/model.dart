@@ -11,7 +11,8 @@ enum ViewType {
   LABEL,
   QRSCANNER,
   PHONECONTACTS,
-  DATE
+  DATE,
+  HIDDEN
 }
 
 enum ControlFormat { PinNumber, PIN, NUMERIC, Amount, DATE }
@@ -98,6 +99,7 @@ class FormItem {
   double? displayOrder;
   String? controlFormat;
   String? dataSourceId;
+  String? controlValue;
   bool? isMandatory;
   bool? isEncrypted;
 
@@ -113,6 +115,7 @@ class FormItem {
     this.displayOrder,
     this.controlFormat,
     this.dataSourceId,
+    this.controlValue,
     this.isMandatory,
     this.isEncrypted,
   });
@@ -131,6 +134,7 @@ class FormItem {
     isEncrypted = json['IsEncrypted'];
     controlFormat = json['ControlFormat'];
     dataSourceId = json['DataSourceID'];
+    controlValue = json['ControlValue'];
   }
 }
 

@@ -6,7 +6,7 @@ class AppTheme {
     colorScheme: ThemeData().colorScheme.copyWith(
           primary: Colors.blue,
         ),
-    fontFamily: "Poppins",
+    fontFamily: "Roboto",
     appBarTheme: const AppBarTheme(
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Color(0xffC92265),

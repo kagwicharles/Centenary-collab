@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
   final String title;
-  final String lastLogin = "Jul 12 2022 11:50AM";
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -17,15 +16,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _sharedPref = SharedPrefLocal();
+  ScrollPhysics physics = const BouncingScrollPhysics();
 
   @override
   Widget build(BuildContext context) {
-    // Open local sqlite database here
-    // for debugging purposes
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Navigator.push(
-    //       context, MaterialPageRoute(builder: (_) => DatabaseList()));
-    // });
     return Scaffold(
         appBar: PreferredSize(
             preferredSize:
@@ -85,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                       return child;
                     }))),
         body: ListView(
-          physics: const BouncingScrollPhysics(),
+          physics: physics,
           children: [
             const SizedBox(
               height: 24,

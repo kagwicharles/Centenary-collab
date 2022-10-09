@@ -110,6 +110,6 @@ class TextLarge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-        style: const TextStyle(fontSize: 14, color: Colors.white));
+        style: const TextStyle(fontSize: 16, color: Colors.white));
   }
 }

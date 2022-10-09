@@ -84,6 +84,9 @@ class _FormsListWidgetState extends State<FormsListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    InputUtil.formInputValues.clear();
+    InputUtil.encryptedField.clear();
+
     return FutureBuilder<List<FormItem>>(
         future: widget.formItems,
         builder:

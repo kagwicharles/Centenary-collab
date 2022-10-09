@@ -110,7 +110,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, `merchantID` TEXT, PRIMARY KEY (`moduleId`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `actionId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `dataSourceId` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `actionId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `dataSourceId` TEXT, `controlValue` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ActionItem` (`no` INTEGER, `moduleId` TEXT NOT NULL, `actionType` TEXT NOT NULL, `actionId` TEXT NOT NULL, `serviceParamsIds` TEXT NOT NULL, `controlId` TEXT NOT NULL, `webHeader` TEXT NOT NULL, `merchantId` TEXT, `formId` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
@@ -290,6 +290,7 @@ class _$FormItemDao extends FormItemDao {
                   'displayOrder': item.displayOrder,
                   'controlFormat': item.controlFormat,
                   'dataSourceId': item.dataSourceId,
+                  'controlValue': item.controlValue,
                   'isMandatory': item.isMandatory == null
                       ? null
                       : (item.isMandatory! ? 1 : 0),
@@ -321,6 +322,7 @@ class _$FormItemDao extends FormItemDao {
             displayOrder: row['displayOrder'] as double?,
             controlFormat: row['controlFormat'] as String?,
             dataSourceId: row['dataSourceId'] as String?,
+            controlValue: row['controlValue'] as String?,
             isMandatory: row['isMandatory'] == null
                 ? null
                 : (row['isMandatory'] as int) != 0,

@@ -60,6 +60,14 @@ class DetermineRenderWidget extends StatelessWidget {
         }
         break;
 
+      case ViewType.HIDDEN:
+        {
+          InputUtil.formInputValues
+              .add({"${formItem.serviceParamId}": "${formItem.controlValue}"});
+          dynamicWidgetItem = const SizedBox();
+        }
+        break;
+
       case ViewType.BUTTON:
         {
           dynamicWidgetItem = ButtonWidget(

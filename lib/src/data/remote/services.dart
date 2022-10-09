@@ -10,6 +10,7 @@ import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/data/user_model.dart';
+import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:rafiki/src/utils/app_logger.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 
@@ -50,7 +51,7 @@ class TestEndpoint {
   baseRequestSetUp() async {
     var imeiNo = await Constants.getImei();
     requestObj = {
-      "UNIQUEID": "ffffffff-a104-c869-0000-00002eac7df5",
+      "UNIQUEID": "00000000-55f4-3514-0000-00001d093e12",
       "CustomerID": "4570670220",
       "BankID": "16",
       "Country": "UGANDATEST",
@@ -201,13 +202,15 @@ class TestEndpoint {
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(requestObj), localDevice, localIv);
     final route = await SharedPrefLocal.getRoute(webHeader);
-
+    debugPrint("Dynamic route...$route");
     var response = dio.post(route,
         options: Options(
           headers: {'T': localToken},
         ),
         data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
-    response.then((value) async => {
+    InputUtil.encryptedField.clear();
+    InputUtil.formInputValues.clear();
+    await response.then((value) async => {
           print('Raw response: $value'),
           res = value.data["Response"],
           decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
@@ -216,6 +219,7 @@ class TestEndpoint {
               localIv))),
           logger.d("\n\nDYNAMIC REQ: $decrypted"),
         });
+    ;
   }
 
   Future<Map<String, dynamic>> login(String pin) async {

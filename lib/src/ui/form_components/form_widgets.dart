@@ -16,7 +16,8 @@ import 'dart:io';
 import 'package:get/get.dart';
 
 class InputUtil {
-  static Map<String?, dynamic> formInputValues = {};
+  static List<Map<String?, dynamic>> formInputValues = [];
+  static Map<String?, dynamic> encryptedField = {};
 }
 
 class DropdownButtonWidget extends StatelessWidget {
@@ -112,7 +113,8 @@ class DropdownButtonWidget extends StatelessWidget {
               style: const TextStyle(fontSize: 16, color: Colors.black),
               onChanged: ((value) => {_currentValue = value.toString()}),
               validator: (value) {
-                InputUtil.formInputValues[serviceParamId] = _currentValue;
+                debugPrint("Dropdown value...$value");
+                InputUtil.formInputValues.add({"$serviceParamId": "$value"});
               },
               items: _dropdownPicks,
             );
@@ -156,19 +158,21 @@ class TextInputWidget extends StatefulWidget {
   final String text;
   String? controlFormat;
   String? serviceParamId;
+  String? controlValue;
   bool isMandatory;
   bool isObscured;
   var controller;
 
-  TextInputWidget(
-      {Key? key,
-      required this.text,
-      this.controlFormat,
-      this.serviceParamId,
-      this.isMandatory = false,
-      this.controller,
-      this.isObscured = false})
-      : super(key: key);
+  TextInputWidget({
+    Key? key,
+    required this.text,
+    this.controlFormat,
+    this.serviceParamId,
+    this.controlValue,
+    this.isMandatory = false,
+    this.controller,
+    this.isObscured = false,
+  }) : super(key: key);
 
   @override
   State<TextInputWidget> createState() => _TextInputWidgetState();
@@ -199,9 +203,13 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           if (widget.isMandatory && value!.isEmpty) {
             return 'Input required*';
           }
-          InputUtil.formInputValues[widget.serviceParamId] =
-              widget.isObscured ? CryptLibImpl.encryptField(value!) : value;
-          print("validator running...");
+          if (widget.isObscured) {
+            InputUtil.encryptedField[widget.serviceParamId] =
+                CryptLibImpl.encryptField(value!);
+          } else {
+            InputUtil.formInputValues
+                .add({"${widget.serviceParamId}": "$value"});
+          }
           return null;
         });
   }
@@ -239,9 +247,14 @@ class ButtonWidget extends StatelessWidget {
         if (formKey.currentState.validate()) {
           print("Form is okay...");
           print(InputUtil.formInputValues.toString());
-
-          _dynamicRequest.dynamicRequest(moduleId, actionId,
-              dataObj: InputUtil.formInputValues, merchantID: merchantID);
+          InputUtil.formInputValues.add({"MerchantID": "$merchantID"});
+          _dynamicRequest.dynamicRequest(
+            moduleId,
+            actionId,
+            merchantID: merchantID,
+            dataObj: InputUtil.formInputValues,
+            encryptedField: InputUtil.encryptedField,
+          );
         } else {
           Vibration.vibrate();
         }
@@ -448,7 +461,7 @@ class _PhonePickerFormWidgetState extends State<PhonePickerFormWidget> {
             }),
       ),
       validator: (value) {
-        InputUtil.formInputValues[widget.serviceParamId] = value;
+        InputUtil.formInputValues.add({"${widget.serviceParamId}": "$value"});
       },
       style: const TextStyle(fontSize: 16),
     );
