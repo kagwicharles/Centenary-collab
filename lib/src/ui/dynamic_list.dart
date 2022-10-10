@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:rafiki/src/ui/form_components/tab_layout.dart';
 import 'package:rafiki/src/ui/menu_item_widget.dart';
 import 'package:rafiki/src/utils/determine_render_widget.dart';
 
-class ModulesListWidget extends StatelessWidget {
+class ModulesListWidget extends StatefulWidget {
   final Future<List<ModuleItem>>? moduleItems;
   final orientation;
   final String parentModule;
@@ -18,11 +19,16 @@ class ModulesListWidget extends StatelessWidget {
       required this.moduleName});
 
   @override
+  State<ModulesListWidget> createState() => _ModulesListWidgetState();
+}
+
+class _ModulesListWidgetState extends State<ModulesListWidget> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(moduleName)),
+        appBar: AppBar(title: Text(widget.moduleName)),
         body: FutureBuilder<List<ModuleItem>>(
-            future: moduleItems,
+            future: widget.moduleItems,
             builder: (BuildContext context,
                 AsyncSnapshot<List<ModuleItem>> snapshot) {
               Widget child = const Text("Please wait...");
@@ -36,7 +42,9 @@ class ModulesListWidget extends StatelessWidget {
                         itemCount: snapshot.data?.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount:
-                              (orientation == Orientation.portrait) ? 3 : 4,
+                              (widget.orientation == Orientation.portrait)
+                                  ? 3
+                                  : 4,
                         ),
                         itemBuilder: (BuildContext context, int index) {
                           var name = snapshot.data![index].moduleName;
@@ -50,7 +58,7 @@ class ModulesListWidget extends StatelessWidget {
                             imageUrl: imageUrl!,
                             moduleName: name,
                             moduleId: moduleId,
-                            parentModule: parentModule,
+                            parentModule: widget.parentModule,
                             moduleCategory: moduleCategory,
                             merchantID: merchantID,
                           );
@@ -58,6 +66,12 @@ class ModulesListWidget extends StatelessWidget {
               }
               return child;
             }));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    EasyLoading.dismiss();
   }
 }
 
@@ -137,5 +151,11 @@ class _FormsListWidgetState extends State<FormsListWidget> {
 
   void updateState() {
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    EasyLoading.dismiss();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -8,6 +9,7 @@ import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/data/user_model.dart';
+import 'package:rafiki/src/ui/info/request_status.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/render_utils.dart';
@@ -245,16 +247,14 @@ class ButtonWidget extends StatelessWidget {
       onPressed: () {
         // InputUtil.formInputValues.clear();
         if (formKey.currentState.validate()) {
-          print("Form is okay...");
+          EasyLoading.show(status: 'Processing...');
           print(InputUtil.formInputValues.toString());
           InputUtil.formInputValues.add({"MerchantID": "$merchantID"});
-          _dynamicRequest.dynamicRequest(
-            moduleId,
-            actionId,
-            merchantID: merchantID,
-            dataObj: InputUtil.formInputValues,
-            encryptedField: InputUtil.encryptedField,
-          );
+          var res = _dynamicRequest.dynamicRequest(moduleId, actionId,
+              merchantID: merchantID,
+              dataObj: InputUtil.formInputValues,
+              encryptedField: InputUtil.encryptedField,
+              context: context);
         } else {
           Vibration.vibrate();
         }

@@ -194,8 +194,11 @@ class TestEndpoint {
     }
   }
 
-  dynamicRequest({required requestObj, required webHeader}) async {
-    String res, decrypted;
+  Future<Map<String, dynamic>> dynamicRequest({
+    required requestObj,
+    required webHeader,
+  }) async {
+    String res, decrypted = "";
     AppLogger.appLogE(tag: "Raw request", message: jsonEncode(requestObj));
     await securityFeatureSetUp();
 
@@ -219,7 +222,11 @@ class TestEndpoint {
               localIv))),
           logger.d("\n\nDYNAMIC REQ: $decrypted"),
         });
-    ;
+    Map<String, dynamic> resMap = {};
+    resMap["Status"] = jsonDecode(decrypted)["Status"];
+    resMap["Message"] = jsonDecode(decrypted)["Message"];
+    debugPrint("Dynamic res..$resMap");
+    return resMap;
   }
 
   Future<Map<String, dynamic>> login(String pin) async {

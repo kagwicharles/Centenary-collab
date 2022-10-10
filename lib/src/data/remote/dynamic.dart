@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/ui/info/request_status.dart';
 import 'package:rafiki/src/utils/app_logger.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
 
 class DynamicRequest {
   final _actionControlRepository = ActionControlRepository();
   final _services = TestEndpoint();
 
   dynamicRequest(String moduleId, String actionId,
-      {dataObj, merchantID, encryptedField}) {
+      {dataObj, merchantID, encryptedField, context}) async {
     ActionType actionType;
     Map requestObj;
     Map requestMap = {};
+    var responseMap;
     _actionControlRepository
         .getActionControlByModuleIdAndActionId(moduleId, actionId)
         .then((actionControl) async {
@@ -35,7 +39,7 @@ class DynamicRequest {
                 merchantId: merchantID,
                 moduleId: moduleId,
                 data: requestMap);
-            TestEndpoint().dynamicRequest(
+            responseMap = TestEndpoint().dynamicRequest(
                 requestObj: requestObj, webHeader: actionControl.webHeader);
           }
           break;
@@ -49,8 +53,23 @@ class DynamicRequest {
               moduleId: moduleId,
               data: requestMap,
               encryptedFields: encryptedField);
-          TestEndpoint().dynamicRequest(
-              requestObj: requestObj, webHeader: actionControl.webHeader);
+          responseMap = TestEndpoint()
+              .dynamicRequest(
+                requestObj: requestObj,
+                webHeader: actionControl.webHeader,
+              )
+              .then((value) => {
+                    debugPrint("Navigating to request status page...$value"),
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      EasyLoading.dismiss();
+                      CommonLibs.navigateToRoute(
+                          context: context,
+                          widget: RequestStatusScreen(
+                            statusCode: value["Status"],
+                            message: value["Message"],
+                          ));
+                    })
+                  });
           break;
         case ActionType.VALIDATE:
           {
@@ -59,7 +78,7 @@ class DynamicRequest {
                 merchantId: merchantID,
                 moduleId: moduleId,
                 data: requestMap);
-            TestEndpoint().dynamicRequest(
+            responseMap = TestEndpoint().dynamicRequest(
                 requestObj: requestObj, webHeader: actionControl.webHeader);
           }
           break;
@@ -77,6 +96,8 @@ class DynamicRequest {
           break;
       }
     });
+    print("#####$responseMap");
+    return responseMap;
   }
 
   Future<Map<String, dynamic>> dbCall(

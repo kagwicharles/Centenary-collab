@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
-import 'package:rafiki/src/ui/auth/activation.dart';
-import 'package:rafiki/src/ui/auth/login.dart';
 import 'package:rafiki/theme/app_theme.dart';
 
 import 'src/ui/home/dashboard.dart';
@@ -36,7 +34,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme().appTheme,
       // home: HomePage(title: 'Rafiki'),
-      home: DashBoard(),
+      home: const DashBoard(),
+      builder: EasyLoading.init(),
     );
   }
 }
