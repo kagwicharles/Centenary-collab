@@ -5,6 +5,7 @@ import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/ui/dynamic.dart';
 import 'package:rafiki/src/ui/info/request_status.dart';
+import 'package:rafiki/src/ui/list/transaction_list.dart';
 import 'package:rafiki/src/utils/app_logger.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
@@ -12,14 +13,20 @@ import 'package:rafiki/src/utils/common_widgets.dart';
 class DynamicRequest {
   final _actionControlRepository = ActionControlRepository();
   final _services = TestEndpoint();
+  Map requestObj = {};
 
-  dynamicRequest(String moduleId, String actionId,
+  Future<Widget?> dynamicRequest(String moduleId, String actionId,
       {dataObj, merchantID, moduleName, encryptedField, context}) async {
     ActionType actionType;
-    Map requestObj;
     Map requestMap = {};
-    var responseMap;
     String? status, message;
+    Widget? widget;
+    await _services.baseRequestSetUp();
+    requestObj = _services.requestObj;
+    requestObj["MerchantID"] = merchantID;
+    requestObj["ModuleID"] = moduleId;
+    requestObj["SessionID"] = "ffffffff-e46c-53ce-0000-00001d093e12";
+
     _actionControlRepository
         .getActionControlByModuleIdAndActionId(moduleId, actionId)
         .then((actionControl) async {
@@ -37,36 +44,20 @@ class DynamicRequest {
       switch (actionType) {
         case ActionType.DBCALL:
           {
-            requestObj = await dbCall(
-                actionType: actionType.name,
-                merchantId: merchantID,
-                moduleId: moduleId,
-                data: requestMap);
-            responseMap = TestEndpoint()
+            requestObj["FormID"] = actionType.name;
+            await dbCall(data: requestMap);
+            await _services
                 .dynamicRequest(
                     requestObj: requestObj, webHeader: actionControl.webHeader)
                 .then((value) => {
-                      EasyLoading.dismiss(),
                       status = value["Status"],
                       message = value["Message"],
-                      if (status == "000")
-                        {}
-                      else
-                        {
-                          if (status != null && message != null)
-                            {
-                              navigateToStatusRoute(
-                                  context: context,
-                                  status: status,
-                                  message: message)
-                            }
-                          else
-                            {
-                              CommonWidgets.buildNormalSnackBar(
-                                  context: context,
-                                  message: "Error processing request!")
-                            }
-                        }
+                      widget = postDynamicCallCheck(
+                          context: context,
+                          actionID: actionId,
+                          status: status,
+                          message: message),
+                      debugPrint("My Widget#$widget")
                     });
           }
           break;
@@ -74,71 +65,36 @@ class DynamicRequest {
           // TODO: Handle this case.
           break;
         case ActionType.PAYBILL:
-          var notifications;
-          requestObj = await payBillCall(
-              actionType: actionType.name,
-              merchantId: merchantID,
-              moduleId: moduleId,
-              data: requestMap,
-              encryptedFields: encryptedField);
-          responseMap = TestEndpoint()
+          requestObj["FormID"] = actionType.name;
+          payBillCall(data: requestMap, encryptedFields: encryptedField);
+          _services
               .dynamicRequest(
-                requestObj: requestObj,
-                webHeader: actionControl.webHeader,
-              )
+                  requestObj: requestObj, webHeader: actionControl.webHeader)
               .then((value) => {
-                    EasyLoading.dismiss(),
-                    debugPrint("Navigating to request status page...$value"),
-                    message = value["Message"],
                     status = value["Status"],
-                    notifications = value["Notifications"],
-                    if (notifications != null)
-                      {message = notifications[0]["NotifyText"]},
-                    if (status != null && message != null)
-                      {
-                        Future.delayed(const Duration(milliseconds: 500), () {
-                          CommonLibs.navigateToRoute(
-                              context: context,
-                              widget: RequestStatusScreen(
-                                statusCode: status!,
-                                message: message!,
-                              ));
-                        })
-                      }
+                    message = value["Message"],
+                    postDynamicCallCheck(
+                        context: context,
+                        actionID: actionId,
+                        status: status,
+                        message: message)
                   });
           break;
         case ActionType.VALIDATE:
           {
-            var formID;
-            requestObj = await validateCall(
-                actionType: actionType.name,
-                merchantId: merchantID,
-                moduleId: moduleId,
-                data: requestMap);
-            responseMap = TestEndpoint()
+            requestObj["FormID"] = actionType.name;
+            validateCall(data: requestMap);
+            await _services
                 .dynamicRequest(
                     requestObj: requestObj, webHeader: actionControl.webHeader)
                 .then((value) => {
-                      EasyLoading.dismiss(),
-                      if (value["Status"] == "000")
-                        {
-                          debugPrint(value.toString()),
-                          formID = value["FormID"],
-                          debugPrint("Navigating to...$formID"),
-                          CommonLibs.navigateToRoute(
-                              context: context,
-                              widget: DynamicWidget(
-                                  moduleId: formID,
-                                  moduleName: moduleName,
-                                  moduleCategory: "FORM"))
-                        }
-                      else
-                        {
-                          navigateToStatusRoute(
-                              context: context,
-                              status: value["Status"],
-                              message: value["Message"])
-                        }
+                      status = value["Status"],
+                      message = value["Message"],
+                      postDynamicCallCheck(
+                          context: context,
+                          actionID: actionId,
+                          status: status,
+                          message: message)
                     });
           }
           break;
@@ -156,8 +112,8 @@ class DynamicRequest {
           break;
       }
     });
-    print("#####$responseMap");
-    return responseMap;
+    debugPrint("Returning...$widget");
+    return widget;
   }
 
   void navigateToStatusRoute({context, status, message}) {
@@ -169,40 +125,83 @@ class DynamicRequest {
         ));
   }
 
-  Future<Map<String, dynamic>> dbCall(
-      {actionType, merchantId, moduleId, data}) async {
-    await _services.baseRequestSetUp();
-    var requestObj = _services.requestObj;
-    requestObj["FormID"] = actionType;
-    requestObj["MerchantID"] = merchantId;
-    requestObj["ModuleID"] = moduleId;
-    requestObj["SessionID"] = "00000000-13f7-a5b8-0000-00001d093e12";
+  dbCall({data}) {
     requestObj["DynamicForm"] = data;
-    return requestObj;
   }
 
-  Future<Map<String, dynamic>> validateCall(
-      {actionType, merchantId, moduleId, data}) async {
-    await _services.baseRequestSetUp();
-    var requestObj = _services.requestObj;
-    requestObj["FormID"] = actionType;
-    requestObj["MerchantID"] = merchantId;
-    requestObj["ModuleID"] = moduleId;
-    requestObj["SessionID"] = "ffffffff-ca44-d45e-0000-00001d093e12";
+  validateCall({data}) {
     requestObj["Validate"] = data;
-    return requestObj;
   }
 
-  Future<Map<String, dynamic>> payBillCall(
-      {actionType, merchantId, moduleId, data, encryptedFields}) async {
-    await _services.baseRequestSetUp();
-    var requestObj = _services.requestObj;
-    requestObj["FormID"] = actionType;
-    requestObj["MerchantID"] = merchantId;
-    requestObj["ModuleID"] = moduleId;
-    requestObj["SessionID"] = "ffffffff-e46c-53ce-0000-00001d093e12";
+  payBillCall({data, encryptedFields}) {
     requestObj["PayBill"] = data;
     requestObj["EncryptedFields"] = encryptedFields;
-    return requestObj;
+  }
+
+  Widget postDynamicCallCheck(
+      {required context,
+      required actionID,
+      required status,
+      required message,
+      formID,
+      moduleName,
+      returnsWidget = false,
+      opensDynamicRoute = false}) {
+    EasyLoading.dismiss();
+
+    switch (status) {
+      case "000":
+        {
+          if (returnsWidget) {
+            return dbCallTypeCheck(actionID, context: context);
+          }
+          if (opensDynamicRoute) {
+            CommonLibs.navigateToRoute(
+                context: context,
+                widget: DynamicWidget(
+                    moduleId: formID,
+                    moduleName: moduleName,
+                    moduleCategory: "FORM"));
+            break;
+          }
+          showStatusScreen(context: context, status: status, message: message);
+        }
+        break;
+      case "091":
+        {
+          showStatusScreen(context: context, status: status, message: message);
+        }
+        break;
+      case "099":
+        {
+          showStatusScreen(context: context, status: status, message: message);
+        }
+        break;
+      default:
+        {
+          CommonWidgets.buildNormalSnackBar(
+              context: context, message: "Error processing request!");
+        }
+    }
+    return const SizedBox();
+  }
+
+  showStatusScreen({required context, required status, required message}) {
+    if (status != null && message != null) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        navigateToStatusRoute(
+            context: context, status: status, message: message);
+      });
+    }
+  }
+
+  Widget dbCallTypeCheck(String actionID, {required context}) {
+    var enumActionID = ActionID.values.byName(actionID);
+    switch (enumActionID) {
+      case ActionID.GETTRXLIST:
+        {
+          return TransactionList();
+        }
+    }
   }
 }

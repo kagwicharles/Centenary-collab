@@ -9,7 +9,6 @@ import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/data/user_model.dart';
-import 'package:rafiki/src/ui/info/request_status.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 import 'package:rafiki/src/utils/render_utils.dart';

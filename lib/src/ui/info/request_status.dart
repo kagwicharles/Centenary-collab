@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
 
-class RequestStatusScreen extends StatelessWidget {
+class RequestStatusScreen extends StatefulWidget {
   RequestStatusScreen(
       {Key? key, required this.message, required this.statusCode})
       : super(key: key);
@@ -10,8 +10,18 @@ class RequestStatusScreen extends StatelessWidget {
   String statusCode;
 
   @override
-  Widget build(BuildContext context) {
+  State<RequestStatusScreen> createState() => _RequestStatusScreenState();
+}
+
+class _RequestStatusScreenState extends State<RequestStatusScreen> {
+  @override
+  void initState() {
     Vibration.vibrate(duration: 500);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
             child: Container(
@@ -26,7 +36,7 @@ class RequestStatusScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  getAvatarType(statusCode),
+                  getAvatarType(widget.statusCode),
                   height: 54,
                   width: 54,
                 ),
@@ -34,7 +44,7 @@ class RequestStatusScreen extends StatelessWidget {
                   height: 54,
                 ),
                 Text(
-                  message,
+                  widget.message,
                   style: Theme.of(context).textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
@@ -64,5 +74,10 @@ class RequestStatusScreen extends StatelessWidget {
         return "assets/images/close.png";
     }
     return "assets/images/info.png";
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

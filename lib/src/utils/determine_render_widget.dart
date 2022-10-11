@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:vibration/vibration.dart';
 
@@ -10,6 +11,7 @@ class DetermineRenderWidget extends StatelessWidget {
   String? merchantID, moduleName;
   FormItem formItem;
   var formKey;
+  final _dynamicRequest = DynamicRequest();
 
   DetermineRenderWidget(this.widgetType,
       {Key? key,
@@ -116,6 +118,21 @@ class DetermineRenderWidget extends StatelessWidget {
           );
         }
         break;
+      // case ViewType.LIST:
+      //   {
+      //     InputUtil.formInputValues.add({"HEADER": "${formItem.actionId}"});
+      //     _dynamicRequest.dynamicRequest(formItem.moduleId!, formItem.actionId!,
+      //         merchantID: merchantID,
+      //         moduleName: moduleName,
+      //         dataObj: InputUtil.formInputValues,
+      //         encryptedField: InputUtil.encryptedField,
+      //         context: context);
+      //     dynamicWidgetItem = const Visibility(
+      //       visible: false,
+      //       child: SizedBox(),
+      //     );
+      //   }
+      //   break;
       default:
         {
           return const Visibility(

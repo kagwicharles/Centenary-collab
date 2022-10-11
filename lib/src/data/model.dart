@@ -12,7 +12,8 @@ enum ViewType {
   QRSCANNER,
   PHONECONTACTS,
   DATE,
-  HIDDEN
+  HIDDEN,
+  LIST
 }
 
 enum ControlFormat { PinNumber, PIN, NUMERIC, Amount, DATE }
@@ -33,6 +34,8 @@ enum ActionType {
   ACTIVATE,
   BENEFICIARY
 }
+
+enum ActionID { GETTRXLIST }
 
 class CreditCard {
   final String balance;

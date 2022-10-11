@@ -66,6 +66,7 @@ dependencies:
   flutter_speed_dial: ^6.1.0+1
   shimmer: ^2.0.0
   flutter_easyloading: ^3.0.5
+  flutter_jailbreak_detection: ^1.8.0
 
 dev_dependencies:
   flutter_test:

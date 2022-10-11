@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
 import 'package:rafiki/src/ui/auth/login.dart';
-import 'package:rafiki/src/ui/home/adverts.dart';
+import 'package:rafiki/src/ui/info/request_status.dart';
 import 'package:rafiki/src/ui/others/map_view.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 
@@ -9,6 +13,20 @@ class DashBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _checkDeviceRooted().then((value) => {
+          debugPrint("Device root status...$value"),
+          if (value)
+            {
+              CommonLibs.navigateToRoute(
+                  context: context,
+                  widget: RequestStatusScreen(
+                      message: "This app cannot run on a rooted device!",
+                      statusCode: "!")),
+              Future.delayed(const Duration(milliseconds: 5000), () {
+                exit(0);
+              })
+            }
+        });
     return Scaffold(
         appBar: AppBar(
           title: const Text("Dashboard"),
@@ -51,6 +69,16 @@ class DashBoard extends StatelessWidget {
             // AdvertsContainer())
           ],
         ));
+  }
+
+  Future<bool> _checkDeviceRooted() async {
+    bool _jailBroken = false;
+    try {
+      _jailBroken = await FlutterJailbreakDetection.jailbroken;
+    } on PlatformException {
+      _jailBroken = true;
+    }
+    return _jailBroken;
   }
 }
 
