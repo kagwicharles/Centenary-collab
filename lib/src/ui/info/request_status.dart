@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vibration/vibration.dart';
 
 class RequestStatusScreen extends StatelessWidget {
   RequestStatusScreen(
@@ -10,6 +11,7 @@ class RequestStatusScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Vibration.vibrate(duration: 500);
     return Scaffold(
         body: SingleChildScrollView(
             child: Container(
