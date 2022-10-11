@@ -65,6 +65,7 @@ class DynamicRequest {
           // TODO: Handle this case.
           break;
         case ActionType.PAYBILL:
+          var notifications;
           requestObj["FormID"] = actionType.name;
           payBillCall(data: requestMap, encryptedFields: encryptedField);
           _services
@@ -73,6 +74,9 @@ class DynamicRequest {
               .then((value) => {
                     status = value["Status"],
                     message = value["Message"],
+                    notifications = value["Notifications"],
+                    if (notifications != null)
+                      {message = notifications[0]["NotifyText"]},
                     postDynamicCallCheck(
                         context: context,
                         actionID: actionId,
