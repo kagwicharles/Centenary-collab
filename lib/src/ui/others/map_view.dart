@@ -147,7 +147,7 @@ class _MapViewState extends State<MapView> {
         // / This is ignored if animatedIcon is non null
         // child: Text("open"),
         // activeChild: Text("close"),
-        icon: Icons.add,
+        icon: Icons.category,
         activeIcon: Icons.close,
         spacing: 3,
         mini: mini,
@@ -211,7 +211,7 @@ class _MapViewState extends State<MapView> {
         // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         children: [
           SpeedDialChild(
-            child: !rmicons ? const Icon(Icons.brush) : null,
+            child: !rmicons ? const Icon(Icons.account_balance) : null,
             backgroundColor: Colors.deepOrange,
             foregroundColor: Colors.white,
             label: 'Branches',
@@ -220,7 +220,7 @@ class _MapViewState extends State<MapView> {
             },
           ),
           SpeedDialChild(
-            child: !rmicons ? const Icon(Icons.margin) : null,
+            child: !rmicons ? const Icon(Icons.local_atm) : null,
             backgroundColor: Colors.indigo,
             foregroundColor: Colors.white,
             label: 'ATMs',

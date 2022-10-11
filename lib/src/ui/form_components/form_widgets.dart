@@ -230,6 +230,7 @@ class ButtonWidget extends StatelessWidget {
   String moduleId;
   String actionId;
   String? merchantID;
+  String? moduleName;
   final _dynamicRequest = DynamicRequest();
 
   ButtonWidget(
@@ -238,7 +239,8 @@ class ButtonWidget extends StatelessWidget {
       this.formKey,
       required this.moduleId,
       required this.actionId,
-      this.merchantID})
+      this.merchantID,
+      this.moduleName})
       : super(key: key);
 
   @override
@@ -252,6 +254,7 @@ class ButtonWidget extends StatelessWidget {
           InputUtil.formInputValues.add({"MerchantID": "$merchantID"});
           var res = _dynamicRequest.dynamicRequest(moduleId, actionId,
               merchantID: merchantID,
+              moduleName: moduleName,
               dataObj: InputUtil.formInputValues,
               encryptedField: InputUtil.encryptedField,
               context: context);

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class RequestStatusScreen extends StatelessWidget {
-  RequestStatusScreen({Key? key, this.message, this.statusCode})
+  RequestStatusScreen(
+      {Key? key, required this.message, required this.statusCode})
       : super(key: key);
 
-  String? message;
-  String? statusCode;
+  String message;
+  String statusCode;
 
   @override
   Widget build(BuildContext context) {
@@ -18,27 +19,36 @@ class RequestStatusScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              getAvatarType(statusCode!),
-              height: 54,
-              width: 54,
-            ),
-            const SizedBox(
-              height: 54,
-            ),
-            Text(
-              message!,
-              style: Theme.of(context).textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(
-              height: 54,
-            ),
+            Expanded(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  getAvatarType(statusCode),
+                  height: 54,
+                  width: 54,
+                ),
+                const SizedBox(
+                  height: 54,
+                ),
+                Text(
+                  message,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 54,
+                ),
+              ],
+            )),
             ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text("Close"))
+                child: const Text("Close")),
+            const SizedBox(
+              height: 15,
+            )
           ]),
     )));
   }
@@ -47,7 +57,10 @@ class RequestStatusScreen extends StatelessWidget {
     switch (statusCode) {
       case "000":
         return "assets/images/checked.png";
+
+      case "099":
+        return "assets/images/close.png";
     }
-    return "assets/images/close.png";
+    return "assets/images/info.png";
   }
 }

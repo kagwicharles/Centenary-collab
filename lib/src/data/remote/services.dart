@@ -51,7 +51,7 @@ class TestEndpoint {
   baseRequestSetUp() async {
     var imeiNo = await Constants.getImei();
     requestObj = {
-      "UNIQUEID": "00000000-55f4-3514-0000-00001d093e12",
+      "UNIQUEID": "00000000-40ee-9111-0000-00001d093e12",
       "CustomerID": "4570670220",
       "BankID": "16",
       "Country": "UGANDATEST",
@@ -224,9 +224,10 @@ class TestEndpoint {
         });
     Map<String, dynamic> resMap = {};
     resMap["Status"] = jsonDecode(decrypted)["Status"];
+    debugPrint(jsonDecode(decrypted)["NotifyText"]);
     resMap["Message"] = jsonDecode(decrypted)["Message"];
     debugPrint("Dynamic res..$resMap");
-    return resMap;
+    return resMap["Status"] == "000" ? jsonDecode(decrypted) : resMap;
   }
 
   Future<Map<String, dynamic>> login(String pin) async {

@@ -7,12 +7,16 @@ class CommonWidgets {
   static var successColor = Colors.green[600];
 
   static buildNormalSnackBar({context, message}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          duration: snackBarDuration,
-          content: Text(message),
-          behavior: snackBarBehavior,
-          backgroundColor: Color(0xffC92265)),
-    );
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            duration: snackBarDuration,
+            content: Text(message),
+            behavior: snackBarBehavior,
+            backgroundColor: const Color(0xffC92265)),
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }

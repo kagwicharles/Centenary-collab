@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:rafiki/src/ui/form_components/tab_layout.dart';
 import 'package:rafiki/src/ui/menu_item_widget.dart';
@@ -76,18 +77,18 @@ class _ModulesListWidgetState extends State<ModulesListWidget> {
 }
 
 class FormsListWidget extends StatefulWidget {
-  final Future<List<FormItem>>? formItems;
   final orientation;
-  final String parentModule;
   final String moduleName;
+  final String moduleID;
   String? merchantID;
 
   FormsListWidget(
-      {required this.orientation,
-      required this.formItems,
-      required this.parentModule,
+      {Key? key,
+      required this.orientation,
       required this.moduleName,
-      this.merchantID});
+      required this.moduleID,
+      this.merchantID})
+      : super(key: key);
 
   @override
   State<FormsListWidget> createState() => _FormsListWidgetState();
@@ -95,14 +96,18 @@ class FormsListWidget extends StatefulWidget {
 
 class _FormsListWidgetState extends State<FormsListWidget> {
   final _formKey = GlobalKey<FormState>();
+  final _formsRepository = FormsRepository();
+
+  getFormItems() => _formsRepository.getFormsByModuleId(widget.moduleID);
 
   @override
   Widget build(BuildContext context) {
     InputUtil.formInputValues.clear();
     InputUtil.encryptedField.clear();
+    debugPrint("Am back to forms####");
 
     return FutureBuilder<List<FormItem>>(
-        future: widget.formItems,
+        future: getFormItems(),
         builder:
             (BuildContext context, AsyncSnapshot<List<FormItem>> snapshot) {
           Widget child = const SizedBox();
@@ -113,6 +118,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
               ..sort(((a, b) {
                 return a.displayOrder!.compareTo(b.displayOrder!);
               }));
+            debugPrint("Filtered form items at 0...$filteredFormItems");
             child = snapshot.data!
                     .map((item) => item.controlType)
                     .contains("CONTAINER")
@@ -121,7 +127,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                     formItems: filteredFormItems,
                     moduleName: widget.moduleName,
                     merchantID: widget.merchantID,
-                    updateState: updateState)
+                  )
                 : Scaffold(
                     appBar: AppBar(title: Text(widget.moduleName)),
                     body: Container(
@@ -138,19 +144,17 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                     controlType = ViewType.values.byName(
                                         filteredFormItems[index].controlType!);
                                   } catch (e) {}
-                                  return DetermineRenderWidget(controlType,
-                                      formKey: _formKey,
-                                      formItem: filteredFormItems[index],
-                                      merchantID: widget.merchantID,
-                                      refreshParent: updateState);
+                                  return DetermineRenderWidget(
+                                    controlType,
+                                    formKey: _formKey,
+                                    formItem: filteredFormItems[index],
+                                    merchantID: widget.merchantID,
+                                    moduleName: widget.moduleName,
+                                  );
                                 }))));
           }
           return child;
         });
-  }
-
-  void updateState() {
-    setState(() {});
   }
 
   @override

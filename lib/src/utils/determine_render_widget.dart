@@ -7,7 +7,7 @@ class DetermineRenderWidget extends StatelessWidget {
   static List<String> textfieldValues = [];
   static List<String> dropdownItems = [];
   ViewType? widgetType;
-  String? merchantID;
+  String? merchantID, moduleName;
   FormItem formItem;
   var formKey;
 
@@ -16,6 +16,7 @@ class DetermineRenderWidget extends StatelessWidget {
       formWidgets,
       this.formKey,
       this.merchantID,
+      this.moduleName,
       required this.formItem,
       refreshParent})
       : super(key: key);
@@ -73,11 +74,13 @@ class DetermineRenderWidget extends StatelessWidget {
       case ViewType.BUTTON:
         {
           dynamicWidgetItem = ButtonWidget(
-              text: formItem.controlText!,
-              formKey: formKey,
-              moduleId: formItem.moduleId!,
-              actionId: formItem.actionId!,
-              merchantID: merchantID);
+            text: formItem.controlText!,
+            formKey: formKey,
+            moduleId: formItem.moduleId!,
+            actionId: formItem.actionId!,
+            merchantID: merchantID,
+            moduleName: moduleName,
+          );
         }
         break;
 

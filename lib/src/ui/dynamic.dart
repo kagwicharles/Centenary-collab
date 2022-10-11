@@ -1,51 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/ui/dynamic_list.dart';
 
-class DynamicWidget extends StatelessWidget {
+class DynamicWidget extends StatefulWidget {
   final String moduleId;
   final String moduleName;
-  final String parentModule;
+  String? parentModule;
   final String moduleCategory;
   String? merchantID;
-  List<FormItem> content = [];
-  final _moduleRepository = ModuleRepository();
-  final _formsRepository = FormsRepository();
-
-  Future<List<FormItem>>? _formItems;
-  Future<List<ModuleItem>>? _moduleItems;
 
   DynamicWidget(
       {Key? key,
       required this.moduleId,
       required this.moduleName,
-      required this.parentModule,
+      this.parentModule,
       required this.moduleCategory,
       this.merchantID})
       : super(key: key);
 
   @override
+  State<DynamicWidget> createState() => _DynamicWidgetState();
+}
+
+class _DynamicWidgetState extends State<DynamicWidget> {
+  List<FormItem> content = [];
+
+  final _moduleRepository = ModuleRepository();
+
+  Future<List<ModuleItem>>? _moduleItems;
+
+  @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
-
+    EasyLoading.dismiss();
     // _formItems = DynamicData.readFormsJson(moduleId);
     // _moduleItems = DynamicData.readModulesJson(moduleId);
 
-    _moduleItems = _moduleRepository.getModulesById(moduleId);
-    _formItems = _formsRepository.getFormsByModuleId(moduleId);
+    _moduleItems = _moduleRepository.getModulesById(widget.moduleId);
 
-    return moduleCategory == "FORM"
+    return widget.moduleCategory == "FORM"
         ? FormsListWidget(
             orientation: orientation,
-            formItems: _formItems,
-            parentModule: parentModule,
-            moduleName: moduleName,
-            merchantID: merchantID)
+            moduleName: widget.moduleName,
+            moduleID: widget.moduleId,
+            merchantID: widget.merchantID)
         : ModulesListWidget(
             orientation: orientation,
             moduleItems: _moduleItems,
-            parentModule: parentModule,
-            moduleName: moduleName);
+            parentModule: widget.parentModule!,
+            moduleName: widget.moduleName);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

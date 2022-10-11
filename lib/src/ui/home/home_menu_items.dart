@@ -119,8 +119,8 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            crossAxisSpacing: 4.0,
-                            mainAxisSpacing: 4.0),
+                            crossAxisSpacing: 0.0,
+                            mainAxisSpacing: 1.0),
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
                       return AnimationConfiguration.staggeredList(
