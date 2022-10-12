@@ -46,6 +46,7 @@ class DynamicRequest {
         case ActionType.DBCALL:
           {
             requestObj["FormID"] = actionType.name;
+            requestMap.addAll({"HEADER": "$merchantID"});
             await dbCall(data: requestMap);
             await _services
                 .dynamicRequest(

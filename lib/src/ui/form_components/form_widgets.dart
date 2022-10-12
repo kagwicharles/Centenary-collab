@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:intl/intl.dart';
 
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:rafiki/src/data/model.dart';
@@ -73,7 +74,9 @@ class DropdownButtonWidget extends StatelessWidget {
                 return DropdownMenuItem(
                   value: value.bankAccountId,
                   child: Text(
-                    value.bankAccountId,
+                    value.aliasName.isEmpty
+                        ? value.bankAccountId
+                        : value.aliasName,
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                 );
@@ -94,7 +97,7 @@ class DropdownButtonWidget extends StatelessWidget {
               _userCodes = List<UserCode>.from(_dropdownItems!);
               _dropdownPicks = _userCodes?.map((value) {
                 return DropdownMenuItem(
-                  value: value.description,
+                  value: value.subCodeId,
                   child: Text(
                     value.description!,
                     style: Theme.of(context).textTheme.labelSmall,
@@ -162,7 +165,6 @@ class TextInputWidget extends StatefulWidget {
   String? controlValue;
   bool isMandatory;
   bool isObscured;
-  var controller;
 
   TextInputWidget({
     Key? key,
@@ -171,7 +173,6 @@ class TextInputWidget extends StatefulWidget {
     this.serviceParamId,
     this.controlValue,
     this.isMandatory = false,
-    this.controller,
     this.isObscured = false,
   }) : super(key: key);
 
@@ -180,6 +181,7 @@ class TextInputWidget extends StatefulWidget {
 }
 
 class _TextInputWidgetState extends State<TextInputWidget> {
+  final controller = TextEditingController();
   var inputType = TextInputType.text;
   var suffixIcon;
 
@@ -191,7 +193,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
         refreshParent: refreshParent);
 
     return TextFormField(
-        controller: widget.controller,
+        controller: controller,
         keyboardType: textFieldParams['inputType'],
         obscureText: widget.isObscured,
         decoration: InputDecoration(
@@ -215,10 +217,11 @@ class _TextInputWidgetState extends State<TextInputWidget> {
         });
   }
 
-  void refreshParent(bool status) {
+  void refreshParent(bool status, {newText}) {
     print("refresh called!");
     setState(() {
       status;
+      controller.text = DateFormat('yyyy-MM-dd').format(newText);
     });
   }
 }
@@ -491,7 +494,10 @@ class TextViewWidget extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: mapItems.length,
         itemBuilder: (context, index) {
-
+          var mapItem = mapItems[index];
+          mapItem.removeWhere((key, value) =>
+              key == null || value == null || value.length <= 0);
+          debugPrint("New map...$mapItem");
           return Material(
               elevation: 2,
               borderRadius: const BorderRadius.all(Radius.circular(4.0)),
@@ -499,7 +505,7 @@ class TextViewWidget extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                 child: Column(
-                  children: mapItems[index]
+                  children: mapItem
                       .map((key, value) => MapEntry(
                           key,
                           Container(

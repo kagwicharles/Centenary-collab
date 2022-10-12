@@ -4,9 +4,9 @@ import 'package:rafiki/src/data/model.dart';
 class RenderUtils {
   static Map<String, dynamic> checkControlFormat(String widgetControlFormat,
       {context, isObscure, refreshParent}) {
+    var suffixIcon, controlFormat;
     var inputType = TextInputType.text;
-    var suffixIcon;
-    var controlFormat;
+
     try {
       controlFormat = ControlFormat.values.byName(widgetControlFormat);
     } catch (e) {}
@@ -16,7 +16,7 @@ class RenderUtils {
           inputType = TextInputType.datetime;
           suffixIcon = IconButton(
               onPressed: () {
-                _selectDate(context);
+                _selectDate(context, refreshDate: refreshParent);
               },
               icon: const Icon(Icons.calendar_month));
         }
@@ -54,7 +54,7 @@ class RenderUtils {
     return textFieldParams;
   }
 
-  static Future<void> _selectDate(BuildContext context) async {
+  static Future<void> _selectDate(BuildContext context, {refreshDate}) async {
     DateTime selectedDate = DateTime.now();
 
     final DateTime? picked = await showDatePicker(
@@ -64,6 +64,7 @@ class RenderUtils {
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
       selectedDate = picked;
+      refreshDate(true, newText: selectedDate);
     }
   }
 }
