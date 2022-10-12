@@ -140,8 +140,9 @@ class TestEndpoint {
         });
   }
 
-  getStaticData() async {
+  getStaticData({currentStaticDataVersion}) async {
     String res, decrypted;
+    int staticDataVersion;
     await securityFeatureSetUp();
     await baseRequestSetUp();
     requestObj["FormID"] = "STATICDATA";
@@ -161,8 +162,16 @@ class TestEndpoint {
             res = value.data["Response"],
             decrypted = CryptLibImpl.gzipDecompressStaticData(res),
             AppLogger.appLogI(tag: "\n\nSTATIC DATA REQ:", message: decrypted),
-            await _sharedPref.addStaticDataVersion(
-                json.decode(decrypted)["StaticDataVersion"]),
+            staticDataVersion = json.decode(decrypted)["StaticDataVersion"],
+            debugPrint("Updating data version...$staticDataVersion"),
+            await _sharedPref.addStaticDataVersion(staticDataVersion),
+            if (currentStaticDataVersion != null &&
+                currentStaticDataVersion < staticDataVersion)
+              {
+                getUIData(FormId.MENU),
+                getUIData(FormId.FORMS),
+                getUIData(FormId.ACTIONS),
+              },
             await _sharedPref
                 .addAppIdleTimeout(json.decode(decrypted)["AppIdleTimeout"]),
             await clearAllStaticData(),

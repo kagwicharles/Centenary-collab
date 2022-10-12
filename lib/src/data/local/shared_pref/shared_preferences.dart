@@ -24,10 +24,13 @@ class SharedPrefLocal {
     });
   }
 
-  getStaticDataVersion() {
-    return getSharedPrefInstance().then((sharedPref) {
-      sharedPref.getString("currentDataVersion");
-    });
+  getStaticDataVersion() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? version = prefs.getInt("currentDataVersion");
+    if (version == null) {
+      return 0;
+    }
+    return version;
   }
 
   addAppIdleTimeout(int appIdleTimeout) {

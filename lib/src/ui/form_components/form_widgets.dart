@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -255,7 +253,7 @@ class ButtonWidget extends StatelessWidget {
               EasyLoading.show(status: 'Processing...');
               print(InputUtil.formInputValues.toString());
               InputUtil.formInputValues.add({"MerchantID": "$merchantID"});
-              var res = _dynamicRequest.dynamicRequest(moduleId, actionId,
+              _dynamicRequest.dynamicRequest(moduleId, actionId,
                   merchantID: merchantID,
                   moduleName: moduleName,
                   dataObj: InputUtil.formInputValues,
@@ -477,9 +475,60 @@ class _PhonePickerFormWidgetState extends State<PhonePickerFormWidget> {
 class TextViewWidget extends StatelessWidget {
   TextViewWidget({Key? key, this.jsonTxt}) : super(key: key);
   var jsonTxt;
+  List<Map> mapItems = [];
 
   @override
   Widget build(BuildContext context) {
-    return Text(jsonTxt!.toString());
+    // return Text(jsonTxt!.toString());
+    debugPrint("Textview data...$jsonTxt");
+    jsonTxt.forEach((item) {
+      debugPrint("Adding...$item");
+      mapItems.add(item);
+    });
+    return Column(children: [
+      ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: mapItems.length,
+        itemBuilder: (context, index) {
+
+          return Material(
+              elevation: 2,
+              borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                child: Column(
+                  children: mapItems[index]
+                      .map((key, value) => MapEntry(
+                          key,
+                          Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "$key:",
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  Flexible(
+                                      child: Text(
+                                    value,
+                                    textAlign: TextAlign.right,
+                                  ))
+                                ],
+                              ))))
+                      .values
+                      .toList(),
+                ),
+              ));
+        },
+      ),
+      const SizedBox(
+        height: 12,
+      )
+    ]);
   }
 }
