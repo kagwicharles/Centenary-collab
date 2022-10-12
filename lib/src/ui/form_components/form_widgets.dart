@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -244,25 +246,27 @@ class ButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        // InputUtil.formInputValues.clear();
-        if (formKey.currentState.validate()) {
-          EasyLoading.show(status: 'Processing...');
-          print(InputUtil.formInputValues.toString());
-          InputUtil.formInputValues.add({"MerchantID": "$merchantID"});
-          var res = _dynamicRequest.dynamicRequest(moduleId, actionId,
-              merchantID: merchantID,
-              moduleName: moduleName,
-              dataObj: InputUtil.formInputValues,
-              encryptedField: InputUtil.encryptedField,
-              context: context);
-        } else {
-          Vibration.vibrate();
-        }
-      },
-      child: Text(text),
-    );
+    return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: ElevatedButton(
+          onPressed: () {
+            // InputUtil.formInputValues.clear();
+            if (formKey.currentState.validate()) {
+              EasyLoading.show(status: 'Processing...');
+              print(InputUtil.formInputValues.toString());
+              InputUtil.formInputValues.add({"MerchantID": "$merchantID"});
+              var res = _dynamicRequest.dynamicRequest(moduleId, actionId,
+                  merchantID: merchantID,
+                  moduleName: moduleName,
+                  dataObj: InputUtil.formInputValues,
+                  encryptedField: InputUtil.encryptedField,
+                  context: context);
+            } else {
+              Vibration.vibrate();
+            }
+          },
+          child: Text(text),
+        ));
   }
 }
 
@@ -467,5 +471,15 @@ class _PhonePickerFormWidgetState extends State<PhonePickerFormWidget> {
       },
       style: const TextStyle(fontSize: 16),
     );
+  }
+}
+
+class TextViewWidget extends StatelessWidget {
+  TextViewWidget({Key? key, this.jsonTxt}) : super(key: key);
+  var jsonTxt;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(jsonTxt!.toString());
   }
 }

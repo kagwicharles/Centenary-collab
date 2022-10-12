@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/model.dart';
-import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:vibration/vibration.dart';
 
@@ -10,8 +9,8 @@ class DetermineRenderWidget extends StatelessWidget {
   ViewType? widgetType;
   String? merchantID, moduleName;
   FormItem formItem;
+  var jsonTxt;
   var formKey;
-  final _dynamicRequest = DynamicRequest();
 
   DetermineRenderWidget(this.widgetType,
       {Key? key,
@@ -20,6 +19,7 @@ class DetermineRenderWidget extends StatelessWidget {
       this.merchantID,
       this.moduleName,
       required this.formItem,
+      this.jsonTxt,
       refreshParent})
       : super(key: key);
 
@@ -116,6 +116,17 @@ class DetermineRenderWidget extends StatelessWidget {
             text: formItem.controlText,
             serviceParamId: formItem.serviceParamId,
           );
+        }
+        break;
+
+      case ViewType.TEXTVIEW:
+        {
+          dynamicWidgetItem = jsonTxt != null
+              ? TextViewWidget(jsonTxt: jsonTxt!)
+              : const Visibility(
+                  visible: false,
+                  child: SizedBox(),
+                );
         }
         break;
       // case ViewType.LIST:

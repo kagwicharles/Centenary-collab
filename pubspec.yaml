@@ -67,6 +67,9 @@ dependencies:
   shimmer: ^2.0.0
   flutter_easyloading: ^3.0.5
   flutter_jailbreak_detection: ^1.8.0
+  flutter_telephony: ^0.0.15
+  device_info_plus: ^6.0.0
+  device_information: ^0.0.4
 
 dev_dependencies:
   flutter_test:

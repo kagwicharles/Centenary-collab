@@ -8,28 +8,32 @@ import 'package:rafiki/src/ui/menu_item_widget.dart';
 import 'package:rafiki/src/utils/determine_render_widget.dart';
 
 class ModulesListWidget extends StatefulWidget {
-  final Future<List<ModuleItem>>? moduleItems;
   final orientation;
   final String parentModule;
   final String moduleName;
+  final String moduleID;
 
   ModulesListWidget(
       {required this.orientation,
-      required this.moduleItems,
       required this.parentModule,
-      required this.moduleName});
+      required this.moduleName,
+      required this.moduleID});
 
   @override
   State<ModulesListWidget> createState() => _ModulesListWidgetState();
 }
 
 class _ModulesListWidgetState extends State<ModulesListWidget> {
+  final _moduleRepository = ModuleRepository();
+
+  getModules() => _moduleRepository.getModulesById(widget.moduleID);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text(widget.moduleName)),
         body: FutureBuilder<List<ModuleItem>>(
-            future: widget.moduleItems,
+            future: getModules(),
             builder: (BuildContext context,
                 AsyncSnapshot<List<ModuleItem>> snapshot) {
               Widget child = const Text("Please wait...");
@@ -81,13 +85,17 @@ class FormsListWidget extends StatefulWidget {
   final String moduleName;
   final String moduleID;
   String? merchantID;
+  var jsonDisplay;
+  int? nextFormSequence;
 
   FormsListWidget(
       {Key? key,
       required this.orientation,
       required this.moduleName,
       required this.moduleID,
-      this.merchantID})
+      this.merchantID,
+      this.jsonDisplay,
+      this.nextFormSequence})
       : super(key: key);
 
   @override
@@ -104,7 +112,8 @@ class _FormsListWidgetState extends State<FormsListWidget> {
   Widget build(BuildContext context) {
     InputUtil.formInputValues.clear();
     InputUtil.encryptedField.clear();
-    debugPrint("Am back to forms####");
+    debugPrint(
+        "Am back to forms####...showing forms from moduleID...${widget.moduleID}");
 
     return FutureBuilder<List<FormItem>>(
         future: getFormItems(),
@@ -113,7 +122,8 @@ class _FormsListWidgetState extends State<FormsListWidget> {
           Widget child = const SizedBox();
           if (snapshot.hasData) {
             var filteredFormItems = snapshot.data!
-                .where((formItem) => formItem.formSequence == 1)
+                .where((formItem) =>
+                    formItem.formSequence == (widget.nextFormSequence ?? 1))
                 .toList()
               ..sort(((a, b) {
                 return a.displayOrder!.compareTo(b.displayOrder!);
@@ -144,13 +154,12 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                     controlType = ViewType.values.byName(
                                         filteredFormItems[index].controlType!);
                                   } catch (e) {}
-                                  return DetermineRenderWidget(
-                                    controlType,
-                                    formKey: _formKey,
-                                    formItem: filteredFormItems[index],
-                                    merchantID: widget.merchantID,
-                                    moduleName: widget.moduleName,
-                                  );
+                                  return DetermineRenderWidget(controlType,
+                                      formKey: _formKey,
+                                      formItem: filteredFormItems[index],
+                                      merchantID: widget.merchantID,
+                                      moduleName: widget.moduleName,
+                                      jsonTxt: widget.jsonDisplay);
                                 }))));
           }
           return child;

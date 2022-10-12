@@ -8,11 +8,17 @@ import 'package:rafiki/src/ui/info/request_status.dart';
 import 'package:rafiki/src/ui/others/map_view.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 
-class DashBoard extends StatelessWidget {
+class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
 
   @override
+  State<DashBoard> createState() => _DashBoardState();
+}
+
+class _DashBoardState extends State<DashBoard> {
+  @override
   Widget build(BuildContext context) {
+    _checkPermissions();
     _checkDeviceRooted().then((value) => {
           debugPrint("Device root status...$value"),
           if (value)
@@ -27,6 +33,7 @@ class DashBoard extends StatelessWidget {
               })
             }
         });
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("Dashboard"),
@@ -42,7 +49,7 @@ class DashBoard extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               physics: const NeverScrollableScrollPhysics(),
               childAspectRatio: (.5 / .6),
-              crossAxisSpacing: 8,
+              crossAxisSpacing: 12,
               mainAxisSpacing: 8,
               crossAxisCount: 3,
               children: <Widget>[
@@ -71,7 +78,14 @@ class DashBoard extends StatelessWidget {
         ));
   }
 
+  _checkPermissions() async {
+    await CommonLibs.checkReadPhoneStatePermission();
+    await CommonLibs.checkContactsPermission();
+    await CommonLibs.checkCameraPermission();
+  }
+
   Future<bool> _checkDeviceRooted() async {
+    debugPrint("Device IMEI: ${await CommonLibs.getDeviceUniqueID()}");
     bool _jailBroken = false;
     try {
       _jailBroken = await FlutterJailbreakDetection.jailbroken;
@@ -100,18 +114,21 @@ class DashItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Material(
-            elevation: 4,
-            borderRadius: const BorderRadius.all(Radius.circular(12.0)),
-            child: InkWell(
-                onTap: () {
-                  isUrl
-                      ? CommonLibs.openUrl(Uri.parse(launchUrl!))
-                      : CommonLibs.navigateToRoute(
-                          context: context, widget: widget);
-                },
+    return Material(
+        elevation: 4,
+        borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+        child: InkWell(
+            customBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            onTap: () {
+              isUrl
+                  ? CommonLibs.openUrl(Uri.parse(launchUrl!))
+                  : CommonLibs.navigateToRoute(
+                      context: context, widget: widget);
+            },
+            child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

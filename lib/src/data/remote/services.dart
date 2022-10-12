@@ -70,7 +70,6 @@ class TestEndpoint {
 
   Future<int> getToken() async {
     var keys = "";
-    Map routeMap;
     var routes, device, iv = "";
     var data;
     var token;

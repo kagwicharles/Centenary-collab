@@ -13,7 +13,8 @@ enum ViewType {
   PHONECONTACTS,
   DATE,
   HIDDEN,
-  LIST
+  LIST,
+  TEXTVIEW
 }
 
 enum ControlFormat { PinNumber, PIN, NUMERIC, Amount, DATE }

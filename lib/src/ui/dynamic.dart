@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:rafiki/src/data/model.dart';
-import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/ui/dynamic_list.dart';
 
 class DynamicWidget extends StatefulWidget {
   final String moduleId;
   final String moduleName;
-  String? parentModule;
   final String moduleCategory;
+  String? parentModule;
+  var jsonDisplay;
   String? merchantID;
+  int? nextFormSequence;
 
   DynamicWidget(
       {Key? key,
       required this.moduleId,
       required this.moduleName,
-      this.parentModule,
       required this.moduleCategory,
-      this.merchantID})
+      this.jsonDisplay,
+      this.parentModule,
+      this.merchantID,
+      this.nextFormSequence})
       : super(key: key);
 
   @override
@@ -26,9 +29,6 @@ class DynamicWidget extends StatefulWidget {
 
 class _DynamicWidgetState extends State<DynamicWidget> {
   List<FormItem> content = [];
-
-  final _moduleRepository = ModuleRepository();
-
   Future<List<ModuleItem>>? _moduleItems;
 
   @override
@@ -37,20 +37,21 @@ class _DynamicWidgetState extends State<DynamicWidget> {
     EasyLoading.dismiss();
     // _formItems = DynamicData.readFormsJson(moduleId);
     // _moduleItems = DynamicData.readModulesJson(moduleId);
-
-    _moduleItems = _moduleRepository.getModulesById(widget.moduleId);
-
+    debugPrint("Module id...${widget.moduleId}");
     return widget.moduleCategory == "FORM"
         ? FormsListWidget(
             orientation: orientation,
             moduleName: widget.moduleName,
             moduleID: widget.moduleId,
-            merchantID: widget.merchantID)
+            merchantID: widget.merchantID,
+            jsonDisplay: widget.jsonDisplay,
+            nextFormSequence: widget.nextFormSequence)
         : ModulesListWidget(
             orientation: orientation,
-            moduleItems: _moduleItems,
             parentModule: widget.parentModule!,
-            moduleName: widget.moduleName);
+            moduleName: widget.moduleName,
+            moduleID: widget.moduleId,
+          );
   }
 
   @override

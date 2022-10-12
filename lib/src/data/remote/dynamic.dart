@@ -4,6 +4,7 @@ import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/ui/dynamic.dart';
+import 'package:rafiki/src/ui/dynamic_list.dart';
 import 'package:rafiki/src/ui/info/request_status.dart';
 import 'package:rafiki/src/ui/list/transaction_list.dart';
 import 'package:rafiki/src/utils/app_logger.dart';
@@ -86,6 +87,8 @@ class DynamicRequest {
           break;
         case ActionType.VALIDATE:
           {
+            var formID, display;
+            int? nextFormSequence;
             requestObj["FormID"] = actionType.name;
             validateCall(data: requestMap);
             await _services
@@ -94,11 +97,23 @@ class DynamicRequest {
                 .then((value) => {
                       status = value["Status"],
                       message = value["Message"],
+                      formID = value["FormID"],
+                      display = value["Display"],
+                      nextFormSequence = value["NextFormSequence"],
+                      debugPrint("FormID from res...$formID"),
                       postDynamicCallCheck(
                           context: context,
                           actionID: actionId,
                           status: status,
-                          message: message)
+                          message: message,
+                          formID: formID,
+                          moduleName: moduleName,
+                          jsonDisplay: display,
+                          nextFormSequence: nextFormSequence,
+                          opensDynamicRoute:
+                              formID != null && formID!.length > 1
+                                  ? true
+                                  : false)
                     });
           }
           break;
@@ -149,6 +164,8 @@ class DynamicRequest {
       required message,
       formID,
       moduleName,
+      jsonDisplay,
+      nextFormSequence,
       returnsWidget = false,
       opensDynamicRoute = false}) {
     EasyLoading.dismiss();
@@ -163,6 +180,8 @@ class DynamicRequest {
             CommonLibs.navigateToRoute(
                 context: context,
                 widget: DynamicWidget(
+                    nextFormSequence: nextFormSequence,
+                    jsonDisplay: jsonDisplay,
                     moduleId: formID,
                     moduleName: moduleName,
                     moduleCategory: "FORM"));
