@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/remote/services.dart';
+import 'package:rafiki/src/ui/auth/otp_verification.dart';
 import 'package:rafiki/src/ui/home/home.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
 
 class Login extends StatefulWidget {
@@ -103,6 +105,12 @@ class _LoginState extends State<Login> {
                               Text("Please wait...")
                             ])
                       : const Text("LOGIN")),
+              TextButton(
+                  onPressed: () {
+                    CommonLibs.navigateToRoute(
+                        context: context, widget: const OTPVerification());
+                  },
+                  child: const Text("Go to OTP"))
             ]),
           )),
     );

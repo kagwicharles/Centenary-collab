@@ -71,6 +71,7 @@ dependencies:
   device_info_plus: ^6.0.0
   device_information: ^0.0.4
   intl: ^0.17.0
+  sms_autofill: ^2.2.0
 
 dev_dependencies:
   flutter_test:
