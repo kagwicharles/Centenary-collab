@@ -103,6 +103,7 @@ class FormsListWidget extends StatefulWidget {
 }
 
 class _FormsListWidgetState extends State<FormsListWidget> {
+  int? currentForm;
   final _formKey = GlobalKey<FormState>();
   final _formsRepository = FormsRepository();
 
@@ -121,9 +122,16 @@ class _FormsListWidgetState extends State<FormsListWidget> {
             (BuildContext context, AsyncSnapshot<List<FormItem>> snapshot) {
           Widget child = const SizedBox();
           if (snapshot.hasData) {
+            if (widget.nextFormSequence != null) {
+              if (widget.nextFormSequence == 0) {
+                currentForm = 2;
+              } else {
+                currentForm = widget.nextFormSequence;
+              }
+            }
             var filteredFormItems = snapshot.data!
-                .where((formItem) =>
-                    formItem.formSequence == (widget.nextFormSequence ?? 1))
+                .where(
+                    (formItem) => formItem.formSequence == (currentForm ?? 1))
                 .toList()
               ..sort(((a, b) {
                 return a.displayOrder!.compareTo(b.displayOrder!);

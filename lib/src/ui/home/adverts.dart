@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
 
 class AdvertsContainer extends StatefulWidget {
   @override
@@ -25,10 +26,10 @@ class _AdvertsContainerState extends State<AdvertsContainer> {
         child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 0, 18, 10),
             child: Material(
-                elevation: 4,
+                elevation: 2,
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
-                    height: 150,
+                    height: 144,
                     constraints: const BoxConstraints(maxWidth: 450),
                     child: FutureBuilder<List<ImageData>>(
                         future: getAdverts(),
@@ -42,8 +43,12 @@ class _AdvertsContainerState extends State<AdvertsContainer> {
                                 autoplay: true,
                                 itemCount: _images?.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  var _Image = _images![index].imageUrl;
-                                  return AdvertWidget(adResource: _Image!);
+                                  var _image = _images![index].imageUrl;
+                                  var _adUrl = _images[index].imageInfoUrl;
+                                  return AdvertWidget(
+                                    adResource: _image!,
+                                    adUrl: _adUrl,
+                                  );
                                 });
                           }
                           print("No online products yet");
@@ -55,20 +60,28 @@ class _AdvertsContainerState extends State<AdvertsContainer> {
 }
 
 class AdvertWidget extends StatelessWidget {
-  const AdvertWidget({Key? key, required this.adResource}) : super(key: key);
+  AdvertWidget({Key? key, required this.adResource, this.adUrl})
+      : super(key: key);
 
   final String adResource;
+  String? adUrl;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12.0),
-      child: CachedNetworkImage(
-        imageUrl: adResource,
-        // placeholder: (context, url) =>
-        //     Lottie.asset('assets/lottie/loading.json'),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
-      ),
-    );
+    return InkWell(
+        borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+        onTap: () {
+          CommonLibs.openUrl(Uri.parse(adUrl!));
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12.0),
+          child: CachedNetworkImage(
+            fit: BoxFit.fill,
+            imageUrl: adResource,
+            // placeholder: (context, url) =>
+            //     Lottie.asset('assets/lottie/loading.json'),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ),
+        ));
   }
 }
