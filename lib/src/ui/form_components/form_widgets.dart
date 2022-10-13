@@ -254,8 +254,8 @@ class ButtonWidget extends StatelessWidget {
             // InputUtil.formInputValues.clear();
             if (formKey.currentState.validate()) {
               EasyLoading.show(status: 'Processing...');
-              print(InputUtil.formInputValues.toString());
               InputUtil.formInputValues.add({"MerchantID": "$merchantID"});
+              debugPrint(InputUtil.formInputValues.toString());
               _dynamicRequest.dynamicRequest(moduleId, actionId,
                   merchantID: merchantID,
                   moduleName: moduleName,

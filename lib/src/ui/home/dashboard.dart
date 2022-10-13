@@ -69,7 +69,7 @@ class _DashBoardState extends State<DashBoard> {
                   const Text("Welcome to Centenary Bank",
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.w600))
                 ],
               ))),
@@ -114,7 +114,9 @@ class _DashBoardState extends State<DashBoard> {
               const SizedBox(
                 height: 44,
               ),
-              AdvertsContainer(),
+              AdvertsContainer(
+                isFirstTimer: true,
+              ),
             ],
           )
           // Expanded(child:

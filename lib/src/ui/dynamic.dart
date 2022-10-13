@@ -11,6 +11,7 @@ class DynamicWidget extends StatefulWidget {
   var jsonDisplay;
   String? merchantID;
   int? nextFormSequence;
+  bool isWizard;
 
   DynamicWidget(
       {Key? key,
@@ -20,7 +21,8 @@ class DynamicWidget extends StatefulWidget {
       this.jsonDisplay,
       this.parentModule,
       this.merchantID,
-      this.nextFormSequence})
+      this.nextFormSequence,
+      this.isWizard = false})
       : super(key: key);
 
   @override
@@ -45,7 +47,8 @@ class _DynamicWidgetState extends State<DynamicWidget> {
             moduleID: widget.moduleId,
             merchantID: widget.merchantID,
             jsonDisplay: widget.jsonDisplay,
-            nextFormSequence: widget.nextFormSequence)
+            nextFormSequence: widget.nextFormSequence,
+            isWizard: widget.isWizard)
         : ModulesListWidget(
             orientation: orientation,
             parentModule: widget.parentModule!,

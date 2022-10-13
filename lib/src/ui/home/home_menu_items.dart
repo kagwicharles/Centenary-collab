@@ -48,6 +48,7 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
                                 parentModule: favourites[index].parentModule,
                                 moduleCategory:
                                     favourites[index].moduleCategory,
+                                merchantID: favourites[index].merchantID,
                               )));
                     },
                     child: Container(

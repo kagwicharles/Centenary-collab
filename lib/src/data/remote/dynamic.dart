@@ -45,6 +45,7 @@ class DynamicRequest {
       switch (actionType) {
         case ActionType.DBCALL:
           {
+            var formID, display;
             requestObj["FormID"] = actionType.name;
             requestMap.addAll({"HEADER": "$merchantID"});
             await dbCall(data: requestMap);
@@ -54,11 +55,18 @@ class DynamicRequest {
                 .then((value) => {
                       status = value["Status"],
                       message = value["Message"],
+                      formID = value["FormID"],
+                      display = value["Display"],
                       widget = postDynamicCallCheck(
                           context: context,
                           actionID: actionId,
+                          formID: formID,
+                          merchantID: merchantID,
+                          moduleName: moduleName,
                           status: status,
-                          message: message),
+                          message: message,
+                          jsonDisplay: display,
+                          opensDynamicRoute: display != null ? true : false),
                       debugPrint("My Widget#$widget")
                     });
           }
@@ -165,6 +173,7 @@ class DynamicRequest {
       required message,
       formID,
       moduleName,
+      merchantID,
       jsonDisplay,
       nextFormSequence,
       returnsWidget = false,
@@ -182,7 +191,9 @@ class DynamicRequest {
                 context: context,
                 widget: DynamicWidget(
                     nextFormSequence: nextFormSequence,
+                    isWizard: true,
                     jsonDisplay: jsonDisplay,
+                    merchantID: merchantID,
                     moduleId: formID,
                     moduleName: moduleName,
                     moduleCategory: "FORM"));

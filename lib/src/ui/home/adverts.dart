@@ -6,6 +6,10 @@ import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 
 class AdvertsContainer extends StatefulWidget {
+  bool? isFirstTimer;
+
+  AdvertsContainer({Key? key, this.isFirstTimer}) : super(key: key);
+
   @override
   State<AdvertsContainer> createState() => _AdvertsContainerState();
 
@@ -15,13 +19,16 @@ class AdvertsContainer extends StatefulWidget {
 class _AdvertsContainerState extends State<AdvertsContainer> {
   @override
   Widget build(BuildContext context) {
+    if (widget.isFirstTimer != null && widget.isFirstTimer == true) {
+      debugPrint("Waiting...");
+      Future.delayed(const Duration(seconds: 60), () async {});
+    }
     getAdverts().then(
       (value) => {
         print("Adverts $value"),
         if (value.isEmpty) {setState(() {})}
       },
     );
-
     return Center(
         child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 0, 18, 10),
@@ -38,8 +45,10 @@ class _AdvertsContainerState extends State<AdvertsContainer> {
                           Widget child = const SizedBox();
                           if (snapshot.hasData) {
                             var _images = snapshot.data;
-
                             child = Swiper(
+                                controller: SwiperController(),
+                                duration: 1000,
+                                scrollDirection: Axis.horizontal,
                                 autoplay: true,
                                 itemCount: _images?.length,
                                 itemBuilder: (BuildContext context, int index) {

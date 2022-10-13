@@ -22,13 +22,7 @@ class _AccountActivationState extends State<AccountActivation> {
         leading: IconButton(
           icon: const Icon(Icons.cancel),
           onPressed: (() {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HomePage(
-                        title: 'Rafiki',
-                      )),
-            );
+            Navigator.of(context).pop();
           }),
         ),
       ),
@@ -40,6 +34,13 @@ class _AccountActivationState extends State<AccountActivation> {
               children: <Widget>[
                 const SizedBox(
                   height: 24,
+                ),
+                Text(
+                  "Please fill below details to activate your mobile",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(
+                  height: 12,
                 ),
                 TextFormField(
                   controller: mobileController,

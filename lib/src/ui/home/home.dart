@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                             bottomRight: Radius.circular(22),
                           )),
                       height: 200,
-                      child: Align(
+                      child: const Align(
                           alignment: Alignment.topCenter,
                           child: MainMenuWidget()),
                     )),
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(12),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: SubMenuWidget(),
+                          child: const SubMenuWidget(),
                         )))
               ],
             ),

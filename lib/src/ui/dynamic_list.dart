@@ -85,8 +85,9 @@ class FormsListWidget extends StatefulWidget {
   final String moduleName;
   final String moduleID;
   String? merchantID;
-  var jsonDisplay;
   int? nextFormSequence;
+  bool isWizard;
+  var jsonDisplay;
 
   FormsListWidget(
       {Key? key,
@@ -95,7 +96,8 @@ class FormsListWidget extends StatefulWidget {
       required this.moduleID,
       this.merchantID,
       this.jsonDisplay,
-      this.nextFormSequence})
+      this.nextFormSequence,
+      this.isWizard = false})
       : super(key: key);
 
   @override
@@ -122,11 +124,19 @@ class _FormsListWidgetState extends State<FormsListWidget> {
             (BuildContext context, AsyncSnapshot<List<FormItem>> snapshot) {
           Widget child = const SizedBox();
           if (snapshot.hasData) {
-            if (widget.nextFormSequence != null) {
-              if (widget.nextFormSequence == 0) {
+            int? _currentFormSequence = widget.nextFormSequence;
+            debugPrint("Current form sequence...$_currentFormSequence");
+            if (_currentFormSequence != null) {
+              if (_currentFormSequence == 0) {
                 currentForm = 2;
               } else {
-                currentForm = widget.nextFormSequence;
+                currentForm = _currentFormSequence;
+              }
+            } else {
+              if (widget.isWizard) {
+                currentForm = 2;
+              } else {
+                currentForm = 1;
               }
             }
             var filteredFormItems = snapshot.data!
@@ -162,6 +172,8 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                     controlType = ViewType.values.byName(
                                         filteredFormItems[index].controlType!);
                                   } catch (e) {}
+                                  debugPrint(
+                                      "Merchant ID...${widget.merchantID}");
                                   return DetermineRenderWidget(controlType,
                                       formKey: _formKey,
                                       formItem: filteredFormItems[index],
