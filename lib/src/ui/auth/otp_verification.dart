@@ -28,6 +28,7 @@ class _OTPVerificationState extends State<OTPVerification> with CodeAutoFill {
 
     SmsAutoFill().getAppSignature.then((signature) {
       setState(() {
+        debugPrint("App signature...$signature");
         appSignature = signature;
       });
     });
@@ -58,17 +59,18 @@ class _OTPVerificationState extends State<OTPVerification> with CodeAutoFill {
                     ),
                     Container(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child:PinFieldAutoFill(
-                      decoration: const BoxLooseDecoration(
-                          strokeColorBuilder: FixedColorBuilder(Colors.blue)),
-                      currentCode: otpCode,
-                      onCodeSubmitted: (code) {},
-                      onCodeChanged: (code) {
-                        if (code!.length == 6) {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                        }
-                      },
-                    )),
+                        child: PinFieldAutoFill(
+                          decoration: const BoxLooseDecoration(
+                              strokeColorBuilder:
+                                  FixedColorBuilder(Colors.blue)),
+                          currentCode: otpCode,
+                          onCodeSubmitted: (code) {},
+                          onCodeChanged: (code) {
+                            if (code!.length == 6) {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                            }
+                          },
+                        )),
                     const SizedBox(
                       height: 34,
                     ),
@@ -95,7 +97,7 @@ class _OTPVerificationState extends State<OTPVerification> with CodeAutoFill {
                                     ),
                                     Text("Please wait...")
                                   ])
-                            : const Text("LOGIN")),
+                            : const Text("Verify OTP")),
                   ],
                 ))));
   }
