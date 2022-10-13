@@ -116,6 +116,7 @@ class DynamicRequest {
                           status: status,
                           message: message,
                           formID: formID,
+                          merchantID: merchantID,
                           moduleName: moduleName,
                           jsonDisplay: display,
                           nextFormSequence: nextFormSequence,

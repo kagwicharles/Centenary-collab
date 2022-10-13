@@ -88,7 +88,7 @@ class DropdownButtonWidget extends StatelessWidget {
                 return DropdownMenuItem(
                   value: value.merchantID,
                   child: Text(
-                    value.merchantID,
+                    value.merchantName,
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                 );
@@ -163,6 +163,8 @@ class TextInputWidget extends StatefulWidget {
   String? controlFormat;
   String? serviceParamId;
   String? controlValue;
+  String? minValue;
+  String? maxValue;
   bool isMandatory;
   bool isObscured;
 
@@ -172,6 +174,8 @@ class TextInputWidget extends StatefulWidget {
     this.controlFormat,
     this.serviceParamId,
     this.controlValue,
+    this.minValue,
+    this.maxValue,
     this.isMandatory = false,
     this.isObscured = false,
   }) : super(key: key);
@@ -206,6 +210,16 @@ class _TextInputWidgetState extends State<TextInputWidget> {
           if (widget.isMandatory && value!.isEmpty) {
             return 'Input required*';
           }
+          // if (widget.maxValue != null) {
+          //   if (int.parse(value!) > int.parse(widget.maxValue!)) {
+          //     return "Input exceeds max value!";
+          //   }
+          // }
+          // if (widget.minValue != null) {
+          //   if (int.parse(value!) < int.parse(widget.minValue!)) {
+          //     return "Input less min value!";
+          //   }
+          // }
           if (widget.isObscured) {
             InputUtil.encryptedField[widget.serviceParamId] =
                 CryptLibImpl.encryptField(value!);

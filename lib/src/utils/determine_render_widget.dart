@@ -44,11 +44,14 @@ class DetermineRenderWidget extends StatelessWidget {
                   ? true
                   : false;
           dynamicWidgetItem = TextInputWidget(
-              text: formItem.controlText!,
-              isMandatory: formItem.isMandatory!,
-              controlFormat: formItem.controlFormat,
-              serviceParamId: formItem.serviceParamId,
-              isObscured: obscureText);
+            text: formItem.controlText!,
+            isMandatory: formItem.isMandatory!,
+            controlFormat: formItem.controlFormat,
+            serviceParamId: formItem.serviceParamId,
+            isObscured: obscureText,
+            minValue: formItem.minValue,
+            maxValue: formItem.minValue,
+          );
         }
         break;
 
@@ -59,6 +62,8 @@ class DetermineRenderWidget extends StatelessWidget {
             isMandatory: formItem.isMandatory!,
             controlFormat: formItem.controlFormat,
             serviceParamId: formItem.serviceParamId,
+            minValue: formItem.minValue,
+            maxValue: formItem.maxValue,
           );
         }
         break;

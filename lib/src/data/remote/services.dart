@@ -12,6 +12,7 @@ import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
 import 'package:rafiki/src/utils/app_logger.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/crypt_lib.dart';
 
 class TestEndpoint {
@@ -56,10 +57,8 @@ class TestEndpoint {
       "BankID": "16",
       "Country": "UGANDATEST",
       "VersionNumber": "119",
-      "IMEI": "h1AAV9QQ1mxlBqJxVrL97q7mCxduYDdbzIAW9tsQC+A=",
-      "IMSI": "h1AAV9QQ1mxlBqJxVrL97q7mCxduYDdbzIAW9tsQC+A=",
-      // "IMEI": CryptLibImpl.encryptField(imeiNo),
-      // "IMSI": CryptLibImpl.encryptField(imeiNo),
+      "IMEI": CryptLibImpl.encryptField(await CommonLibs.getDeviceUniqueID()),
+      "IMSI": CryptLibImpl.encryptField(await CommonLibs.getDeviceUniqueID()),
       "TRXSOURCE": "APP",
       "APPNAME": "CENTEMOBILE",
       "CODEBASE": "ANDROID",

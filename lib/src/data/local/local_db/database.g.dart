@@ -110,7 +110,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ModuleItem` (`moduleId` TEXT NOT NULL, `parentModule` TEXT NOT NULL, `moduleUrl` TEXT, `moduleName` TEXT NOT NULL, `moduleCategory` TEXT NOT NULL, `merchantID` TEXT, PRIMARY KEY (`moduleId`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `actionId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `dataSourceId` TEXT, `controlValue` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, PRIMARY KEY (`no`))');
+            'CREATE TABLE IF NOT EXISTS `FormItem` (`no` INTEGER, `controlType` TEXT, `controlText` TEXT, `moduleId` TEXT, `controlId` TEXT, `actionId` TEXT, `linkedToControl` TEXT, `formSequence` INTEGER, `serviceParamId` TEXT, `displayOrder` REAL, `controlFormat` TEXT, `dataSourceId` TEXT, `controlValue` TEXT, `isMandatory` INTEGER, `isEncrypted` INTEGER, `minValue` TEXT, `maxValue` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ActionItem` (`no` INTEGER, `moduleId` TEXT NOT NULL, `actionType` TEXT NOT NULL, `actionId` TEXT NOT NULL, `serviceParamsIds` TEXT NOT NULL, `controlId` TEXT NOT NULL, `webHeader` TEXT NOT NULL, `merchantId` TEXT, `formId` TEXT, PRIMARY KEY (`no`))');
         await database.execute(
@@ -296,7 +296,9 @@ class _$FormItemDao extends FormItemDao {
                       : (item.isMandatory! ? 1 : 0),
                   'isEncrypted': item.isEncrypted == null
                       ? null
-                      : (item.isEncrypted! ? 1 : 0)
+                      : (item.isEncrypted! ? 1 : 0),
+                  'minValue': item.minValue,
+                  'maxValue': item.maxValue
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -328,7 +330,9 @@ class _$FormItemDao extends FormItemDao {
                 : (row['isMandatory'] as int) != 0,
             isEncrypted: row['isEncrypted'] == null
                 ? null
-                : (row['isEncrypted'] as int) != 0),
+                : (row['isEncrypted'] as int) != 0,
+            minValue: row['minValue'] as String?,
+            maxValue: row['maxValue'] as String?),
         arguments: [id]);
   }
 

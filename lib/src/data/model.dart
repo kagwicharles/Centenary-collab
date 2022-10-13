@@ -106,23 +106,26 @@ class FormItem {
   String? controlValue;
   bool? isMandatory;
   bool? isEncrypted;
+  String? minValue;
+  String? maxValue;
 
-  FormItem({
-    required this.controlType,
-    required this.controlText,
-    required this.moduleId,
-    this.linkedToControl,
-    this.controlId,
-    this.actionId,
-    this.formSequence,
-    this.serviceParamId,
-    this.displayOrder,
-    this.controlFormat,
-    this.dataSourceId,
-    this.controlValue,
-    this.isMandatory,
-    this.isEncrypted,
-  });
+  FormItem(
+      {required this.controlType,
+      required this.controlText,
+      required this.moduleId,
+      this.linkedToControl,
+      this.controlId,
+      this.actionId,
+      this.formSequence,
+      this.serviceParamId,
+      this.displayOrder,
+      this.controlFormat,
+      this.dataSourceId,
+      this.controlValue,
+      this.isMandatory,
+      this.isEncrypted,
+      this.minValue,
+      this.maxValue});
 
   FormItem.fromJson(Map<String, dynamic> json) {
     controlType = json['ControlType'];
@@ -139,6 +142,8 @@ class FormItem {
     controlFormat = json['ControlFormat'];
     dataSourceId = json['DataSourceID'];
     controlValue = json['ControlValue'];
+    minValue = json['MinValue'];
+    maxValue = json["MaxValue"];
   }
 }
 
