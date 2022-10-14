@@ -27,7 +27,8 @@ part 'database.g.dart';
   ModuleToHide,
   ModuleToDisable,
   AtmLocation,
-  BranchLocation
+  BranchLocation,
+  PendingTrxDisplay
 ])
 abstract class AppDatabase extends FloorDatabase {
   ModuleItemDao get moduleItemDao;
@@ -57,6 +58,8 @@ abstract class AppDatabase extends FloorDatabase {
   AtmLocationDao get atmLocationDao;
 
   BranchLocationDao get branchLocationDao;
+
+  PendingTrxDisplayDao get pendingTrxDisplayDao;
 
   static getDatabaseInstance() async {
     return await $FloorAppDatabase.databaseBuilder('app_database.db').build();

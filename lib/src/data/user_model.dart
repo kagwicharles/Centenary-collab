@@ -140,5 +140,33 @@ class ModuleToDisable {
         displayMessage = json["DisplayMessage"];
 }
 
+@entity
+class PendingTrxDisplay {
+  @primaryKey
+  int? no;
+  String name;
+  String comments;
+  String transactionType;
+  String sendTo;
+  double amount;
+  String pendingUniqueID;
+
+  PendingTrxDisplay(
+      {required this.name,
+      required this.comments,
+      required this.transactionType,
+      required this.sendTo,
+      required this.amount,
+      required this.pendingUniqueID});
+
+  PendingTrxDisplay.fromJson(Map<String, dynamic> json)
+      : name = json["Name"],
+        comments = json["Comments"],
+        transactionType = json["Trx Type"],
+        sendTo = json["Send to"],
+        amount = json["Amount"],
+        pendingUniqueID = json["PendingUniqueID"];
+}
+
 //TODO Add Entity for service alerts
 //TODO Add Entity for loanlimit

@@ -89,6 +89,8 @@ class _$AppDatabase extends AppDatabase {
 
   BranchLocationDao? _branchLocationDaoInstance;
 
+  PendingTrxDisplayDao? _pendingTrxDisplayDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -135,6 +137,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `AtmLocation` (`no` INTEGER, `longitude` REAL NOT NULL, `latitude` REAL NOT NULL, `distance` REAL NOT NULL, `location` TEXT NOT NULL, PRIMARY KEY (`no`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BranchLocation` (`no` INTEGER, `longitude` REAL NOT NULL, `latitude` REAL NOT NULL, `distance` REAL NOT NULL, `location` TEXT NOT NULL, PRIMARY KEY (`no`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `PendingTrxDisplay` (`no` INTEGER, `name` TEXT NOT NULL, `comments` TEXT NOT NULL, `transactionType` TEXT NOT NULL, `sendTo` TEXT NOT NULL, `amount` REAL NOT NULL, `pendingUniqueID` TEXT NOT NULL, PRIMARY KEY (`no`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -219,6 +223,12 @@ class _$AppDatabase extends AppDatabase {
   BranchLocationDao get branchLocationDao {
     return _branchLocationDaoInstance ??=
         _$BranchLocationDao(database, changeListener);
+  }
+
+  @override
+  PendingTrxDisplayDao get pendingTrxDisplayDao {
+    return _pendingTrxDisplayDaoInstance ??=
+        _$PendingTrxDisplayDao(database, changeListener);
   }
 }
 
@@ -909,5 +919,54 @@ class _$BranchLocationDao extends BranchLocationDao {
   Future<void> insertBranchLocation(BranchLocation branchLocation) async {
     await _branchLocationInsertionAdapter.insert(
         branchLocation, OnConflictStrategy.abort);
+  }
+}
+
+class _$PendingTrxDisplayDao extends PendingTrxDisplayDao {
+  _$PendingTrxDisplayDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _pendingTrxDisplayInsertionAdapter = InsertionAdapter(
+            database,
+            'PendingTrxDisplay',
+            (PendingTrxDisplay item) => <String, Object?>{
+                  'no': item.no,
+                  'name': item.name,
+                  'comments': item.comments,
+                  'transactionType': item.transactionType,
+                  'sendTo': item.sendTo,
+                  'amount': item.amount,
+                  'pendingUniqueID': item.pendingUniqueID
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<PendingTrxDisplay> _pendingTrxDisplayInsertionAdapter;
+
+  @override
+  Future<List<PendingTrxDisplay>> getAllPendingTransactions() async {
+    return _queryAdapter.queryList('SELECT * FROM PendingTrxDisplay',
+        mapper: (Map<String, Object?> row) => PendingTrxDisplay(
+            name: row['name'] as String,
+            comments: row['comments'] as String,
+            transactionType: row['transactionType'] as String,
+            sendTo: row['sendTo'] as String,
+            amount: row['amount'] as double,
+            pendingUniqueID: row['pendingUniqueID'] as String));
+  }
+
+  @override
+  Future<void> clearTable() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM PendingTrxDisplay');
+  }
+
+  @override
+  Future<void> insertPendingTransaction(
+      PendingTrxDisplay pendingTrxDisplay) async {
+    await _pendingTrxDisplayInsertionAdapter.insert(
+        pendingTrxDisplay, OnConflictStrategy.abort);
   }
 }

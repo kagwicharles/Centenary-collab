@@ -86,3 +86,15 @@ abstract class AtmLocationDao {
   @Query('DELETE FROM AtmLocation')
   Future<void> clearTable();
 }
+
+@dao
+abstract class PendingTrxDisplayDao {
+  @Query('SELECT * FROM PendingTrxDisplay')
+  Future<List<PendingTrxDisplay>> getAllPendingTransactions();
+
+  @insert
+  Future<void> insertPendingTransaction(PendingTrxDisplay pendingTrxDisplay);
+
+  @Query('DELETE FROM PendingTrxDisplay')
+  Future<void> clearTable();
+}

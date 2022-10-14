@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
 import 'package:rafiki/src/ui/auth/login.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
+import 'package:rafiki/src/ui/home/social.dart';
 import 'package:rafiki/src/ui/info/request_status.dart';
 import 'package:rafiki/src/ui/others/map_view.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
@@ -51,15 +52,16 @@ class _DashBoardState extends State<DashBoard> {
           Container(
               height: 300,
               decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.all(Radius.circular(12.0))),
-              margin: const EdgeInsets.all(8),
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                      bottomRight: Radius.circular(24))),
               child: Center(
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    "assets/images/bank.png",
+                    "assets/images/app_icon.png",
                     height: 100,
                     width: 100,
                   ),
@@ -73,52 +75,58 @@ class _DashBoardState extends State<DashBoard> {
                           fontWeight: FontWeight.w600))
                 ],
               ))),
-          Column(
-            children: [
-              GridView.count(
-                shrinkWrap: true,
-                primary: false,
-                padding: const EdgeInsets.all(20),
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: (.5 / .6),
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                crossAxisCount: 3,
-                children: <Widget>[
-                  DashItem(
-                    title: "Login",
-                    widget: const Login(),
-                    iconUrl: "assets/icons/lock.png",
+          Material(
+
+              child: Column(
+                children: [
+                  GridView.count(
+                    shrinkWrap: true,
+                    primary: false,
+                    padding: const EdgeInsets.all(20),
+                    physics: const NeverScrollableScrollPhysics(),
+                    childAspectRatio: (.5 / .6),
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    crossAxisCount: 3,
+                    children: <Widget>[
+                      DashItem(
+                        title: "Login",
+                        widget: const Login(),
+                        iconUrl: "assets/icons/lock.png",
+                      ),
+                      DashItem(
+                        title: "Banks & Branches",
+                        widget: const MapView(),
+                        iconUrl: "assets/icons/atm_machine.png",
+                      ),
+                      DashItem(
+                        title: "Internet Banking",
+                        iconUrl: "assets/icons/checking.png",
+                        isUrl: true,
+                        launchUrl:
+                            "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
+                      ),
+                      // DashItem(
+                      //   title: "Cente on The Go",
+                      //   iconUrl: "assets/icons/checking.png",
+                      //   isUrl: true,
+                      //   launchUrl:
+                      //       "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
+                      // ),
+                    ],
                   ),
-                  DashItem(
-                    title: "Banks & Branches",
-                    widget: const MapView(),
-                    iconUrl: "assets/icons/atm_machine.png",
+                  const SizedBox(
+                    height: 44,
                   ),
-                  DashItem(
-                    title: "Internet Banking",
-                    iconUrl: "assets/icons/checking.png",
-                    isUrl: true,
-                    launchUrl:
-                        "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
+                  AdvertsContainer(
+                    isFirstTimer: true,
                   ),
-                  // DashItem(
-                  //   title: "Cente on The Go",
-                  //   iconUrl: "assets/icons/checking.png",
-                  //   isUrl: true,
-                  //   launchUrl:
-                  //       "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
-                  // ),
+                  const SizedBox(
+                    height: 44,
+                  ),
+                  SocialContainer(),
                 ],
-              ),
-              const SizedBox(
-                height: 44,
-              ),
-              AdvertsContainer(
-                isFirstTimer: true,
-              ),
-            ],
-          )
+              ))
           // Expanded(child:
           // AdvertsContainer())
         ])));

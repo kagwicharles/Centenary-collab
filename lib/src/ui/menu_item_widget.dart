@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/ui/dynamic.dart';
+import 'package:rafiki/src/ui/list/pending_transactions.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 
 import 'form_components/form_widgets.dart';
@@ -41,6 +42,10 @@ class ModuleItemWidget extends StatelessWidget {
             onTap: () {
               if (moduleId == "TRANSACTIONSCENTER") {
                 getList(context);
+              } else if (moduleId == "PENDINGTRANSACTIONS") {
+                CommonLibs.navigateToRoute(
+                    context: context,
+                    widget: PendingTransactionList(moduleName: moduleName));
               } else {
                 CommonLibs.navigateToRoute(
                     context: context,

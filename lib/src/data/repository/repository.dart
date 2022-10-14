@@ -323,3 +323,26 @@ class BranchLocationRepository {
     });
   }
 }
+
+class PendingTrxDisplayRepository {
+  void insertPendingTransaction(PendingTrxDisplay pendingTrxDisplay) async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.pendingTrxDisplayDao.insertPendingTransaction(pendingTrxDisplay);
+    });
+  }
+
+  Future<List<PendingTrxDisplay>> getAllPendingTransactions() async {
+    var pendingTransactions;
+    await AppDatabase.getDatabaseInstance().then((database) {
+      pendingTransactions =
+          database.pendingTrxDisplayDao.getAllPendingTransactions();
+    });
+    return pendingTransactions;
+  }
+
+  void clearTable() async {
+    AppDatabase.getDatabaseInstance().then((database) {
+      database.pendingTrxDisplayDao.clearTable();
+    });
+  }
+}

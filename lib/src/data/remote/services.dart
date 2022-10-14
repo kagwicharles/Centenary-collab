@@ -42,6 +42,7 @@ class TestEndpoint {
   final _moduleToDisableRepository = ModuleToDisableRepository();
   final _atmLocationRepository = AtmLocationRepository();
   final _branchLocationRepository = BranchLocationRepository();
+  final _pendingTransactionsRepository = PendingTrxDisplayRepository();
 
   securityFeatureSetUp() async {
     localDevice = await SharedPrefLocal.getLocalDevice();
@@ -384,6 +385,10 @@ class TestEndpoint {
       _moduleToDisableRepository
           .insertModuleToDisable(ModuleToDisable.fromJson(item));
     });
+    jsonData["PendingTrxDisplay"].forEach((item) {
+      _pendingTransactionsRepository
+          .insertPendingTransaction(PendingTrxDisplay.fromJson(item));
+    });
   }
 
   clearAllUserData() {
@@ -392,6 +397,7 @@ class TestEndpoint {
     _beneficiaryRepository.clearTable();
     _moduleToDisableRepository.clearTable();
     _moduleToHideRepository.clearTable();
+    _pendingTransactionsRepository.clearTable();
   }
 
   clearAllStaticData() async {

@@ -73,6 +73,8 @@ dependencies:
   intl: ^0.17.0
   sms_autofill: ^2.2.0
   confirm_dialog: ^1.0.1
+  getwidget: ^3.0.1
+  font_awesome_flutter: ^10.2.1
 
 dev_dependencies:
   flutter_test:
