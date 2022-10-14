@@ -40,6 +40,7 @@ class _DynamicWidgetState extends State<DynamicWidget> {
     // _formItems = DynamicData.readFormsJson(moduleId);
     // _moduleItems = DynamicData.readModulesJson(moduleId);
     debugPrint("Module id...${widget.moduleId}");
+    debugPrint("Module name...${widget.moduleName}");
     return widget.moduleCategory == "FORM"
         ? FormsListWidget(
             orientation: orientation,

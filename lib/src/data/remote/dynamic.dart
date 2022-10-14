@@ -4,7 +4,6 @@ import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/ui/dynamic.dart';
-import 'package:rafiki/src/ui/dynamic_list.dart';
 import 'package:rafiki/src/ui/info/request_status.dart';
 import 'package:rafiki/src/ui/list/transaction_list.dart';
 import 'package:rafiki/src/utils/app_logger.dart';
@@ -16,10 +15,16 @@ class DynamicRequest {
   final _services = TestEndpoint();
   Map requestObj = {};
 
-  Future<Widget?> dynamicRequest(String moduleId, String actionId,
-      {dataObj, merchantID, moduleName, encryptedField, context}) async {
-    ActionType actionType;
+  dynamicRequest(String moduleId, String actionId,
+      {dataObj,
+      merchantID,
+      moduleName,
+      encryptedField,
+      context,
+      isNotTransactionList = true}) async {
     Map requestMap = {};
+    List<dynamic>? list;
+    ActionType actionType;
     String? status, message;
     Widget? widget;
     await _services.baseRequestSetUp();
@@ -47,8 +52,10 @@ class DynamicRequest {
           {
             var formID, display;
             requestObj["FormID"] = actionType.name;
-            requestMap.addAll({"HEADER": "$merchantID"});
-            await dbCall(data: requestMap);
+            if (isNotTransactionList) {
+              requestMap.addAll({"HEADER": "$merchantID"});
+            }
+            dbCall(data: requestMap);
             await _services
                 .dynamicRequest(
                     requestObj: requestObj, webHeader: actionControl.webHeader)
@@ -57,6 +64,7 @@ class DynamicRequest {
                       message = value["Message"],
                       formID = value["FormID"],
                       display = value["Display"],
+                      list = value["Data"],
                       widget = postDynamicCallCheck(
                           context: context,
                           actionID: actionId,
@@ -66,7 +74,9 @@ class DynamicRequest {
                           status: status,
                           message: message,
                           jsonDisplay: display,
-                          opensDynamicRoute: display != null ? true : false),
+                          opensDynamicRoute: display != null ? true : false,
+                          isNotTransactionList: isNotTransactionList,
+                          list: list),
                       debugPrint("My Widget#$widget")
                     });
           }
@@ -91,7 +101,8 @@ class DynamicRequest {
                         context: context,
                         actionID: actionId,
                         status: status,
-                        message: message)
+                        message: message,
+                        isNotTransactionList: isNotTransactionList)
                   });
           break;
         case ActionType.VALIDATE:
@@ -110,20 +121,22 @@ class DynamicRequest {
                       display = value["Display"],
                       nextFormSequence = value["NextFormSequence"],
                       debugPrint("FormID from res...$formID"),
+                      debugPrint(
+                          "Pre-post-dynamic call...moduleName...$moduleName"),
                       postDynamicCallCheck(
-                          context: context,
-                          actionID: actionId,
-                          status: status,
-                          message: message,
-                          formID: formID,
-                          merchantID: merchantID,
-                          moduleName: moduleName,
-                          jsonDisplay: display,
-                          nextFormSequence: nextFormSequence,
-                          opensDynamicRoute:
-                              formID != null && formID!.length > 1
-                                  ? true
-                                  : false)
+                        context: context,
+                        actionID: actionId,
+                        status: status,
+                        message: message,
+                        formID: formID,
+                        merchantID: merchantID,
+                        moduleName: moduleName,
+                        jsonDisplay: display,
+                        isNotTransactionList: isNotTransactionList,
+                        nextFormSequence: nextFormSequence,
+                        opensDynamicRoute:
+                            formID != null && formID!.length > 1 ? true : false,
+                      )
                     });
           }
           break;
@@ -142,7 +155,7 @@ class DynamicRequest {
       }
     });
     debugPrint("Returning...$widget");
-    return widget;
+    return list;
   }
 
   void navigateToStatusRoute({context, status, message}) {
@@ -167,7 +180,7 @@ class DynamicRequest {
     requestObj["EncryptedFields"] = encryptedFields;
   }
 
-  Widget postDynamicCallCheck(
+  postDynamicCallCheck(
       {required context,
       required actionID,
       required status,
@@ -177,16 +190,15 @@ class DynamicRequest {
       merchantID,
       jsonDisplay,
       nextFormSequence,
+      isNotTransactionList,
+      list,
       returnsWidget = false,
       opensDynamicRoute = false}) {
     EasyLoading.dismiss();
-
+    debugPrint("Post dynamic module name...$moduleName");
     switch (status) {
       case "000":
         {
-          if (returnsWidget) {
-            return dbCallTypeCheck(actionID, context: context);
-          }
           if (opensDynamicRoute) {
             CommonLibs.navigateToRoute(
                 context: context,
@@ -200,7 +212,17 @@ class DynamicRequest {
                     moduleCategory: "FORM"));
             break;
           }
-          showStatusScreen(context: context, status: status, message: message);
+          if (isNotTransactionList) {
+            showStatusScreen(
+                context: context, status: status, message: message);
+          } else {
+            CommonLibs.navigateToRoute(
+                context: context,
+                widget: TransactionList(
+                  dynamicList: list,
+                  moduleName: moduleName,
+                ));
+          }
         }
         break;
       case "091":
@@ -219,7 +241,6 @@ class DynamicRequest {
               context: context, message: "Error processing request!");
         }
     }
-    return const SizedBox();
   }
 
   showStatusScreen({required context, required status, required message}) {
@@ -228,16 +249,6 @@ class DynamicRequest {
         navigateToStatusRoute(
             context: context, status: status, message: message);
       });
-    }
-  }
-
-  Widget dbCallTypeCheck(String actionID, {required context}) {
-    var enumActionID = ActionID.values.byName(actionID);
-    switch (enumActionID) {
-      case ActionID.GETTRXLIST:
-        {
-          return TransactionList();
-        }
     }
   }
 }

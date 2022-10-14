@@ -1,7 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/ui/dynamic.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
+
+import 'form_components/form_widgets.dart';
 
 class ModuleItemWidget extends StatelessWidget {
   final String imageUrl;
@@ -11,6 +16,9 @@ class ModuleItemWidget extends StatelessWidget {
   final String moduleCategory;
   String? merchantID;
   bool isMain = false;
+  ModuleItem moduleItem;
+
+  final _dynamicRequest = DynamicRequest();
 
   ModuleItemWidget(
       {Key? key,
@@ -20,7 +28,8 @@ class ModuleItemWidget extends StatelessWidget {
       required this.parentModule,
       required this.moduleCategory,
       this.merchantID,
-      this.isMain = false})
+      this.isMain = false,
+      required this.moduleItem})
       : super(key: key);
 
   @override
@@ -30,13 +39,18 @@ class ModuleItemWidget extends StatelessWidget {
         color: isMain ? Colors.transparent : null,
         child: InkWell(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DynamicWidget(
-                      moduleId: moduleId,
-                      moduleName: moduleName,
-                      parentModule: parentModule,
-                      moduleCategory: moduleCategory,
-                      merchantID: merchantID)));
+              if (moduleId == "TRANSACTIONSCENTER") {
+                getList(context);
+              } else {
+                CommonLibs.navigateToRoute(
+                    context: context,
+                    widget: DynamicWidget(
+                        moduleId: moduleId,
+                        moduleName: moduleName,
+                        parentModule: parentModule,
+                        moduleCategory: moduleCategory,
+                        merchantID: merchantID));
+              }
             },
             child: Container(
               padding: const EdgeInsets.all(2.0),
@@ -71,5 +85,17 @@ class ModuleItemWidget extends StatelessWidget {
                     )),
                   ]),
             )));
+  }
+
+  getList(context) {
+    InputUtil.formInputValues.clear();
+    InputUtil.formInputValues.add({"HEADER": "GETTRXLIST"});
+    _dynamicRequest.dynamicRequest(moduleItem.moduleId, "GETTRXLIST",
+        merchantID: moduleItem.merchantID,
+        moduleName: moduleItem.moduleName,
+        dataObj: InputUtil.formInputValues,
+        encryptedField: InputUtil.encryptedField,
+        context: context,
+        isNotTransactionList: false);
   }
 }

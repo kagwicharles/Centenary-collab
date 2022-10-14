@@ -270,6 +270,7 @@ class ButtonWidget extends StatelessWidget {
               EasyLoading.show(status: 'Processing...');
               InputUtil.formInputValues.add({"MerchantID": "$merchantID"});
               debugPrint(InputUtil.formInputValues.toString());
+              debugPrint("Pre-dynamic call Module Name...$moduleName");
               _dynamicRequest.dynamicRequest(moduleId, actionId,
                   merchantID: merchantID,
                   moduleName: moduleName,

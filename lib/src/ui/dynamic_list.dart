@@ -58,15 +58,16 @@ class _ModulesListWidgetState extends State<ModulesListWidget> {
                           var moduleCategory =
                               snapshot.data![index].moduleCategory;
                           var merchantID = snapshot.data![index].merchantID;
+                          var module = snapshot.data![index];
 
                           return ModuleItemWidget(
-                            imageUrl: imageUrl!,
-                            moduleName: name,
-                            moduleId: moduleId,
-                            parentModule: widget.parentModule,
-                            moduleCategory: moduleCategory,
-                            merchantID: merchantID,
-                          );
+                              imageUrl: imageUrl!,
+                              moduleName: name,
+                              moduleId: moduleId,
+                              parentModule: widget.parentModule,
+                              moduleCategory: moduleCategory,
+                              merchantID: merchantID,
+                              moduleItem: module);
                         }));
               }
               return child;
@@ -147,6 +148,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                 return a.displayOrder!.compareTo(b.displayOrder!);
               }));
             debugPrint("Filtered form items at 0...$filteredFormItems");
+            debugPrint("Module name...${widget.moduleName}");
             child = snapshot.data!
                     .map((item) => item.controlType)
                     .contains("CONTAINER")

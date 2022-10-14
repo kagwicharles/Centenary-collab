@@ -35,6 +35,7 @@ class TabWidget extends StatelessWidget {
     linkControls.asMap().forEach((index, linkControl) {
       tabWidgetList.add(TabWidgetList(
           merchantID: merchantID,
+          moduleName: moduleName,
           formItems: formItems
               .where((formItem) =>
                   formItem.linkedToControl == linkControl ||
@@ -66,8 +67,13 @@ class TabWidgetList extends StatefulWidget {
   final List<FormItem> formItems;
   Function? updateState;
   String? merchantID;
+  String? moduleName;
 
-  TabWidgetList({required this.formItems, this.updateState, this.merchantID});
+  TabWidgetList(
+      {required this.formItems,
+      this.updateState,
+      this.merchantID,
+      this.moduleName});
 
   @override
   State<TabWidgetList> createState() => _TabWidgetListState();
@@ -97,11 +103,14 @@ class _TabWidgetListState extends State<TabWidgetList> {
                         .byName(widget.formItems[index].controlType!);
                   } catch (e) {}
 
-                  return DetermineRenderWidget(controlType,
-                      formKey: _formKey,
-                      merchantID: widget.merchantID,
-                      formItem: widget.formItems[index],
-                      refreshParent: widget.updateState);
+                  return DetermineRenderWidget(
+                    controlType,
+                    formKey: _formKey,
+                    merchantID: widget.merchantID,
+                    formItem: widget.formItems[index],
+                    refreshParent: widget.updateState,
+                    moduleName: widget.moduleName,
+                  );
                 })));
   }
 
