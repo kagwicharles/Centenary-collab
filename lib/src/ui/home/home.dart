@@ -1,3 +1,4 @@
+import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/data/user_model.dart';
@@ -71,8 +72,20 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const Spacer(),
                             IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.more_vert))
+                                onPressed: () async {
+                                  if (await confirm(
+                                    context,
+                                    title: const Text('Logout'),
+                                    content:
+                                        const Text('Would you like to logout?'),
+                                    textOK: const Text('Confirm'),
+                                    textCancel: const Text('Cancel'),
+
+                                  )) {
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                                icon: const Icon(Icons.power_settings_new))
                           ],
                         );
                       }

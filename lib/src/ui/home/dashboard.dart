@@ -102,13 +102,13 @@ class _DashBoardState extends State<DashBoard> {
                     launchUrl:
                         "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
                   ),
-                  DashItem(
-                    title: "Cente on The Go",
-                    iconUrl: "assets/icons/checking.png",
-                    isUrl: true,
-                    launchUrl:
-                        "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
-                  ),
+                  // DashItem(
+                  //   title: "Cente on The Go",
+                  //   iconUrl: "assets/icons/checking.png",
+                  //   isUrl: true,
+                  //   launchUrl:
+                  //       "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
+                  // ),
                 ],
               ),
               const SizedBox(

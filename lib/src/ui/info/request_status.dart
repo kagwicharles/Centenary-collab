@@ -56,6 +56,7 @@ class _RequestStatusScreenState extends State<RequestStatusScreen> {
             ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
+                  Navigator.pop(context);
                 },
                 child: const Text("Close")),
             const SizedBox(
