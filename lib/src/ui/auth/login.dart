@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/remote/services.dart';
+import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/auth/otp_verification.dart';
 import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
@@ -17,8 +19,9 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   var mobileController = TextEditingController();
   var pinController = TextEditingController();
-  bool loading = false;
   final _services = TestEndpoint();
+  final _hiddenModulesRepository = ModuleToHideRepository();
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +71,7 @@ class _LoginState extends State<Login> {
                   onPressed: loading
                       ? null
                       : () {
+                          List<ModuleToHide>? hiddenModules;
                           if (_formKey.currentState!.validate()) {
                             setState(() {
                               loading = true;
@@ -78,7 +82,7 @@ class _LoginState extends State<Login> {
                                 () {
                               _services
                                   .login(pinController.text)
-                                  .then((value) => {
+                                  .then((value) async => {
                                         setState(() {
                                           loading = false;
                                         }),
@@ -86,12 +90,16 @@ class _LoginState extends State<Login> {
                                             StatusCode.success)
                                           {
                                             pinController.clear(),
+                                            hiddenModules =
+                                                await _hiddenModulesRepository
+                                                    .getAllModulesToHide(),
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       HomePage(
                                                         title: 'Rafiki',
+                                                        hiddenModules: hiddenModules
                                                       )),
                                             )
                                           }

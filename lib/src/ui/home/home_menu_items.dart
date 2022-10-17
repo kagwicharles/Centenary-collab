@@ -89,7 +89,8 @@ class _MainMenuWidgetState extends State<MainMenuWidget> {
 }
 
 class SubMenuWidget extends StatefulWidget {
-  const SubMenuWidget({Key? key}) : super(key: key);
+  SubMenuWidget({Key? key, this.hiddenModules}) : super(key: key);
+  List<ModuleToHide>? hiddenModules;
 
   @override
   State<SubMenuWidget> createState() => _SubMenuWidgetState();
@@ -112,6 +113,14 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
             (BuildContext context, AsyncSnapshot<List<ModuleItem>> snapshot) {
           Widget child = const Center(child: Text("Please wait..."));
           if (snapshot.hasData) {
+            var dbModules = snapshot.data;
+            var hiddenModules = widget.hiddenModules;
+            if (hiddenModules != null) {
+              hiddenModules.forEach((module) {
+                dbModules?.removeWhere(
+                    (dbModule) => dbModule.moduleId == module.moduleId);
+              });
+            }
             child = Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: GridView.builder(
@@ -131,15 +140,13 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
                               verticalOffset: 50.0,
                               child: FadeInAnimation(
                                   child: ModuleItemWidget(
-                                imageUrl: snapshot.data![index].moduleUrl!,
-                                moduleName: snapshot.data![index].moduleName,
-                                moduleId: snapshot.data![index].moduleId,
-                                parentModule:
-                                    snapshot.data![index].parentModule,
-                                moduleCategory:
-                                    snapshot.data![index].moduleCategory,
-                                merchantID: snapshot.data![index].merchantID,
-                                moduleItem: snapshot.data![index],
+                                imageUrl: dbModules![index].moduleUrl!,
+                                moduleName: dbModules[index].moduleName,
+                                moduleId: dbModules[index].moduleId,
+                                parentModule: dbModules[index].parentModule,
+                                moduleCategory: dbModules[index].moduleCategory,
+                                merchantID: dbModules[index].merchantID,
+                                moduleItem: dbModules[index],
                                 isMain: true,
                               ))));
                     }));

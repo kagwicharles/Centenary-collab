@@ -8,8 +8,10 @@ import 'package:rafiki/src/ui/home/top_home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title}) : super(key: key);
+  HomePage({Key? key, required this.title, this.hiddenModules})
+      : super(key: key);
   final String title;
+  List<ModuleToHide>? hiddenModules;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -75,13 +77,20 @@ class _HomePageState extends State<HomePage> {
                                 onPressed: () async {
                                   if (await confirm(
                                     context,
-                                    title: const Text('Logout'),
+                                    title: const Text(
+                                      'Logout',
+                                      style: TextStyle(fontSize: 24),
+                                    ),
                                     content:
                                         const Text('Would you like to logout?'),
-                                    textOK: const Text('Confirm'),
-                                    textCancel: const Text('Cancel'),
-
+                                    textOK: const Text(
+                                      'Confirm',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    textCancel: const Text('Cancel',
+                                        style: TextStyle(fontSize: 16)),
                                   )) {
+                                    Navigator.of(context).pop();
                                     Navigator.of(context).pop();
                                   }
                                 },
@@ -127,7 +136,8 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(12),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: const SubMenuWidget(),
+                          child: SubMenuWidget(
+                              hiddenModules: widget.hiddenModules),
                         )))
               ],
             ),

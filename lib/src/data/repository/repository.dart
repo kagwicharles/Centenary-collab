@@ -241,8 +241,8 @@ class ModuleToHideRepository {
     });
   }
 
-  Future<Future<List<ModuleToHide>>?> getAllModulesToHide() async {
-    Future<List<ModuleToHide>>? modulesToHide;
+  Future<List<ModuleToHide>>? getAllModulesToHide() async {
+    var modulesToHide;
 
     await AppDatabase.getDatabaseInstance().then((database) {
       modulesToHide = database.moduleToHideDao.getAllModulesToHide();

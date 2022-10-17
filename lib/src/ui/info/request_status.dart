@@ -29,39 +29,44 @@ class _RequestStatusScreenState extends State<RequestStatusScreen> {
       height: MediaQuery.of(context).size.height,
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Material(
-                borderRadius: BorderRadius.circular(12.0),
-                color: const Color.fromARGB(255, 243, 248, 251),
-                child: Expanded(
+            Center(
+                child: Container(
+                    padding: EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        color: Colors.blue[50]),
                     child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      getAvatarType(widget.statusCode),
-                      height: 54,
-                      width: 54,
-                    ),
-                    const SizedBox(
-                      height: 54,
-                    ),
-                    Text(
-                      widget.message,
-                      style: Theme.of(context).textTheme.titleLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 54,
-                    ),
-                  ],
-                ))),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                child: const Text("Close")),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          getAvatarType(widget.statusCode),
+                          height: 54,
+                          width: 54,
+                        ),
+                        const SizedBox(
+                          height: 54,
+                        ),
+                        Text(
+                          widget.message,
+                          style: Theme.of(context).textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ))),
+            const SizedBox(
+              height: 54,
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Close"))),
             const SizedBox(
               height: 15,
             )
