@@ -553,3 +553,16 @@ class TextViewWidget extends StatelessWidget {
     ]);
   }
 }
+
+class ListWidget extends StatelessWidget {
+  ListWidget({Key? key, this.dynamicList}) : super(key: key);
+
+  List<dynamic>? dynamicList;
+
+  @override
+  Widget build(BuildContext context) {
+    return dynamicList != null
+        ? Text(dynamicList.toString())
+        : const Center(child: Text("Nothing was found!"));
+  }
+}

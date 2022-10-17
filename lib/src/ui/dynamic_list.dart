@@ -109,6 +109,7 @@ class _FormsListWidgetState extends State<FormsListWidget> {
   int? currentForm;
   final _formKey = GlobalKey<FormState>();
   final _formsRepository = FormsRepository();
+  final _determineRenderWidget = DetermineRenderWidget();
 
   getFormItems() => _formsRepository.getFormsByModuleId(widget.moduleID);
 
@@ -170,18 +171,22 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                 itemCount: filteredFormItems.length,
                                 itemBuilder: (context, index) {
                                   var controlType;
+                                  String? controlValue =
+                                      filteredFormItems[index].controlValue;
                                   try {
                                     controlType = ViewType.values.byName(
                                         filteredFormItems[index].controlType!);
                                   } catch (e) {}
                                   debugPrint(
                                       "Merchant ID...${widget.merchantID}");
-                                  return DetermineRenderWidget(controlType,
+                                  return _determineRenderWidget.getWidget(
+                                      controlType, filteredFormItems[index],
+                                      context: context,
                                       formKey: _formKey,
-                                      formItem: filteredFormItems[index],
                                       merchantID: widget.merchantID,
                                       moduleName: widget.moduleName,
-                                      jsonTxt: widget.jsonDisplay);
+                                      jsonTxt: widget.jsonDisplay,
+                                      controlValue: controlValue);
                                 }))));
           }
           return child;

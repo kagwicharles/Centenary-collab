@@ -34,6 +34,7 @@ class _RequestStatusScreenState extends State<RequestStatusScreen> {
           children: [
             Center(
                 child: Container(
+                    width: double.infinity,
                     padding: EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12.0),

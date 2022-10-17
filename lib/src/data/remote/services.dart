@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
@@ -51,7 +52,6 @@ class TestEndpoint {
   }
 
   baseRequestSetUp() async {
-    var imeiNo = await Constants.getImei();
     requestObj = {
       "UNIQUEID": "00000000-40ee-9111-0000-00001d093e12",
       "CustomerID": "4570670220",
@@ -202,11 +202,12 @@ class TestEndpoint {
     }
   }
 
-  Future<Map<String, dynamic>> dynamicRequest({
+  Future<DynamicResponse> dynamicRequest({
     required requestObj,
     required webHeader,
   }) async {
     String res, decrypted = "";
+    DynamicResponse dynamicResponse;
     AppLogger.appLogE(tag: "Raw request", message: jsonEncode(requestObj));
     await securityFeatureSetUp();
 
@@ -230,12 +231,10 @@ class TestEndpoint {
               localIv))),
           logger.d("\n\nDYNAMIC REQ: $decrypted"),
         });
-    Map<String, dynamic> resMap = {};
-    resMap["Status"] = jsonDecode(decrypted)["Status"];
-    debugPrint(jsonDecode(decrypted)["NotifyText"]);
-    resMap["Message"] = jsonDecode(decrypted)["Message"];
-    debugPrint("Dynamic res..$resMap");
-    return resMap["Status"] == "000" ? jsonDecode(decrypted) : resMap;
+    EasyLoading.dismiss();
+    dynamicResponse = DynamicResponse.fromJson(jsonDecode(decrypted));
+    debugPrint("Dynamic response status...${dynamicResponse.status}");
+    return dynamicResponse;
   }
 
   Future<Map<String, dynamic>> login(String pin) async {

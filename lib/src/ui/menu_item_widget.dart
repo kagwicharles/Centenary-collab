@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
@@ -93,6 +94,7 @@ class ModuleItemWidget extends StatelessWidget {
   }
 
   getList(context) {
+    EasyLoading.show(status: "Processing");
     InputUtil.formInputValues.clear();
     InputUtil.formInputValues.add({"HEADER": "GETTRXLIST"});
     _dynamicRequest.dynamicRequest(moduleItem.moduleId, "GETTRXLIST",

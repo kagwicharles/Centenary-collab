@@ -40,14 +40,17 @@ class _LoginState extends State<Login> {
           child: Form(
             key: _formKey,
             child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-                    Widget>[
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                Widget>[
               const SizedBox(
                 height: 24,
               ),
               Text(
                 "Welcome back!",
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .headline5,
               ),
 
               const SizedBox(
@@ -71,58 +74,63 @@ class _LoginState extends State<Login> {
                   onPressed: loading
                       ? null
                       : () {
-                          List<ModuleToHide>? hiddenModules;
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              loading = true;
+                    List<ModuleToHide>? hiddenModules;
+                    if (_formKey.currentState!.validate()) {
+                      setState(() {
+                        loading = true;
+                      });
+                      // debugPrint(
+                      //     "Encrypted pin...${CryptLibImpl.encryptField(pinController.text)}");
+                      Future.delayed(const Duration(milliseconds: 500),
+                              () {
+                            _services
+                                .login(pinController.text)
+                                .then((value) async =>
+                            {
+                              if (value["Status"] ==
+                                  StatusCode.success)
+                                {
+                                  hiddenModules =
+                                  await _hiddenModulesRepository
+                                      .getAllModulesToHide(),
+                                  Future.delayed(
+                                      const Duration(
+                                          milliseconds: 1000), () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              HomePage(
+                                                  title: 'Rafiki',
+                                                  hiddenModules:
+                                                  hiddenModules)),
+                                    );
+                                    pinController.clear();
+                                  }),
+                                }
+                              else
+                                {
+                                  CommonWidgets.buildNormalSnackBar(
+                                      context: context,
+                                      message: value["Message"])
+                                },
+                              setState(() {
+                                loading = false;
+                              }),
                             });
-                            // debugPrint(
-                            //     "Encrypted pin...${CryptLibImpl.encryptField(pinController.text)}");
-                            Future.delayed(const Duration(milliseconds: 500),
-                                () {
-                              _services
-                                  .login(pinController.text)
-                                  .then((value) async => {
-                                        setState(() {
-                                          loading = false;
-                                        }),
-                                        if (value["Status"] ==
-                                            StatusCode.success)
-                                          {
-                                            pinController.clear(),
-                                            hiddenModules =
-                                                await _hiddenModulesRepository
-                                                    .getAllModulesToHide(),
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage(
-                                                        title: 'Rafiki',
-                                                        hiddenModules: hiddenModules
-                                                      )),
-                                            )
-                                          }
-                                        else
-                                          {
-                                            CommonWidgets.buildNormalSnackBar(
-                                                context: context,
-                                                message: value["Message"])
-                                          }
-                                      });
-                            });
-                          }
-                        },
+                          });
+                    }
+                  },
                   child: loading
                       ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                              CircularProgressIndicator(),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Text("Please wait...")
-                            ])
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        CircularProgressIndicator(),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text("Please wait...")
+                      ])
                       : const Text("LOGIN")),
               // TextButton(
               //     onPressed: () {

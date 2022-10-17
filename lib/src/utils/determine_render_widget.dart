@@ -1,40 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/ui/form_components/form_widgets.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:vibration/vibration.dart';
 
 class DetermineRenderWidget extends StatelessWidget {
-  static List<String> textfieldValues = [];
-  static List<String> dropdownItems = [];
-  ViewType? widgetType;
-  String? merchantID, moduleName;
-  FormItem formItem;
-  var jsonTxt;
-  var formKey;
-
-  DetermineRenderWidget(this.widgetType,
-      {Key? key,
-      formWidgets,
-      this.formKey,
-      this.merchantID,
-      this.moduleName,
-      required this.formItem,
-      this.jsonTxt,
-      refreshParent})
-      : super(key: key);
-
-  Function()? refreshParent;
-
-  String? selectedItem;
-
-  bool obscureText = false;
-
-  String? number = "";
-
+  final _dynamicRequest = DynamicRequest();
   Widget? dynamicWidgetItem;
 
-  @override
-  Widget build(BuildContext context) {
+  Widget getWidget(ViewType widgetType, FormItem formItem,
+      {required context,
+      required formKey,
+      obscureText = false,
+      merchantID,
+      moduleName,
+      controlValue,
+      jsonTxt}) {
     switch (widgetType) {
       case ViewType.TEXT:
         {
@@ -134,21 +117,44 @@ class DetermineRenderWidget extends StatelessWidget {
                 );
         }
         break;
-      // case ViewType.LIST:
-      //   {
-      //     InputUtil.formInputValues.add({"HEADER": "${formItem.actionId}"});
-      //     _dynamicRequest.dynamicRequest(formItem.moduleId!, formItem.actionId!,
-      //         merchantID: merchantID,
-      //         moduleName: moduleName,
-      //         dataObj: InputUtil.formInputValues,
-      //         encryptedField: InputUtil.encryptedField,
-      //         context: context);
-      //     dynamicWidgetItem = const Visibility(
-      //       visible: false,
-      //       child: SizedBox(),
-      //     );
-      //   }
-      //   break;
+      case ViewType.LIST:
+        List<dynamic>? dynamicList;
+        {
+          if (formItem.controlFormat != null &&
+              formItem.controlFormat!.isNotEmpty) {
+            dynamicWidgetItem =
+                const Visibility(visible: false, child: SizedBox());
+          } else {
+            EasyLoading.show(status: "Processing");
+            await _dynamicRequest
+                .dynamicRequest(formItem.moduleId!, formItem.actionId!,
+                    merchantID: merchantID,
+                    moduleName: moduleName,
+                    dataObj: InputUtil.formInputValues,
+                    encryptedField: InputUtil.encryptedField,
+                    isList: true,
+                    context: context)
+                .then((value) => {
+                      debugPrint("Returning from dynamic call...$value"),
+                      dynamicList = value?.dynamicList,
+                      dynamicWidgetItem = ListWidget(dynamicList: dynamicList)
+                    });
+          }
+        }
+        break;
+
+      case ViewType.HYPERLINK:
+        {
+          if (controlValue != null) {
+            Navigator.pop(context);
+            CommonLibs.openUrl(Uri.parse(controlValue!));
+          }
+          dynamicWidgetItem = const Visibility(
+            visible: false,
+            child: SizedBox(),
+          );
+        }
+        break;
       default:
         {
           return const Visibility(
@@ -166,6 +172,11 @@ class DetermineRenderWidget extends StatelessWidget {
         )
       ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox();
   }
 
   validateFormFields(List<TextFormField> inputFields) {

@@ -79,11 +79,13 @@ class _DashBoardState extends State<DashBoard> {
                               children: [
                                 Text(
                                   "Good",
-                                  style: Theme.of(context).textTheme.labelLarge,
+                                  style:
+                                      Theme.of(context).textTheme.headlineLarge,
                                 ),
                                 Text(
                                   CommonLibs.greeting(),
-                                  style: Theme.of(context).textTheme.labelLarge,
+                                  style:
+                                      Theme.of(context).textTheme.headlineLarge,
                                 ),
                               ],
                             ),

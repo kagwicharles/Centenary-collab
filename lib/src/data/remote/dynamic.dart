@@ -11,21 +11,22 @@ import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
 
 class DynamicRequest {
+  Map requestObj = {};
+  DynamicResponse? dynamicResponse;
   final _actionControlRepository = ActionControlRepository();
   final _services = TestEndpoint();
-  Map requestObj = {};
 
-  dynamicRequest(String moduleId, String actionId,
+  Future<DynamicResponse?> dynamicRequest(String moduleId, String actionId,
       {dataObj,
       merchantID,
       moduleName,
       encryptedField,
+      isList = false,
       context,
       isNotTransactionList = true}) async {
     Map requestMap = {};
-    List<dynamic>? list;
     ActionType actionType;
-    String? status, message;
+    String? message;
     Widget? widget;
     await _services.baseRequestSetUp();
     requestObj = _services.requestObj;
@@ -33,7 +34,7 @@ class DynamicRequest {
     requestObj["ModuleID"] = moduleId;
     requestObj["SessionID"] = "ffffffff-e46c-53ce-0000-00001d093e12";
 
-    _actionControlRepository
+    await _actionControlRepository
         .getActionControlByModuleIdAndActionId(moduleId, actionId)
         .then((actionControl) async {
       actionType = ActionType.values.byName(actionControl!.actionType);
@@ -50,35 +51,33 @@ class DynamicRequest {
       switch (actionType) {
         case ActionType.DBCALL:
           {
-            var formID, display;
             requestObj["FormID"] = actionType.name;
             if (isNotTransactionList) {
               requestMap.addAll({"HEADER": "$merchantID"});
             }
+            if (isList) {
+              requestMap["HEADER"] = actionId;
+              requestMap["MerchantID"] = merchantID;
+            }
             dbCall(data: requestMap);
-            await _services
-                .dynamicRequest(
-                    requestObj: requestObj, webHeader: actionControl.webHeader)
-                .then((value) => {
-                      status = value["Status"],
-                      message = value["Message"],
-                      formID = value["FormID"],
-                      display = value["Display"],
-                      list = value["Data"],
-                      widget = postDynamicCallCheck(
-                          context: context,
-                          actionID: actionId,
-                          formID: formID,
-                          merchantID: merchantID,
-                          moduleName: moduleName,
-                          status: status,
-                          message: message,
-                          jsonDisplay: display,
-                          opensDynamicRoute: display != null ? true : false,
-                          isNotTransactionList: isNotTransactionList,
-                          list: list),
-                      debugPrint("My Widget#$widget")
-                    });
+            debugPrint("Starting dynamic cal...");
+            dynamicResponse = await _services.dynamicRequest(
+                requestObj: requestObj, webHeader: actionControl.webHeader);
+            postDynamicCallCheck(
+                context: context,
+                actionID: actionId,
+                formID: dynamicResponse?.formID,
+                merchantID: merchantID,
+                moduleName: moduleName,
+                status: dynamicResponse?.status,
+                message: dynamicResponse?.message,
+                jsonDisplay: dynamicResponse?.display,
+                opensDynamicRoute:
+                    dynamicResponse?.display != null ? true : false,
+                isNotTransactionList: isNotTransactionList,
+                list: dynamicResponse?.dynamicList,
+                isList: isList);
+            debugPrint("Completing dbcall...");
           }
           break;
         case ActionType.ACTIVATIONREQ:
@@ -92,50 +91,43 @@ class DynamicRequest {
               .dynamicRequest(
                   requestObj: requestObj, webHeader: actionControl.webHeader)
               .then((value) => {
-                    status = value["Status"],
-                    message = value["Message"],
-                    notifications = value["Notifications"],
+                    notifications = value.notifications,
+                    debugPrint("Notifications...$notifications"),
                     if (notifications != null)
                       {message = notifications[0]["NotifyText"]},
                     postDynamicCallCheck(
                         context: context,
                         actionID: actionId,
-                        status: status,
+                        status: value.status,
                         message: message,
                         isNotTransactionList: isNotTransactionList)
                   });
           break;
         case ActionType.VALIDATE:
           {
-            var formID, display;
-            int? nextFormSequence;
             requestObj["FormID"] = actionType.name;
             validateCall(data: requestMap);
             await _services
                 .dynamicRequest(
                     requestObj: requestObj, webHeader: actionControl.webHeader)
                 .then((value) => {
-                      status = value["Status"],
-                      message = value["Message"],
-                      formID = value["FormID"],
-                      display = value["Display"],
-                      nextFormSequence = value["NextFormSequence"],
-                      debugPrint("FormID from res...$formID"),
                       debugPrint(
                           "Pre-post-dynamic call...moduleName...$moduleName"),
                       postDynamicCallCheck(
                         context: context,
                         actionID: actionId,
-                        status: status,
-                        message: message,
-                        formID: formID,
+                        status: value.status,
+                        message: value.message,
+                        formID: value.formID,
                         merchantID: merchantID,
                         moduleName: moduleName,
-                        jsonDisplay: display,
+                        jsonDisplay: value.display,
                         isNotTransactionList: isNotTransactionList,
-                        nextFormSequence: nextFormSequence,
+                        nextFormSequence: value.nextFormSequence,
                         opensDynamicRoute:
-                            formID != null && formID!.length > 1 ? true : false,
+                            value.formID != null && value.formID!.length > 1
+                                ? true
+                                : false,
                       )
                     });
           }
@@ -155,7 +147,7 @@ class DynamicRequest {
       }
     });
     debugPrint("Returning...$widget");
-    return list;
+    return dynamicResponse;
   }
 
   void navigateToStatusRoute({context, status, message}) {
@@ -192,6 +184,7 @@ class DynamicRequest {
       nextFormSequence,
       isNotTransactionList,
       list,
+      isList = false,
       returnsWidget = false,
       opensDynamicRoute = false}) {
     EasyLoading.dismiss();
@@ -212,9 +205,11 @@ class DynamicRequest {
                     moduleCategory: "FORM"));
             break;
           }
-          if (isNotTransactionList) {
+
+          if (isNotTransactionList && isList == false) {
             showStatusScreen(
                 context: context, status: status, message: message);
+          } else if (isList) {
           } else {
             CommonLibs.navigateToRoute(
                 context: context,

@@ -14,7 +14,8 @@ enum ViewType {
   DATE,
   HIDDEN,
   LIST,
-  TEXTVIEW
+  TEXTVIEW,
+  HYPERLINK
 }
 
 enum ControlFormat { PinNumber, PIN, NUMERIC, Amount, DATE }
@@ -325,4 +326,29 @@ class FavouriteItem {
   String title;
 
   FavouriteItem({required this.imageUrl, required this.title});
+}
+
+class DynamicResponse {
+  String status;
+  String? message, formID;
+  int? nextFormSequence;
+  List<dynamic>? dynamicList, notifications, display;
+
+  DynamicResponse(
+      {required this.status,
+      this.message,
+      this.formID,
+      this.display,
+      this.nextFormSequence,
+      this.dynamicList,
+      this.notifications});
+
+  DynamicResponse.fromJson(Map<String, dynamic> json)
+      : status = json["Status"],
+        message = json["Message"],
+        formID = json['FormID'],
+        display = json["Display"],
+        nextFormSequence = json["NextFormSequence"],
+        notifications = json["Notifications"],
+        dynamicList = json["Data"];
 }

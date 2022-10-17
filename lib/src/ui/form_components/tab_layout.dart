@@ -80,7 +80,8 @@ class TabWidgetList extends StatefulWidget {
 }
 
 class _TabWidgetListState extends State<TabWidgetList> {
-  var _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final _determineRenderWidget = DetermineRenderWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -98,19 +99,19 @@ class _TabWidgetListState extends State<TabWidgetList> {
                 itemCount: widget.formItems.length,
                 itemBuilder: (context, index) {
                   var controlType;
+                  String? controlValue = widget.formItems[index].controlValue;
                   try {
                     controlType = ViewType.values
                         .byName(widget.formItems[index].controlType!);
                   } catch (e) {}
 
-                  return DetermineRenderWidget(
-                    controlType,
-                    formKey: _formKey,
-                    merchantID: widget.merchantID,
-                    formItem: widget.formItems[index],
-                    refreshParent: widget.updateState,
-                    moduleName: widget.moduleName,
-                  );
+                  return _determineRenderWidget.getWidget(
+                      controlType, widget.formItems[index],
+                      context: context,
+                      formKey: _formKey,
+                      merchantID: widget.merchantID,
+                      moduleName: widget.moduleName,
+                      controlValue: controlValue);
                 })));
   }
 
