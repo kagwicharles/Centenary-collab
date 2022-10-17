@@ -47,7 +47,17 @@ class Constants {
   }
 }
 
-class StatusCode{
+class StatusCode {
   static const success = "000";
   static const wrongPin = "091";
+}
+
+class Contacts {
+  static const twitterUrl = "https://twitter.com/CentenaryBank";
+  static const facebookUrl =
+      "https://www.facebook.com/Centenarybank/?ref=br_rs";
+  static const bankNumber = "0800200555";
+  static const bankEmail = "info@centenarybank.co.ug";
+  static const chatUrl =
+      "https://web.powerva.microsoft.com/environments/Default-41c79b66-e60a-4ca0-896b-f4bfdf6a9678/bots/new_bot_49bd010dd726465cab846eb4cdc61ea6/webchat";
 }

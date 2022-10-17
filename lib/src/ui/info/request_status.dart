@@ -31,28 +31,31 @@ class _RequestStatusScreenState extends State<RequestStatusScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  getAvatarType(widget.statusCode),
-                  height: 54,
-                  width: 54,
-                ),
-                const SizedBox(
-                  height: 54,
-                ),
-                Text(
-                  widget.message,
-                  style: Theme.of(context).textTheme.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(
-                  height: 54,
-                ),
-              ],
-            )),
+            Material(
+                borderRadius: BorderRadius.circular(12.0),
+                color: const Color.fromARGB(255, 243, 248, 251),
+                child: Expanded(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      getAvatarType(widget.statusCode),
+                      height: 54,
+                      width: 54,
+                    ),
+                    const SizedBox(
+                      height: 54,
+                    ),
+                    Text(
+                      widget.message,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 54,
+                    ),
+                  ],
+                ))),
             ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);

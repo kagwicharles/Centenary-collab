@@ -75,6 +75,7 @@ dependencies:
   confirm_dialog: ^1.0.1
   getwidget: ^3.0.1
   font_awesome_flutter: ^10.2.1
+  change_app_package_name: ^1.1.0
 
 dev_dependencies:
   flutter_test:

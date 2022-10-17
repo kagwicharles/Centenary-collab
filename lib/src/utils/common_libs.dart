@@ -1,4 +1,3 @@
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:unique_identifier/unique_identifier.dart';
@@ -17,8 +16,8 @@ class CommonLibs {
   }
 
   static getDeviceUniqueID() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     return await UniqueIdentifier.serial; //01e02c9a66c8611d
     // return androidInfo.id; //SP1A.210812.016
     // return await DeviceInformation.deviceIMEINumber; //188439113945710
@@ -40,5 +39,16 @@ class CommonLibs {
     if (await Permission.camera.status.isDenied) {
       await Permission.camera.request();
     }
+  }
+
+  static String greeting() {
+    var hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Morning!';
+    }
+    if (hour < 17) {
+      return 'Afternoon!';
+    }
+    return 'Evening!';
   }
 }

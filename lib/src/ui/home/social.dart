@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:rafiki/src/data/constants.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
 
 class SocialContainer extends StatelessWidget {
   @override
@@ -15,61 +17,99 @@ class SocialContainer extends StatelessWidget {
                 width: double.infinity,
                 constraints: const BoxConstraints(maxWidth: 450),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                child: Column(
+                    const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text("Connect with US!",
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w600)),
-                          Image.asset(
-                            "assets/images/contact_us.png",
-                            height: 70,
-                            width: 70,
-                          )
-                        ]),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GFIconButton(
-                          onPressed: () {},
-                          icon: const FaIcon(FontAwesomeIcons.twitter),
-                          shape: GFIconButtonShape.pills,
-                        ),
-                        GFIconButton(
-                            // Use the FaIcon Widget + FontAwesomeIcons class for the IconData
-                            icon: const FaIcon(FontAwesomeIcons.facebook),
-                            shape: GFIconButtonShape.pills,
-                            onPressed: () {
-                              print("Pressed");
-                            }),
-                        GFIconButton(
-                            // Use the FaIcon Widget + FontAwesomeIcons class for the IconData
-                            icon: const FaIcon(FontAwesomeIcons.phone),
-                            shape: GFIconButtonShape.pills,
-                            onPressed: () {
-                              print("Pressed");
-                            }),
-                        GFIconButton(
-                            // Use the FaIcon Widget + FontAwesomeIcons class for the IconData
-                            icon: const FaIcon(FontAwesomeIcons.message),
-                            shape: GFIconButtonShape.pills,
-                            onPressed: () {
-                              print("Pressed");
-                            }),
-                        GFIconButton(
-                            // Use the FaIcon Widget + FontAwesomeIcons class for the IconData
-                            icon: const FaIcon(FontAwesomeIcons.comments),
-                            shape: GFIconButtonShape.pills,
-                            onPressed: () {
-                              print("Pressed");
-                            }),
-                      ],
+                    Expanded(
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Connect with US!",
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600)),
+                                const SizedBox(
+                                  height: 24,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        CommonLibs.openUrl(
+                                            Uri.parse(Contacts.twitterUrl));
+                                      },
+                                      child: Image.asset(
+                                        "assets/icons/twitter.png",
+                                        height: 40,
+                                        width: 44,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        CommonLibs.openUrl(
+                                            Uri.parse(Contacts.facebookUrl));
+                                      },
+                                      child: Image.asset(
+                                        "assets/icons/facebook.png",
+                                        height: 40,
+                                        width: 44,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        CommonLibs.openUrl(Uri.parse(
+                                            "tel://${Contacts.bankNumber}"));
+                                      },
+                                      child: Image.asset(
+                                        "assets/icons/telephone.png",
+                                        height: 40,
+                                        width: 44,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        CommonLibs.openUrl(Uri.parse(
+                                            "mailto://${Contacts.bankEmail}"));
+                                      },
+                                      child: Image.asset(
+                                        "assets/icons/email.png",
+                                        height: 40,
+                                        width: 44,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        CommonLibs.openUrl(Uri.parse(
+                                            "sms:${Contacts.chatUrl}"));
+                                      },
+                                      child: Image.asset(
+                                        "assets/icons/chat.png",
+                                        height: 40,
+                                        width: 34,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ))),
+                    Image.asset(
+                      "assets/images/contact_us.png",
+                      width: 100,
+                      fit: BoxFit.fitWidth,
                     )
                   ],
                 ))));

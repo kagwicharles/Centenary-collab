@@ -25,12 +25,12 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Centenary login"),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.cancel),
-        //   onPressed: (() {
-        //
-        //   }),
-        // ),
+        leading: IconButton(
+          icon: const Icon(Icons.cancel_rounded),
+          onPressed: (() {
+            Navigator.of(context).pop();
+          }),
+        ),
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -46,15 +46,7 @@ class _LoginState extends State<Login> {
                 "Welcome back!",
                 style: Theme.of(context).textTheme.headline5,
               ),
-              const SizedBox(
-                height: 8,
-              ),
-              Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    "Enter your pin to proceed.",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  )),
+
               const SizedBox(
                 height: 18,
               ),
@@ -93,6 +85,7 @@ class _LoginState extends State<Login> {
                                         if (value["Status"] ==
                                             StatusCode.success)
                                           {
+                                            pinController.clear(),
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(

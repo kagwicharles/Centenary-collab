@@ -7,6 +7,7 @@ import 'package:rafiki/src/ui/auth/login.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
 import 'package:rafiki/src/ui/home/social.dart';
 import 'package:rafiki/src/ui/info/request_status.dart';
+import 'package:rafiki/src/ui/onTheGO/on_the_go_landing.dart';
 import 'package:rafiki/src/ui/others/map_view.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 
@@ -50,83 +51,126 @@ class _DashBoardState extends State<DashBoard> {
             height: viewPadding,
           ),
           Container(
-              height: 300,
-              decoration: const BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24))),
-              child: Center(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "assets/images/app_icon.png",
-                    height: 100,
-                    width: 100,
-                  ),
-                  const SizedBox(
-                    height: 44,
-                  ),
-                  const Text("Welcome to Centenary Bank",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600))
-                ],
-              ))),
+              // height: 500,
+              child: DecoratedBox(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage(
+                      "assets/images/mapeera_house.jpg",
+                    ),
+                    colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.2),
+                      BlendMode.darken,
+                    ),
+                    fit: BoxFit.cover),
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(18.0),
+                    bottomLeft: Radius.circular(18.0))),
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Good",
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                                Text(
+                                  CommonLibs.greeting(),
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                              ],
+                            ),
+                          )),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      Material(
+                          borderRadius: BorderRadius.circular(4.0),
+                          child: Container(
+                            height: 144,
+                            width: MediaQuery.of(context).size.width,
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Welcome To"),
+                                const Text(
+                                  "Centenary Mobile Banking",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    CommonLibs.navigateToRoute(
+                                        context: context,
+                                        widget: const Login());
+                                  },
+                                  child: const Text("LOGIN"),
+                                ),
+                              ],
+                            ),
+                          )),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      GridView.count(
+                        shrinkWrap: true,
+                        primary: false,
+                        physics: const NeverScrollableScrollPhysics(),
+                        childAspectRatio: (.5 / .6),
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        crossAxisCount: 3,
+                        children: <Widget>[
+                          DashItem(
+                            title: "Banks & Branches",
+                            widget: const MapView(),
+                            iconUrl: "assets/icons/atm_machine.png",
+                          ),
+                          DashItem(
+                            title: "Internet Banking",
+                            iconUrl: "assets/icons/checking.png",
+                            isUrl: true,
+                            launchUrl:
+                                "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
+                          ),
+                          DashItem(
+                            title: "Cente On The Go",
+                            widget: const OnTheGOLanding(),
+                            iconUrl: "assets/icons/onTheGo.png",
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                    ])),
+          )),
           Material(
-
               child: Column(
-                children: [
-                  GridView.count(
-                    shrinkWrap: true,
-                    primary: false,
-                    padding: const EdgeInsets.all(20),
-                    physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: (.5 / .6),
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    crossAxisCount: 3,
-                    children: <Widget>[
-                      DashItem(
-                        title: "Login",
-                        widget: const Login(),
-                        iconUrl: "assets/icons/lock.png",
-                      ),
-                      DashItem(
-                        title: "Banks & Branches",
-                        widget: const MapView(),
-                        iconUrl: "assets/icons/atm_machine.png",
-                      ),
-                      DashItem(
-                        title: "Internet Banking",
-                        iconUrl: "assets/icons/checking.png",
-                        isUrl: true,
-                        launchUrl:
-                            "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
-                      ),
-                      // DashItem(
-                      //   title: "Cente on The Go",
-                      //   iconUrl: "assets/icons/checking.png",
-                      //   isUrl: true,
-                      //   launchUrl:
-                      //       "https://centeonlinebanking.centenarybank.co.ug/iProfits2Prod/",
-                      // ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 44,
-                  ),
-                  AdvertsContainer(
-                    isFirstTimer: true,
-                  ),
-                  const SizedBox(
-                    height: 44,
-                  ),
-                  SocialContainer(),
-                ],
-              ))
+            children: [
+              const SizedBox(
+                height: 12,
+              ),
+              AdvertsContainer(
+                isFirstTimer: true,
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              SocialContainer(),
+            ],
+          ))
           // Expanded(child:
           // AdvertsContainer())
         ])));
@@ -170,10 +214,14 @@ class DashItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
         elevation: 4,
-        borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: const BorderSide(color: Colors.white, width: 1.5),
+        ),
+        color: Colors.black.withOpacity(0.1),
         child: InkWell(
             customBorder: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(8.0),
             ),
             onTap: () {
               isUrl
@@ -197,7 +245,8 @@ class DashItem extends StatelessWidget {
                     ),
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w600),
                       textAlign: TextAlign.center,
                     )
                   ],
