@@ -47,8 +47,8 @@ class _AdvertsContainerState extends State<AdvertsContainer> {
                             var _images = snapshot.data;
                             child = Swiper(
                                 controller: SwiperController(),
-                                duration: 1000,
                                 scrollDirection: Axis.horizontal,
+                                duration: 1000,
                                 autoplay: true,
                                 itemCount: _images?.length,
                                 itemBuilder: (BuildContext context, int index) {

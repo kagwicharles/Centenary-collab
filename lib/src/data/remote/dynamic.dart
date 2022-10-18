@@ -33,7 +33,6 @@ class DynamicRequest {
     requestObj["MerchantID"] = merchantID;
     requestObj["ModuleID"] = moduleId;
     requestObj["SessionID"] = "ffffffff-e46c-53ce-0000-00001d093e12";
-
     await _actionControlRepository
         .getActionControlByModuleIdAndActionId(moduleId, actionId)
         .then((actionControl) async {
@@ -47,7 +46,6 @@ class DynamicRequest {
       } catch (e) {
         AppLogger.appLogE(tag: "Error", message: e.toString());
       }
-
       switch (actionType) {
         case ActionType.DBCALL:
           {
@@ -60,7 +58,6 @@ class DynamicRequest {
               requestMap["MerchantID"] = merchantID;
             }
             dbCall(data: requestMap);
-            debugPrint("Starting dynamic cal...");
             dynamicResponse = await _services.dynamicRequest(
                 requestObj: requestObj, webHeader: actionControl.webHeader);
             postDynamicCallCheck(

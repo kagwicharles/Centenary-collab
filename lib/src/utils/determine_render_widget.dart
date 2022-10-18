@@ -10,14 +10,14 @@ class DetermineRenderWidget extends StatelessWidget {
   final _dynamicRequest = DynamicRequest();
   Widget? dynamicWidgetItem;
 
-  Widget getWidget(ViewType widgetType, FormItem formItem,
+  Future<Widget> getWidget(ViewType widgetType, FormItem formItem,
       {required context,
       required formKey,
       obscureText = false,
       merchantID,
       moduleName,
       controlValue,
-      jsonTxt}) {
+      jsonTxt}) async {
     switch (widgetType) {
       case ViewType.TEXT:
         {
@@ -118,7 +118,7 @@ class DetermineRenderWidget extends StatelessWidget {
         }
         break;
       case ViewType.LIST:
-        List<dynamic>? dynamicList;
+        DynamicResponse? dynamicResponse;
         {
           if (formItem.controlFormat != null &&
               formItem.controlFormat!.isNotEmpty) {
@@ -126,19 +126,17 @@ class DetermineRenderWidget extends StatelessWidget {
                 const Visibility(visible: false, child: SizedBox());
           } else {
             EasyLoading.show(status: "Processing");
-            await _dynamicRequest
-                .dynamicRequest(formItem.moduleId!, formItem.actionId!,
-                    merchantID: merchantID,
-                    moduleName: moduleName,
-                    dataObj: InputUtil.formInputValues,
-                    encryptedField: InputUtil.encryptedField,
-                    isList: true,
-                    context: context)
-                .then((value) => {
-                      debugPrint("Returning from dynamic call...$value"),
-                      dynamicList = value?.dynamicList,
-                      dynamicWidgetItem = ListWidget(dynamicList: dynamicList)
-                    });
+            dynamicResponse = await _dynamicRequest.dynamicRequest(
+                formItem.moduleId!, formItem.actionId!,
+                merchantID: merchantID,
+                moduleName: moduleName,
+                dataObj: InputUtil.formInputValues,
+                encryptedField: InputUtil.encryptedField,
+                isList: true,
+                context: context);
+            dynamicWidgetItem = ListWidget(
+              dynamicList: dynamicResponse?.dynamicList,
+            );
           }
         }
         break;
@@ -146,8 +144,8 @@ class DetermineRenderWidget extends StatelessWidget {
       case ViewType.HYPERLINK:
         {
           if (controlValue != null) {
-            Navigator.pop(context);
             CommonLibs.openUrl(Uri.parse(controlValue!));
+            Navigator.pop(context);
           }
           dynamicWidgetItem = const Visibility(
             visible: false,

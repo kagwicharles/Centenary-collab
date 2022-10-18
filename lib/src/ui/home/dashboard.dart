@@ -104,7 +104,10 @@ class _DashBoardState extends State<DashBoard> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Welcome To"),
+                                const Text(
+                                  "Welcome To",
+                                  style: TextStyle(fontSize: 16),
+                                ),
                                 const Text(
                                   "Centenary Mobile Banking",
                                   style: TextStyle(

@@ -557,12 +557,72 @@ class TextViewWidget extends StatelessWidget {
 class ListWidget extends StatelessWidget {
   ListWidget({Key? key, this.dynamicList}) : super(key: key);
 
-  List<dynamic>? dynamicList;
+  var dynamicList;
+
+  List<Map> mapItems = [];
 
   @override
   Widget build(BuildContext context) {
-    return dynamicList != null
-        ? Text(dynamicList.toString())
-        : const Center(child: Text("Nothing was found!"));
+    // return Text(jsonTxt!.toString());
+    debugPrint("Textview data...$dynamicList");
+    dynamicList.forEach((item) {
+      debugPrint("Adding...$item");
+      mapItems.add(item);
+    });
+    return Column(children: [
+      ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: mapItems.length,
+        itemBuilder: (context, index) {
+          var mapItem = mapItems[index];
+          mapItem.removeWhere((key, value) => key == null || value == null);
+          debugPrint("New map...$mapItem");
+          return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              child: Column(
+                children: [
+                  Material(
+                      elevation: 2,
+                      borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 8.0),
+                        child: Column(
+                          children: mapItem
+                              .map((key, value) => MapEntry(
+                                  key,
+                                  Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "$key:",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium,
+                                          ),
+                                          Flexible(
+                                              child: Text(
+                                            value.toString(),
+                                            textAlign: TextAlign.right,
+                                          ))
+                                        ],
+                                      ))))
+                              .values
+                              .toList(),
+                        ),
+                      )),
+                  const SizedBox(
+                    height: 12,
+                  )
+                ],
+              ));
+        },
+      ),
+    ]);
   }
 }

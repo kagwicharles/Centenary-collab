@@ -28,7 +28,7 @@ class AppTheme {
           fontSize: 18,
           fontWeight: FontWeight.w800,
         ),
-        headlineLarge: TextStyle(color: Colors.white, fontSize: 24)),
+        headlineLarge: TextStyle(color: Colors.white, fontSize: 28)),
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
             textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 16)),

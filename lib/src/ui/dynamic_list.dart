@@ -179,16 +179,29 @@ class _FormsListWidgetState extends State<FormsListWidget> {
                                   } catch (e) {}
                                   debugPrint(
                                       "Merchant ID...${widget.merchantID}");
-                                  return _determineRenderWidget.getWidget(
-                                      controlType, filteredFormItems[index],
-                                      context: context,
-                                      formKey: _formKey,
-                                      merchantID: widget.merchantID,
-                                      moduleName: widget.moduleName,
-                                      jsonTxt: widget.jsonDisplay,
-                                      controlValue: controlValue);
+                                  getWidget() =>
+                                      _determineRenderWidget.getWidget(
+                                          controlType, filteredFormItems[index],
+                                          context: context,
+                                          formKey: _formKey,
+                                          merchantID: widget.merchantID,
+                                          moduleName: widget.moduleName,
+                                          jsonTxt: widget.jsonDisplay,
+                                          controlValue: controlValue);
+
+                                  return FutureBuilder<Widget>(
+                                      future: getWidget(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<Widget> snapshot) {
+                                        Widget child = const SizedBox();
+                                        if (snapshot.hasData) {
+                                          child = snapshot.data!;
+                                        }
+                                        return child;
+                                      });
                                 }))));
           }
+
           return child;
         });
   }

@@ -105,13 +105,24 @@ class _TabWidgetListState extends State<TabWidgetList> {
                         .byName(widget.formItems[index].controlType!);
                   } catch (e) {}
 
-                  return _determineRenderWidget.getWidget(
+                  getWidget() => _determineRenderWidget.getWidget(
                       controlType, widget.formItems[index],
                       context: context,
                       formKey: _formKey,
                       merchantID: widget.merchantID,
                       moduleName: widget.moduleName,
                       controlValue: controlValue);
+
+                  return FutureBuilder<Widget>(
+                      future: getWidget(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Widget> snapshot) {
+                        Widget child = const SizedBox();
+                        if (snapshot.hasData) {
+                          child = snapshot.data!;
+                        }
+                        return child;
+                      });
                 })));
   }
 
