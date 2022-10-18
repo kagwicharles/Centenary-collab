@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -493,7 +495,7 @@ class _PhonePickerFormWidgetState extends State<PhonePickerFormWidget> {
 class TextViewWidget extends StatelessWidget {
   TextViewWidget({Key? key, this.jsonTxt}) : super(key: key);
   var jsonTxt;
-  List<Map> mapItems = [];
+  List<LinkedHashMap> mapItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -513,6 +515,7 @@ class TextViewWidget extends StatelessWidget {
           mapItem.removeWhere((key, value) =>
               key == null || value == null || value.length <= 0);
           debugPrint("New map...$mapItem");
+
           return Material(
               elevation: 2,
               borderRadius: const BorderRadius.all(Radius.circular(4.0)),
@@ -584,7 +587,8 @@ class ListWidget extends StatelessWidget {
                 children: [
                   Material(
                       elevation: 2,
-                      borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(4.0)),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12.0, vertical: 8.0),

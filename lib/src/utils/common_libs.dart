@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:unique_identifier/unique_identifier.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -39,6 +40,17 @@ class CommonLibs {
     if (await Permission.camera.status.isDenied) {
       await Permission.camera.request();
     }
+  }
+
+  static checkActivationStatus() async {
+    debugPrint("Checking activation data...");
+    final _sharedPref = SharedPrefLocal();
+    String? customerMobile = await _sharedPref.getCustomerMobile();
+    String? customerID = await _sharedPref.getCustomerID();
+    if (customerID == null || customerMobile == null) {
+      return false;
+    }
+    return true;
   }
 
   static String greeting() {

@@ -20,12 +20,10 @@ class _AdvertsContainerState extends State<AdvertsContainer> {
   @override
   Widget build(BuildContext context) {
     if (widget.isFirstTimer != null && widget.isFirstTimer == true) {
-      debugPrint("Waiting...");
       Future.delayed(const Duration(seconds: 60), () async {});
     }
     getAdverts().then(
       (value) => {
-        print("Adverts $value"),
         if (value.isEmpty) {setState(() {})}
       },
     );

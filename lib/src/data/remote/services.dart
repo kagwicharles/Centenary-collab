@@ -54,7 +54,7 @@ class TestEndpoint {
   baseRequestSetUp() async {
     requestObj = {
       "UNIQUEID": "00000000-40ee-9111-0000-00001d093e12",
-      "CustomerID": "4570670220",
+      "CustomerID": await _sharedPref.getCustomerID(),
       "BankID": "16",
       "Country": "UGANDATEST",
       "VersionNumber": "119",
@@ -115,7 +115,7 @@ class TestEndpoint {
   }
 
   void getUIData(FormId formId) async {
-    String res, status, decrypted;
+    String res, decrypted;
     await securityFeatureSetUp();
     await baseRequestSetUp();
     requestObj["FormID"] = formId.name;
@@ -162,6 +162,8 @@ class TestEndpoint {
             res = value.data["Response"],
             decrypted = CryptLibImpl.gzipDecompressStaticData(res),
             AppLogger.appLogI(tag: "\n\nSTATIC DATA REQ:", message: decrypted),
+            AppLogger.writeResponseToFile(
+                fileName: "Static", response: decrypted),
             staticDataVersion = json.decode(decrypted)["StaticDataVersion"],
             debugPrint("Updating data version...$staticDataVersion"),
             await _sharedPref.addStaticDataVersion(staticDataVersion),
@@ -175,24 +177,24 @@ class TestEndpoint {
             await _sharedPref
                 .addAppIdleTimeout(json.decode(decrypted)["AppIdleTimeout"]),
             await clearAllStaticData(),
-            json.decode(decrypted)["UserCode"].forEach((item) {
+            json.decode(decrypted)["UserCode"]?.forEach((item) {
               _userCodeRepository.insertUserCode(UserCode.fromJson(item));
             }),
-            json.decode(decrypted)["OnlineAccountProduct"].forEach((item) {
+            json.decode(decrypted)["OnlineAccountProduct"]?.forEach((item) {
               _onlineAccountProductRepository.insertOnlineAccountProduct(
                   OnlineAccountProduct.fromJson(item));
             }),
-            json.decode(decrypted)["BankBranch"].forEach((item) {
+            json.decode(decrypted)["BankBranch"]?.forEach((item) {
               _bankBranchRepository.insertBankBranch(BankBranch.fromJson(item));
             }),
-            json.decode(decrypted)["Images"].forEach((item) {
+            json.decode(decrypted)["Images"]?.forEach((item) {
               _imageDataRepository.insertImageData(ImageData.fromJson(item));
             }),
-            json.decode(decrypted)["ATMLocations"].forEach((item) {
+            json.decode(decrypted)["ATMLocations"]?.forEach((item) {
               _atmLocationRepository
                   .insertAtmLocation(AtmLocation.fromJson(item));
             }),
-            json.decode(decrypted)["BranchLocations"].forEach((item) {
+            json.decode(decrypted)["BranchLocations"]?.forEach((item) {
               _branchLocationRepository
                   .insertBranchLocation(BranchLocation.fromJson(item));
             }),
@@ -245,7 +247,7 @@ class TestEndpoint {
     final encryptedPin = CryptLibImpl.encryptField(pin);
     await baseRequestSetUp();
     requestObj["FormID"] = "LOGIN";
-    requestObj["MobileNumber"] = "256782993168";
+    requestObj["MobileNumber"] = await _sharedPref.getCustomerMobile();
     requestObj["SessionID"] = "ffffffff-84c8-e77e-0000-00001d093e12";
     requestObj["AppNotificationID"] =
         "fA7TX2IURGmcf7RvUgs-8t:APA91bFj_J3wSeFaUa14L5Zort_Pg3aSaPgksbnPt8dnAaO-2Q5X4pPlmCPPZE4yIlNYyWZF75r8CeJ-6ItxEVigmae8xWZYcsEfg4oA3jPeB8a5wbwfC57PER1w4mchbkk7bzQ8EcxQ";

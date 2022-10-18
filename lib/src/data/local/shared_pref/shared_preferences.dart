@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefLocal {
@@ -21,6 +22,14 @@ class SharedPrefLocal {
   addStaticDataVersion(int version) {
     getSharedPrefInstance().then((sharedPref) {
       sharedPref.setInt("currentDataVersion", version);
+    });
+  }
+
+  addActivationData(String mobileNumber, String customerID) {
+    getSharedPrefInstance().then((sharedPref) {
+      debugPrint("Setting activation data... $mobileNumber###$customerID");
+      sharedPref.setString("customerMobile", mobileNumber);
+      sharedPref.setString("customerID", customerID);
     });
   }
 
@@ -49,6 +58,16 @@ class SharedPrefLocal {
     getSharedPrefInstance().then((sharedPref) {
       sharedPref.setString(key, value);
     });
+  }
+
+  getCustomerMobile() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("customerMobile");
+  }
+
+  getCustomerID() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("customerID");
   }
 
   String getUserData({sharedPref, key}) {

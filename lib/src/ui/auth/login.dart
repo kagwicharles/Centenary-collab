@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
                 style: Theme
                     .of(context)
                     .textTheme
-                    .headline5,
+                    .headline6,
               ),
 
               const SizedBox(

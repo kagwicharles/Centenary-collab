@@ -5,6 +5,7 @@ import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/theme/app_theme.dart';
 import 'src/ui/home/dashboard.dart';
+import 'src/utils/common_libs.dart';
 
 void main() {
   runApp(MyApp());

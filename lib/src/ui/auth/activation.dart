@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
@@ -10,6 +11,7 @@ class AccountActivation extends StatefulWidget {
 
 class _AccountActivationState extends State<AccountActivation> {
   final _formKey = GlobalKey<FormState>();
+  final _sharedPref = SharedPrefLocal();
   var mobileController = TextEditingController();
   var pinController = TextEditingController();
   bool loading = false;
@@ -37,7 +39,7 @@ class _AccountActivationState extends State<AccountActivation> {
                 ),
                 Text(
                   "Please fill below details to activate your mobile",
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.headline6,
                 ),
                 const SizedBox(
                   height: 12,
@@ -80,17 +82,19 @@ class _AccountActivationState extends State<AccountActivation> {
                               });
                               Future.delayed(const Duration(milliseconds: 500),
                                   () {
-                                TestEndpoint()
-                                    .activateMobile(
-                                        mobileNumber: mobileController.text,
-                                        plainPin: pinController.text)
-                                    .then((value) => {
-                                          setState(() {
-                                            loading = false;
-                                          }),
-                                          CommonWidgets.buildNormalSnackBar(
-                                              context: context, message: value)
-                                        });
+                                _sharedPref.addActivationData(
+                                    "256782993168", "4570670220");
+                                // TestEndpoint()
+                                //     .activateMobile(
+                                //         mobileNumber: mobileController.text,
+                                //         plainPin: pinController.text)
+                                //     .then((value) => {
+                                //           setState(() {
+                                //             loading = false;
+                                //           }),
+                                //           CommonWidgets.buildNormalSnackBar(
+                                //               context: context, message: value)
+                                //         });
                               });
                             }
                           },

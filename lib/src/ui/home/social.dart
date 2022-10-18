@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/utils/common_libs.dart';
 
@@ -49,7 +47,7 @@ class SocialContainer extends StatelessWidget {
                                       },
                                       child: Image.asset(
                                         "assets/icons/twitter.png",
-                                        height: 40,
+                                        height: 34,
                                         width: 44,
                                         fit: BoxFit.contain,
                                       ),
@@ -61,7 +59,7 @@ class SocialContainer extends StatelessWidget {
                                       },
                                       child: Image.asset(
                                         "assets/icons/facebook.png",
-                                        height: 40,
+                                        height: 34,
                                         width: 44,
                                         fit: BoxFit.contain,
                                       ),
@@ -73,7 +71,7 @@ class SocialContainer extends StatelessWidget {
                                       },
                                       child: Image.asset(
                                         "assets/icons/telephone.png",
-                                        height: 40,
+                                        height: 34,
                                         width: 44,
                                         fit: BoxFit.contain,
                                       ),
@@ -85,7 +83,7 @@ class SocialContainer extends StatelessWidget {
                                       },
                                       child: Image.asset(
                                         "assets/icons/email.png",
-                                        height: 40,
+                                        height: 34,
                                         width: 44,
                                         fit: BoxFit.contain,
                                       ),
@@ -97,7 +95,7 @@ class SocialContainer extends StatelessWidget {
                                       },
                                       child: Image.asset(
                                         "assets/icons/chat.png",
-                                        height: 40,
+                                        height: 34,
                                         width: 34,
                                         fit: BoxFit.contain,
                                       ),
@@ -108,8 +106,6 @@ class SocialContainer extends StatelessWidget {
                             ))),
                     Image.asset(
                       "assets/images/contact_us.png",
-                      width: 100,
-                      fit: BoxFit.fitWidth,
                     )
                   ],
                 ))));

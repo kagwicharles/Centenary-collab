@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
+import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
+import 'package:rafiki/src/ui/auth/activation.dart';
 import 'package:rafiki/src/ui/auth/login.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
 import 'package:rafiki/src/ui/home/social.dart';
@@ -19,12 +21,20 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
+  final _sharedPref = SharedPrefLocal();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPermissions();
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Color(0xffC92265), //or set color with: Color(0xFF0000FF)
     ));
-    _checkPermissions();
+
     _checkDeviceRooted().then((value) => {
           debugPrint("Device root status...$value"),
           if (value)
@@ -55,7 +65,7 @@ class _DashBoardState extends State<DashBoard> {
               child: DecoratedBox(
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage(
+                    image: const AssetImage(
                       "assets/images/mapeera_house.jpg",
                     ),
                     colorFilter: ColorFilter.mode(
@@ -63,11 +73,11 @@ class _DashBoardState extends State<DashBoard> {
                       BlendMode.darken,
                     ),
                     fit: BoxFit.cover),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(18.0),
                     bottomLeft: Radius.circular(18.0))),
             child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -115,10 +125,18 @@ class _DashBoardState extends State<DashBoard> {
                                       fontSize: 16),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    CommonLibs.navigateToRoute(
-                                        context: context,
-                                        widget: const Login());
+                                  onPressed: () async {
+                                    bool isActivated = await CommonLibs
+                                        .checkActivationStatus();
+                                    if (isActivated) {
+                                      CommonLibs.navigateToRoute(
+                                          context: context,
+                                          widget: const Login());
+                                    } else {
+                                      CommonLibs.navigateToRoute(
+                                          context: context,
+                                          widget: AccountActivation());
+                                    }
                                   },
                                   child: const Text("LOGIN"),
                                 ),

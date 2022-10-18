@@ -89,6 +89,7 @@ class DynamicRequest {
                   requestObj: requestObj, webHeader: actionControl.webHeader)
               .then((value) => {
                     notifications = value.notifications,
+                    message = value.message,
                     debugPrint("Notifications...$notifications"),
                     if (notifications != null)
                       {message = notifications[0]["NotifyText"]},
@@ -186,6 +187,7 @@ class DynamicRequest {
       opensDynamicRoute = false}) {
     EasyLoading.dismiss();
     debugPrint("Post dynamic module name...$moduleName");
+
     switch (status) {
       case "000":
         {
