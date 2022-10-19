@@ -1,10 +1,13 @@
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:async/async.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
+import 'package:rafiki/src/ui/home/dashboard.dart';
 import 'package:rafiki/src/ui/home/home_menu_items.dart';
 import 'package:rafiki/src/ui/home/top_home_widget.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,137 +21,160 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  RestartableTimer? _timer;
+
   final _sharedPref = SharedPrefLocal();
   ScrollPhysics physics = const BouncingScrollPhysics();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize:
-                const Size.fromHeight(64.0), // here the desired height
-            child: AppBar(
-                automaticallyImplyLeading: false,
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                title: FutureBuilder<SharedPreferences>(
-                    future: SharedPreferences.getInstance(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<SharedPreferences> snapshot) {
-                      Widget child = SizedBox();
-                      if (snapshot.hasData) {
-                        var sharedPref = snapshot.data;
-                        child = Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              child: Image.asset("assets/images/user.png"),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+    _timer = RestartableTimer(const Duration(seconds: 60000), () {
+      debugPrint("####Going to sleeep####");
+      CommonLibs.navigateToDashboard(context: context);
+    });
+
+    return Listener(
+        onPointerDown: (_) =>
+            {restartTimer(), debugPrint("Restarting timer...")},
+        child: Scaffold(
+            appBar: PreferredSize(
+                preferredSize:
+                    const Size.fromHeight(64.0), // here the desired height
+                child: AppBar(
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    title: FutureBuilder<SharedPreferences>(
+                        future: SharedPreferences.getInstance(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<SharedPreferences> snapshot) {
+                          Widget child = const SizedBox();
+                          if (snapshot.hasData) {
+                            var sharedPref = snapshot.data;
+                            child = Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const SizedBox(
-                                  height: 18,
-                                ),
-                                Text(
-                                  "Hello ${_sharedPref.getUserData(sharedPref: sharedPref, key: UserAccountData.FirstName.name)}",
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600),
+                                CircleAvatar(
+                                  child: Image.asset("assets/images/user.png"),
                                 ),
                                 const SizedBox(
-                                  height: 4,
+                                  width: 8,
                                 ),
-                                Text(
-                                  "Last Login ${_sharedPref.getUserData(sharedPref: sharedPref, key: UserAccountData.LastLoginDateTime.name)}",
-                                  style: Theme.of(context).textTheme.titleSmall,
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 18,
+                                    ),
+                                    Text(
+                                      "Hello ${_sharedPref.getUserData(sharedPref: sharedPref, key: UserAccountData.FirstName.name)}",
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    Text(
+                                      "Last Login ${_sharedPref.getUserData(sharedPref: sharedPref, key: UserAccountData.LastLoginDateTime.name)}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
+                                    const SizedBox(
+                                      height: 12,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(
-                                  height: 12,
-                                ),
+                                const Spacer(),
+                                IconButton(
+                                    onPressed: () async {
+                                      if (await confirmLogout()) {
+                                        CommonLibs.navigateToDashboard(
+                                            context: context);
+                                      }
+                                    },
+                                    icon: const Icon(Icons.power_settings_new))
                               ],
-                            ),
-                            const Spacer(),
-                            IconButton(
-                                onPressed: () async {
-                                  if (await confirm(
-                                    context,
-                                    title: const Text(
-                                      'Logout',
-                                      style: TextStyle(fontSize: 24),
-                                    ),
-                                    content:
-                                        const Text('Would you like to logout?'),
-                                    textOK: const Text(
-                                      'Confirm',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    textCancel: const Text('Cancel',
-                                        style: TextStyle(fontSize: 16)),
-                                  )) {
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                                icon: const Icon(Icons.power_settings_new))
-                          ],
-                        );
-                      }
-                      return child;
-                    }))),
-        body: ListView(
-          physics: physics,
-          children: [
-            const SizedBox(
-              height: 24,
-            ),
-            TopHomeWidget(),
-            const SizedBox(
-              height: 24,
-            ),
-            Stack(
-              children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                          color: Colors.blue[600],
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                            bottomLeft: Radius.circular(22),
-                            bottomRight: Radius.circular(22),
-                          )),
-                      height: 200,
-                      child: const Align(
-                          alignment: Alignment.topCenter,
-                          child: MainMenuWidget()),
-                    )),
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 124, 18, 10),
-                    child: Material(
-                        elevation: 4,
-                        borderRadius: BorderRadius.circular(12),
+                            );
+                          }
+                          return child;
+                        }))),
+            body: ListView(
+              physics: physics,
+              children: [
+                const SizedBox(
+                  height: 24,
+                ),
+                TopHomeWidget(),
+                const SizedBox(
+                  height: 24,
+                ),
+                Stack(
+                  children: <Widget>[
+                    Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: SubMenuWidget(
-                              hiddenModules: widget.hiddenModules),
-                        )))
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                              color: Colors.blue[600],
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                                bottomLeft: Radius.circular(22),
+                                bottomRight: Radius.circular(22),
+                              )),
+                          height: 200,
+                          child: const Align(
+                              alignment: Alignment.topCenter,
+                              child: MainMenuWidget()),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 124, 18, 10),
+                        child: Material(
+                            elevation: 4,
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: SubMenuWidget(
+                                  hiddenModules: widget.hiddenModules),
+                            )))
+                  ],
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                AdvertsContainer(),
+                const SizedBox(
+                  height: 24,
+                ),
               ],
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            AdvertsContainer(),
-            const SizedBox(
-              height: 24,
-            ),
-          ],
-        ));
+            )));
+  }
+
+  void restartTimer() {
+    _timer?.reset();
+  }
+
+  void timeOutCallBack() {
+    CommonLibs.navigateToRoute(context: context, widget: const DashBoard());
+  }
+
+  Future<bool> confirmLogout() async {
+    return await confirm(
+      context,
+      title: const Text(
+        'Logout',
+        style: TextStyle(fontSize: 24),
+      ),
+      content: const Text('Would you like to logout?'),
+      textOK: const Text(
+        'Confirm',
+        style: TextStyle(fontSize: 16),
+      ),
+      textCancel: const Text('Cancel', style: TextStyle(fontSize: 16)),
+    );
   }
 }

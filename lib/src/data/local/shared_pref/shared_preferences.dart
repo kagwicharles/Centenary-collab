@@ -6,7 +6,6 @@ class SharedPrefLocal {
 
   static addDeviceData(String token, String device, String iv) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
     await prefs.setString('token', token);
     await prefs.setString('device', device);
     await prefs.setString('iv', iv);

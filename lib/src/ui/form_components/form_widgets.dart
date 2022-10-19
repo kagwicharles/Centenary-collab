@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:intl/intl.dart';
-
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/dynamic.dart';
@@ -49,7 +48,8 @@ class DropdownButtonWidget extends StatelessWidget {
   List<BankAccount>? _bankAccounts;
   List<Beneficiary>? _beneficiaries;
   List<dynamic>? _dropdownItems;
-  List<DropdownMenuItem<String>>? _dropdownPicks;
+  var _dropdownPicks;
+  Map<String, dynamic>? _items;
   String? _currentValue;
 
   @override
@@ -71,41 +71,40 @@ class DropdownButtonWidget extends StatelessWidget {
           if (snapshot.hasData) {
             _dropdownItems = snapshot.data;
             if (currentControlID == ControlID.BANKACCOUNTID) {
-              _bankAccounts = List<BankAccount>.from(_dropdownItems!);
-              _dropdownPicks = _bankAccounts?.map((value) {
-                return DropdownMenuItem(
-                  value: value.bankAccountId,
-                  child: Text(
-                    value.aliasName.isEmpty
-                        ? value.bankAccountId
-                        : value.aliasName,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                );
-              }).toList();
+              _bankAccounts =
+                  List<BankAccount>.from(_dropdownItems!).toSet().toList();
+              _items = _bankAccounts?.fold<Map<String, dynamic>>(
+                  {},
+                  (acc, curr) => acc
+                    ..[curr.bankAccountId] = curr.aliasName.isEmpty
+                        ? curr.bankAccountId
+                        : curr.aliasName);
             } else if (currentControlID == ControlID.BENEFICIARYACCOUNTID) {
-              print("Merchant id...$merchantID");
-              _beneficiaries = List<Beneficiary>.from(_dropdownItems!);
-              _dropdownPicks = _beneficiaries?.map((value) {
-                return DropdownMenuItem(
-                  value: value.merchantID,
-                  child: Text(
-                    value.merchantName,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                );
-              }).toList();
+              _beneficiaries =
+                  List<Beneficiary>.from(_dropdownItems!).toSet().toList();
+              _items = _beneficiaries?.fold<Map<String, dynamic>>({},
+                  (acc, curr) => acc..[curr.merchantID] = curr.merchantName);
             } else {
               _userCodes = List<UserCode>.from(_dropdownItems!);
-              _dropdownPicks = _userCodes?.map((value) {
-                return DropdownMenuItem(
-                  value: value.subCodeId,
-                  child: Text(
-                    value.description!,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                );
-              }).toList();
+              _items = _userCodes?.fold<Map<String, dynamic>>(
+                  {}, (acc, curr) => acc..[curr.subCodeId] = curr.description!);
+            }
+
+            _dropdownPicks = _items?.entries
+                .map((userCode) => DropdownMenuItem(
+                      value: userCode.key,
+                      child: Text(
+                        userCode.value,
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ))
+                .toList();
+            debugPrint("Dropdown items...${_dropdownPicks?.toList()}");
+            _dropdownPicks?.toSet().toList();
+            if (_dropdownPicks != null) {
+              if (_dropdownPicks!.isNotEmpty) {
+                _currentValue = _dropdownPicks![0].value;
+              }
             }
 
             child = DropdownButtonFormField2(

@@ -76,6 +76,9 @@ dependencies:
   getwidget: ^3.0.1
   font_awesome_flutter: ^10.2.1
   change_app_package_name: ^1.1.0
+  back_button_interceptor: ^6.0.2
+  local_session_timeout: ^2.1.1
+  intl_phone_field: ^3.1.0
 
 dev_dependencies:
   flutter_test:

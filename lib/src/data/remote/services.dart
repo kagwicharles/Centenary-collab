@@ -54,7 +54,6 @@ class TestEndpoint {
   baseRequestSetUp() async {
     requestObj = {
       "UNIQUEID": "00000000-40ee-9111-0000-00001d093e12",
-      "CustomerID": await _sharedPref.getCustomerID(),
       "BankID": "16",
       "Country": "UGANDATEST",
       "VersionNumber": "119",
@@ -210,6 +209,7 @@ class TestEndpoint {
   }) async {
     String res, decrypted = "";
     DynamicResponse dynamicResponse;
+    requestObj["CustomerID"] = await _sharedPref.getCustomerID();
     AppLogger.appLogE(tag: "Raw request", message: jsonEncode(requestObj));
     await securityFeatureSetUp();
 
@@ -287,19 +287,19 @@ class TestEndpoint {
     return encodedResponse;
   }
 
-  Future<String> activateMobile({mobileNumber, plainPin}) async {
+  Future<Map<String, dynamic>> activateMobile({mobileNumber, plainPin}) async {
     String res, decrypted;
-    var status = "";
-    var message = "";
+    var message, status = "";
     await securityFeatureSetUp();
     await baseRequestSetUp();
-    final encryptedPin =
-        CryptLibImpl.encrypt(jsonEncode(plainPin), localDevice, localIv);
+    final encryptedPin = CryptLibImpl.encryptField(plainPin);
     requestObj["FormID"] = "ACTIVATIONREQ";
     requestObj["SessionID"] = Constants.uniqueId;
     requestObj["MobileNumber"] = mobileNumber;
     requestObj["Activation"] = {};
     requestObj["EncryptedFields"] = {"PIN": "$encryptedPin"};
+    AppLogger.appLogE(
+        tag: "\n\nACTIVATION REQUEST", message: jsonEncode(requestObj));
     final encryptedBody =
         CryptLibImpl.encrypt(jsonEncode(requestObj), localDevice, localIv);
     var response = dio.post(
@@ -319,7 +319,50 @@ class TestEndpoint {
           logger.d("\n\nACTIVATION RESPONSE: $decrypted"),
         });
     print("Message: $message");
-    return message;
+    return {"Status": "$status", "Message": "$message"};
+  }
+
+  Future<Map<String, dynamic>> verifyOTP({mobileNumber, key}) async {
+    String res, decrypted;
+    var message, status, customerID = "";
+    await securityFeatureSetUp();
+    await baseRequestSetUp();
+    final encryptedKey = CryptLibImpl.encryptField(key);
+    requestObj["FormID"] = "ACTIVATE";
+    requestObj["SessionID"] = Constants.uniqueId;
+    requestObj["MobileNumber"] = mobileNumber;
+    requestObj["Activation"] = {};
+    requestObj["EncryptedFields"] = {"Key": "$encryptedKey"};
+    AppLogger.appLogE(
+        tag: "\n\nVERIFY OTP REQUEST", message: jsonEncode(requestObj));
+    final encryptedBody =
+        CryptLibImpl.encrypt(jsonEncode(requestObj), localDevice, localIv);
+    var response = dio.post(
+        currrenrequestObjaseUrl + "/ElmaWebAuthDynamic/api/elma/authentication",
+        options: Options(
+          headers: {'T': localToken},
+        ),
+        data: {"Data": encryptedBody, "UniqueId": Constants.uniqueId});
+    await response.then((value) => {
+          res = value.data["Response"],
+          decrypted = utf8.decode(base64.decode(CryptLibImpl.decrypt(
+              base64.normalize(res),
+              CryptLibImpl.toSHA256(localDevice, 32),
+              localIv))),
+          status = json.decode(decrypted)["Status"],
+          message = json.decode(decrypted)["Message"],
+          if (status == "000")
+            {customerID = json.decode(decrypted)["CustomerID"]},
+          logger.d("\n\nOTP VERIFICATION RESPONSE: $decrypted"),
+        });
+    if (customerID.isNotEmpty) {
+      return {
+        "Message": "$message",
+        "Status": "$status",
+        "CustomerID": "$customerID"
+      };
+    }
+    return {"Message": "$message", "Status": "$status"};
   }
 
   addDataToLocalDb(FormId formId, {required decryptedData}) {

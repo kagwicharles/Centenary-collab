@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/theme/app_theme.dart';
 import 'src/ui/home/dashboard.dart';
-import 'src/utils/common_libs.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,6 +16,7 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
+  final sessionStateStream = StreamController<SessionState>();
   final _sharedPrefLocal = SharedPrefLocal();
   final _services = TestEndpoint();
 

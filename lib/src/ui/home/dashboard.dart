@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
-import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
 import 'package:rafiki/src/ui/auth/activation.dart';
 import 'package:rafiki/src/ui/auth/login.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
@@ -21,8 +20,6 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
-  final _sharedPref = SharedPrefLocal();
-
   @override
   void initState() {
     super.initState();

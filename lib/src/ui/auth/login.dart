@@ -3,9 +3,7 @@ import 'package:rafiki/src/data/constants.dart';
 import 'package:rafiki/src/data/remote/services.dart';
 import 'package:rafiki/src/data/repository/repository.dart';
 import 'package:rafiki/src/data/user_model.dart';
-import 'package:rafiki/src/ui/auth/otp_verification.dart';
 import 'package:rafiki/src/ui/home/home.dart';
-import 'package:rafiki/src/utils/common_libs.dart';
 import 'package:rafiki/src/utils/common_widgets.dart';
 
 class Login extends StatefulWidget {
@@ -40,17 +38,14 @@ class _LoginState extends State<Login> {
           child: Form(
             key: _formKey,
             child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-                Widget>[
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
               const SizedBox(
                 height: 24,
               ),
               Text(
                 "Welcome back!",
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .headline6,
+                style: Theme.of(context).textTheme.headline6,
               ),
 
               const SizedBox(
@@ -74,63 +69,62 @@ class _LoginState extends State<Login> {
                   onPressed: loading
                       ? null
                       : () {
-                    List<ModuleToHide>? hiddenModules;
-                    if (_formKey.currentState!.validate()) {
-                      setState(() {
-                        loading = true;
-                      });
-                      // debugPrint(
-                      //     "Encrypted pin...${CryptLibImpl.encryptField(pinController.text)}");
-                      Future.delayed(const Duration(milliseconds: 500),
-                              () {
-                            _services
-                                .login(pinController.text)
-                                .then((value) async =>
-                            {
-                              if (value["Status"] ==
-                                  StatusCode.success)
-                                {
-                                  hiddenModules =
-                                  await _hiddenModulesRepository
-                                      .getAllModulesToHide(),
-                                  Future.delayed(
-                                      const Duration(
-                                          milliseconds: 1000), () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              HomePage(
-                                                  title: 'Rafiki',
-                                                  hiddenModules:
-                                                  hiddenModules)),
-                                    );
-                                    pinController.clear();
-                                  }),
-                                }
-                              else
-                                {
-                                  CommonWidgets.buildNormalSnackBar(
-                                      context: context,
-                                      message: value["Message"])
-                                },
-                              setState(() {
-                                loading = false;
-                              }),
+                          List<ModuleToHide>? hiddenModules;
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              loading = true;
                             });
-                          });
-                    }
-                  },
+                            // debugPrint(
+                            //     "Encrypted pin...${CryptLibImpl.encryptField(pinController.text)}");
+                            Future.delayed(const Duration(milliseconds: 500),
+                                () {
+                              _services
+                                  .login(pinController.text)
+                                  .then((value) async => {
+                                        if (value["Status"] ==
+                                            StatusCode.success)
+                                          {
+                                            hiddenModules =
+                                                await _hiddenModulesRepository
+                                                    .getAllModulesToHide(),
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 1000), () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomePage(
+                                                            title: 'Rafiki',
+                                                            hiddenModules:
+                                                                hiddenModules)),
+                                              );
+                                              pinController.clear();
+                                            }),
+                                          }
+                                        else
+                                          {
+                                            CommonWidgets.buildNormalSnackBar(
+                                                context: context,
+                                                message: value["Message"])
+                                          },
+                                        setState(() {
+                                          loading = false;
+                                        }),
+                                      });
+                            });
+                          }
+                        },
                   child: loading
                       ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircularProgressIndicator(),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text("Please wait...")
-                      ])
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                              CircularProgressIndicator(),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Text("Please wait...")
+                            ])
                       : const Text("LOGIN")),
               // TextButton(
               //     onPressed: () {

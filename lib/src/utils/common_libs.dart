@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
+import 'package:rafiki/src/ui/home/dashboard.dart';
 import 'package:unique_identifier/unique_identifier.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,12 +17,14 @@ class CommonLibs {
     );
   }
 
+  static navigateToDashboard({required context}) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const DashBoard()),
+        (Route<dynamic> route) => false);
+  }
+
   static getDeviceUniqueID() async {
-    // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     return await UniqueIdentifier.serial; //01e02c9a66c8611d
-    // return androidInfo.id; //SP1A.210812.016
-    // return await DeviceInformation.deviceIMEINumber; //188439113945710
   }
 
   static checkReadPhoneStatePermission() async {
