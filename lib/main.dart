@@ -1,30 +1,58 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
+import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
+import 'package:rafiki/src/data/model.dart';
 import 'package:rafiki/src/data/remote/services.dart';
-import 'package:rafiki/src/data/repository/repository.dart';
-import 'package:rafiki/src/ui/home/home.dart';
 import 'package:rafiki/theme/app_theme.dart';
+import 'src/ui/home/dashboard.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  final sessionStateStream = StreamController<SessionState>();
+  final _sharedPrefLocal = SharedPrefLocal();
+  final _services = TestEndpoint();
+
   @override
   Widget build(BuildContext context) {
-    TestEndpoint().getToken().then((res) => {
-          TestEndpoint().getModules(),
-          TestEndpoint().getForms(),
-          TestEndpoint().getActionControls()
-        });
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //   statusBarColor:  Color(0xffC92265), //or set color with: Color(0xFF0000FF)
+    // ));
+    getAppData();
 
     return MaterialApp(
       title: 'Rafiki',
       debugShowCheckedModeBanner: false,
       theme: AppTheme().appTheme,
-      home: HomePage(title: 'Rafiki'),
+      // home: HomePage(title: 'Rafiki'),
+      home: const DashBoard(),
+      builder: EasyLoading.init(),
     );
+  }
+
+  getAppData() async {
+    int? staticDataVersion = await _sharedPrefLocal.getStaticDataVersion();
+    debugPrint("Current data version...$staticDataVersion");
+    _services.getToken().then((res) async => {
+          if (staticDataVersion == null)
+            {
+              _services.getUIData(FormId.MENU),
+              _services.getUIData(FormId.FORMS),
+              _services.getUIData(FormId.ACTIONS),
+              _services.getStaticData()
+            }
+          else
+            {
+              _services.getStaticData(
+                  currentStaticDataVersion: staticDataVersion)
+            }
+        });
   }
 }

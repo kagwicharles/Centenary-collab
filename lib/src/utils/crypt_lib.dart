@@ -1,11 +1,16 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:archive/archive.dart';
+import 'package:brotli/brotli.dart';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart';
 import "package:hex/hex.dart";
+import 'package:rafiki/src/utils/app_logger.dart';
 
 class CryptLibImpl {
-  static const staticEncryptKey = "KBSB&er3bflx9%";
+  static const staticEncryptKey = "csXDRzpcEPm_jMny";
   static const staticEncryptIv = "84jfkfndl3ybdfkf";
+  static const staticLogKeyValue = "KBSB&er3bflx9%";
 
   static String toSHA256(String key, int length) {
     var bytes1 = utf8.encode(key); // data being hashed
@@ -39,9 +44,14 @@ class CryptLibImpl {
   }
 
   static String encryptField(String plainText) {
-    final hashKey = toSHA256(staticEncryptKey, 32);
-    final encryptedText = encrypt(plainText, hashKey, staticEncryptIv);
-    return encryptedText.replaceAll('\n', "");
+    final hashKey = Key.fromUtf8(toSHA256(staticLogKeyValue, 32));
+    AppLogger.appLogI(
+        tag: "HASH KEY: STATIC ENCRYPT",
+        message: utf8.decode(base64.decode(hashKey.base64)));
+    final encrypter = Encrypter(AES(hashKey, mode: AESMode.cbc));
+    final encryptedText =
+        encrypter.encrypt(plainText, iv: IV.fromUtf8(staticEncryptIv));
+    return encryptedText.base64;
   }
 
   static String encryptPayloadObj(
@@ -51,5 +61,9 @@ class CryptLibImpl {
     data = encrypt(decryptedString, key, serverIV);
     data = data.replaceAll("\\r\\n|\\r|\\n", "");
     return data;
+  }
+
+  static String gzipDecompressStaticData(String gzippedString) {
+    return utf8.decode(GZipDecoder().decodeBytes(base64.decode(gzippedString)));
   }
 }

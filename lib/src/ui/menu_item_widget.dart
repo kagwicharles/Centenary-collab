@@ -1,7 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rafiki/src/data/model.dart';
+import 'package:rafiki/src/data/remote/dynamic.dart';
 import 'package:rafiki/src/ui/dynamic.dart';
+import 'package:rafiki/src/ui/list/pending_transactions.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
+
+import 'form_components/form_widgets.dart';
 
 class ModuleItemWidget extends StatelessWidget {
   final String imageUrl;
@@ -9,40 +16,63 @@ class ModuleItemWidget extends StatelessWidget {
   final String moduleId;
   final String parentModule;
   final String moduleCategory;
+  String? merchantID;
+  bool isMain = false;
+  ModuleItem moduleItem;
+
+  final _dynamicRequest = DynamicRequest();
 
   ModuleItemWidget(
-      {required this.imageUrl,
+      {Key? key,
+      required this.imageUrl,
       required this.moduleName,
       required this.moduleId,
       required this.parentModule,
-      required this.moduleCategory});
+      required this.moduleCategory,
+      this.merchantID,
+      this.isMain = false,
+      required this.moduleItem})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
         elevation: 0,
+        color: isMain ? Colors.transparent : null,
         child: InkWell(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DynamicWidget(
+              if (moduleId == "TRANSACTIONSCENTER") {
+                getList(context);
+              } else if (moduleId == "PENDINGTRANSACTIONS") {
+                CommonLibs.navigateToRoute(
+                    context: context,
+                    widget: PendingTransactionList(moduleName: moduleName));
+              } else {
+                CommonLibs.navigateToRoute(
+                    context: context,
+                    widget: DynamicWidget(
                         moduleId: moduleId,
                         moduleName: moduleName,
                         parentModule: parentModule,
                         moduleCategory: moduleCategory,
-                      )));
+                        merchantID: merchantID));
+              }
             },
             child: Container(
               padding: const EdgeInsets.all(2.0),
               decoration: BoxDecoration(
+                  color: isMain ? Colors.transparent : null,
                   borderRadius: const BorderRadius.all(Radius.circular(4)),
-                  border: Border.all(color: Colors.blueGrey[100]!)),
+                  border: isMain == true
+                      ? null
+                      : Border.all(color: Colors.blueGrey[100]!)),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CachedNetworkImage(
                       imageUrl: imageUrl,
-                      height: 44,
-                      width: 44,
+                      height: 48,
+                      width: 48,
                       placeholder: (context, url) =>
                           Lottie.asset('assets/lottie/loading.json'),
                       errorWidget: (context, url, error) =>
@@ -56,9 +86,23 @@ class ModuleItemWidget extends StatelessWidget {
                       moduleName,
                       // overflow: TextOverflow.fade,
                       textAlign: TextAlign.center,
+                      overflow: TextOverflow.visible,
                       style: Theme.of(context).textTheme.titleMedium,
                     )),
                   ]),
             )));
+  }
+
+  getList(context) {
+    EasyLoading.show(status: "Processing");
+    InputUtil.formInputValues.clear();
+    InputUtil.formInputValues.add({"HEADER": "GETTRXLIST"});
+    _dynamicRequest.dynamicRequest(moduleItem.moduleId, "GETTRXLIST",
+        merchantID: moduleItem.merchantID,
+        moduleName: moduleItem.moduleName,
+        dataObj: InputUtil.formInputValues,
+        encryptedField: InputUtil.encryptedField,
+        context: context,
+        isNotTransactionList: false);
   }
 }

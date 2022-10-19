@@ -20724,7 +20724,7 @@
                 "ModuleID": "HOME",
                 "ControlID": "ADDS",
                 "ControlText": "",
-                "ControlType": "CAROUSELVIEW",
+                "ControlType": "ImageVIEW",
                 "ContainerID": "",
                 "MinValue": "0",
                 "MaxValue": "0",

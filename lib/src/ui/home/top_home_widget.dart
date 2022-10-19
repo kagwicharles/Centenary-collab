@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:rafiki/src/data/repository/repository.dart';
+import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/home/credit_card.dart';
+import 'package:shimmer/shimmer.dart';
 
 class TopHomeWidget extends StatefulWidget {
   @override
@@ -10,12 +14,9 @@ class TopHomeWidget extends StatefulWidget {
 
 class _TopHomeWidgetState extends State<TopHomeWidget>
     with SingleTickerProviderStateMixin {
-  final List<Widget> creditCards = [
-    CreditCardWidget(),
-    CreditCardWidget(),
-    CreditCardWidget(),
-  ];
   bool viewCreditCardState = true;
+  final _bankAccountRepository = BankAccountRepository();
+  final bool _enabled = true;
 
   var transitionBuilder = (Widget child, Animation<double> animation) {
     // return ScaleTransition(scale: animation, child: child);
@@ -26,6 +27,8 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
         ).animate(animation),
         child: child);
   };
+
+  getBankAccounts() => _bankAccountRepository.getAllBankAccounts();
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +88,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
                           )))
                 ],
               )),
-              SizedBox(
+              const SizedBox(
                 height: 4,
               ),
               viewCreditCardState
@@ -98,14 +101,33 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
                           // when the count changes.
                           key: ValueKey<bool>(viewCreditCardState),
                           height: 177,
-                          constraints: const BoxConstraints(maxWidth: 270),
-                          child: Swiper(
-                              scrollDirection: Axis.horizontal,
-                              autoplay: false,
-                              autoplayDelay: 5000,
-                              itemCount: creditCards.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return creditCards[index];
+                          constraints: const BoxConstraints(maxWidth: 277),
+                          child: FutureBuilder<List<BankAccount>>(
+                              future: getBankAccounts(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<BankAccount>> snapshot) {
+                                Widget child = Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[100]!,
+                                    enabled: _enabled,
+                                    child: const SizedBox(
+                                      width: 275,
+                                    ));
+                                if (snapshot.hasData) {
+                                  var bankAccounts = snapshot.data;
+                                  child = Swiper(
+                                      scrollDirection: Axis.horizontal,
+                                      autoplay: false,
+                                      autoplayDelay: 5000,
+                                      itemCount: bankAccounts?.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return CreditCardWidget(
+                                            bankAccountID: bankAccounts![index]
+                                                .bankAccountId);
+                                      });
+                                }
+                                return child;
                               })))
                   : AnimatedSwitcher(
                       transitionBuilder: transitionBuilder,
@@ -116,7 +138,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
                           // when the count changes.
                           key: ValueKey<bool>(viewCreditCardState),
                           height: 177,
-                          constraints: const BoxConstraints(maxWidth: 270),
+                          constraints: const BoxConstraints(maxWidth: 277),
                           child: const Center(
                             child: Text("No alerts yet"),
                           )))
@@ -124,5 +146,7 @@ class _TopHomeWidgetState extends State<TopHomeWidget>
   }
 
   @override
-  void dispose() {}
+  void dispose() {
+    super.dispose();
+  }
 }

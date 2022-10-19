@@ -1,152 +1,180 @@
+import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:sqlite_viewer/sqlite_viewer.dart';
-import 'package:rafiki/src/data/model.dart';
-import 'package:rafiki/src/data/remote/services.dart';
-import 'package:rafiki/src/data/test/test.dart';
+import 'package:async/async.dart';
+import 'package:rafiki/src/data/local/shared_pref/shared_preferences.dart';
+import 'package:rafiki/src/data/user_model.dart';
 import 'package:rafiki/src/ui/home/adverts.dart';
-import 'package:rafiki/src/ui/home/credit_card.dart';
+import 'package:rafiki/src/ui/home/dashboard.dart';
 import 'package:rafiki/src/ui/home/home_menu_items.dart';
 import 'package:rafiki/src/ui/home/top_home_widget.dart';
+import 'package:rafiki/src/utils/common_libs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title}) : super(key: key);
+  HomePage({Key? key, required this.title, this.hiddenModules})
+      : super(key: key);
   final String title;
-  final String user = "Kagwi";
-  final String lastLogin = "Jul 12 2022 11:50AM";
-
-  final List<Widget> creditCards = [
-    CreditCardWidget(),
-    CreditCardWidget(),
-    CreditCardWidget(),
-  ];
-
-  final List<Widget> adverts = const [
-    AdvertWidget(
-      adResource: "assets/ads/doge-1.jpg",
-    ),
-    AdvertWidget(adResource: "assets/ads/doge.jpeg"),
-    AdvertWidget(adResource: "assets/ads/doge-1.jpg"),
-    AdvertWidget(adResource: "assets/ads/doge.jpeg"),
-  ];
+  List<ModuleToHide>? hiddenModules;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  RestartableTimer? _timer;
+
+  final _sharedPref = SharedPrefLocal();
+  ScrollPhysics physics = const BouncingScrollPhysics();
+
   @override
   Widget build(BuildContext context) {
-    // Open local sqlite database here
-    // for debugging purposes
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Navigator.push(
-    //       context, MaterialPageRoute(builder: (_) => DatabaseList()));
-    // });
+    _timer = RestartableTimer(const Duration(seconds: 60000), () {
+      debugPrint("####Going to sleeep####");
+      CommonLibs.navigateToDashboard(context: context);
+    });
 
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize:
-                const Size.fromHeight(64.0), // here the desired height
-            child: AppBar(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                title: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      child: Image.asset("assets/images/user.png"),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 18,
-                        ),
-                        Text(
-                          "Hello ${widget.user}",
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Text(
-                          "Last Login ${widget.lastLogin}",
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.more_vert))
-                  ],
-                ))),
-        body: ListView(
-          children: [
-            const SizedBox(
-              height: 24,
-            ),
-            TopHomeWidget(),
-            const SizedBox(
-              height: 24,
-            ),
-            Stack(
-              children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                          color: Colors.blue[600],
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                            bottomLeft: Radius.circular(22),
-                            bottomRight: Radius.circular(22),
-                          )),
-                      height: 200,
-                      child: Align(
-                          alignment: Alignment.topCenter,
-                          child: MainMenuWidget()),
-                    )),
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 124, 18, 10),
-                    child: Material(
-                        elevation: 4,
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: SubMenuWidget(),
-                        )))
-              ],
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            Center(
-                child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    height: 150,
-                    constraints: const BoxConstraints(maxWidth: 450),
-                    child: Swiper(
-                        autoplay: true,
-                        pagination: const SwiperPagination(),
-                        itemCount: widget.adverts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return widget.adverts[index];
+    return Listener(
+        onPointerDown: (_) =>
+            {restartTimer(), debugPrint("Restarting timer...")},
+        child: Scaffold(
+            appBar: PreferredSize(
+                preferredSize:
+                    const Size.fromHeight(64.0), // here the desired height
+                child: AppBar(
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    title: FutureBuilder<SharedPreferences>(
+                        future: SharedPreferences.getInstance(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<SharedPreferences> snapshot) {
+                          Widget child = const SizedBox();
+                          if (snapshot.hasData) {
+                            var sharedPref = snapshot.data;
+                            child = Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  child: Image.asset("assets/images/user.png"),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 18,
+                                    ),
+                                    Text(
+                                      "Hello ${_sharedPref.getUserData(sharedPref: sharedPref, key: UserAccountData.FirstName.name)}",
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    Text(
+                                      "Last Login ${_sharedPref.getUserData(sharedPref: sharedPref, key: UserAccountData.LastLoginDateTime.name)}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
+                                    const SizedBox(
+                                      height: 12,
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                IconButton(
+                                    onPressed: () async {
+                                      if (await confirmLogout()) {
+                                        CommonLibs.navigateToDashboard(
+                                            context: context);
+                                      }
+                                    },
+                                    icon: const Icon(Icons.power_settings_new))
+                              ],
+                            );
+                          }
+                          return child;
                         }))),
-            const SizedBox(
-              height: 24,
-            ),
-          ],
-        ));
+            body: ListView(
+              physics: physics,
+              children: [
+                const SizedBox(
+                  height: 24,
+                ),
+                TopHomeWidget(),
+                const SizedBox(
+                  height: 24,
+                ),
+                Stack(
+                  children: <Widget>[
+                    Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                              color: Colors.blue[600],
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                                bottomLeft: Radius.circular(22),
+                                bottomRight: Radius.circular(22),
+                              )),
+                          height: 200,
+                          child: const Align(
+                              alignment: Alignment.topCenter,
+                              child: MainMenuWidget()),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 124, 18, 10),
+                        child: Material(
+                            elevation: 4,
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: SubMenuWidget(
+                                  hiddenModules: widget.hiddenModules),
+                            )))
+                  ],
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                AdvertsContainer(),
+                const SizedBox(
+                  height: 24,
+                ),
+              ],
+            )));
+  }
+
+  void restartTimer() {
+    _timer?.reset();
+  }
+
+  void timeOutCallBack() {
+    CommonLibs.navigateToRoute(context: context, widget: const DashBoard());
+  }
+
+  Future<bool> confirmLogout() async {
+    return await confirm(
+      context,
+      title: const Text(
+        'Logout',
+        style: TextStyle(fontSize: 24),
+      ),
+      content: const Text('Would you like to logout?'),
+      textOK: const Text(
+        'Confirm',
+        style: TextStyle(fontSize: 16),
+      ),
+      textCancel: const Text('Cancel', style: TextStyle(fontSize: 16)),
+    );
   }
 }
